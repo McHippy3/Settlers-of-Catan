@@ -29,6 +29,8 @@ public class SettlersOfCatan extends Application
 	public void start(Stage stage) 
 	{
 		stage.setScene(Scenes.titleScene());
+		stage.setTitle("Settlers of Catan");
+		stage.getIcons().add(new Image("res/window_icon.png"));
 		stage.setMaximized(true);
 		stage.setResizable(false);
 		stage.show();

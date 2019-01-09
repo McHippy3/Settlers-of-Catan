@@ -30,10 +30,29 @@ public class Scenes
 	{
 		VBox root = new VBox();
 		root.setAlignment(Pos.CENTER);
+		root.setSpacing(100);
 		
+		//Components
 		ImageView image = new ImageView(new Image("res/logo.png"));
+		Button startButton = new Button("Start Game");
+		startButton.setPrefSize(100, 25);
 		
-		root.getChildren().addAll(image);
+		root.getChildren().addAll(image, startButton);
+		return new Scene(root);
+	}
+	
+	public static Scene offlineGameScene() 
+	{
+		BorderPane root = new BorderPane();
+		VBox[] playerTiles = new VBox[4];
+		
+		for(int i = 0; i < 4; i++) 
+		{
+			
+		}
+		
+		root.setLeft();
+		root.setRight();
 		return new Scene(root);
 	}
 }
