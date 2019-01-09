@@ -24,19 +24,16 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class SettlersOfCatan extends Application
+public class Scenes 
 {
-	public void start(Stage stage) 
+	public static Scene titleScene() 
 	{
-		stage.setScene(Scenes.titleScene());
-		stage.setMaximized(true);
-		stage.setResizable(false);
-		stage.show();
+		VBox root = new VBox();
+		root.setAlignment(Pos.CENTER);
+		
+		ImageView image = new ImageView(new Image("res/logo.png"));
+		
+		root.getChildren().addAll(image);
+		return new Scene(root);
 	}
-
-	public static void main(String[] args) 
-	{
-		launch(args);
-	}
-
 }
