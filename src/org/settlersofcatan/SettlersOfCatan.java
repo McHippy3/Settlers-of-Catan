@@ -20,7 +20,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.stage.Screen.*;
 import java.io.File;
+import javafx.geometry.Rectangle2D;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -34,6 +36,8 @@ public class SettlersOfCatan extends Application
 	public void start(Stage stage) 
 	{
 		this.stage = stage;
+		
+		//TODO Getting Screen info
 		
 		Button startButton = new Button("Start Game");
 		

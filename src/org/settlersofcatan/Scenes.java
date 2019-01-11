@@ -42,11 +42,36 @@ public class Scenes
 	
 	public static Node offlineGameScene() 
 	{
-		BorderPane root = new BorderPane();
+		//Stack Pane
+		StackPane root = new StackPane();
+		
+		//StackPane Layer 1: Ocean
+		Group oceanLayer = new Group();
+		for(int r = 0; r < 10; r ++) 
+		{
+			int yPos = r * 253;
+			for(int c = 0; c < 10; c++) 
+			{		
+				ImageView oceanPic = new ImageView(new Image("res/ocean.png"));
+				oceanLayer.getChildren().add(oceanPic);
+				oceanPic.setX(c * 199);
+				oceanPic.setY(yPos);
+			}
+		}
+		
+		//StackPane Layer 2: BorderPane
+		BorderPane borderPane = new BorderPane();
+		
+		//leftBox 
 		VBox leftBox = new VBox();
+		leftBox.setPadding(new Insets(25));
+		leftBox.setSpacing(25);
+		
+		//rightBox
 		VBox rightBox = new VBox();
-		Text t = new Text("Hi");
-		root.setCenter(t);
+		rightBox.setPadding(new Insets(25));
+		rightBox.setSpacing(25);
+		
 		//Player Tiles
         GridPane[] playerTiles = new GridPane[4];
         for(int i = 0; i < playerTiles.length; i++)
@@ -68,13 +93,13 @@ public class Scenes
                     backgroundFill = new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY);
                     break;
                 case 1:
-                    backgroundFill = new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY);
+                    backgroundFill = new BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY);
                     break;
                 case 2:
-                    backgroundFill = new BackgroundFill(Color.LIGHTYELLOW, CornerRadii.EMPTY, Insets.EMPTY);
+                    backgroundFill = new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY);
                     break;
                 default:
-                    backgroundFill = new BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY);
+                    backgroundFill = new BackgroundFill(Color.LIGHTSALMON, CornerRadii.EMPTY, Insets.EMPTY);
                     break;
             }
             playerTiles[i].setBackground(new Background(backgroundFill));
@@ -82,9 +107,24 @@ public class Scenes
         
         leftBox.getChildren().addAll(playerTiles[0], playerTiles[1]);
         rightBox.getChildren().addAll(playerTiles[2], playerTiles[3]);
+        
+        //Command Panel
+        HBox commandPanel = new HBox();
+        commandPanel.setMaxWidth(1366);
+        commandPanel.setMaxHeight(250);
+        commandPanel.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        commandPanel.setBorder(new Border
+        		(new BorderStroke
+        				(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(0), new BorderWidths(1))
+        		));
+        commandPanel.setPadding(new Insets(25));
 		
-		root.setLeft(leftBox);
-		root.setRight(rightBox);
+		borderPane.setLeft(leftBox);
+		borderPane.setRight(rightBox);
+		borderPane.setCenter(commandPanel);
+		
+		root.getChildren().addAll(oceanLayer, borderPane);
+		
 		return root;
 	}
 }
