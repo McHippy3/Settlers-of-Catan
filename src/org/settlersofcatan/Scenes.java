@@ -108,6 +108,40 @@ public class Scenes
         leftBox.getChildren().addAll(playerTiles[0], playerTiles[1]);
         rightBox.getChildren().addAll(playerTiles[2], playerTiles[3]);
         
+        //Center 
+        VBox center = new VBox();
+        center.setAlignment(Pos.CENTER);
+        
+        //Game Tiles
+        Group gameTiles = new Group();
+        int numOfColumns = 3;
+        for(int r = 0; r < 5; r++) 
+        {
+        	for(int c = 0; c < numOfColumns; c++) 
+        	{
+        		ImageView img = new ImageView(new Image("res/tile_photos/desert.png"));
+        		img.setFitHeight(210);
+        		img.setFitWidth(240);
+        		img.setRotate(90);
+        		int x = 205 * c - (105 * r % 2);
+        		
+        		//Shift right to center
+        		if(r != 2) 
+        		{
+        			x += 105;
+        		}
+        		img.setX(x);
+        		img.setY(180 * r);
+        		gameTiles.getChildren().add(img);
+        	}
+        	
+        	if(r < 2) 
+        	{
+        		numOfColumns++;
+        	}
+        	else numOfColumns--;
+        }
+        
         //Command Panel
         HBox commandPanel = new HBox();
         commandPanel.setMaxWidth(1366);
@@ -118,10 +152,12 @@ public class Scenes
         				(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(0), new BorderWidths(1))
         		));
         commandPanel.setPadding(new Insets(25));
+        
+        center.getChildren().addAll(gameTiles, commandPanel);
 		
 		borderPane.setLeft(leftBox);
 		borderPane.setRight(rightBox);
-		borderPane.setCenter(commandPanel);
+		borderPane.setCenter(center);
 		
 		root.getChildren().addAll(oceanLayer, borderPane);
 		
