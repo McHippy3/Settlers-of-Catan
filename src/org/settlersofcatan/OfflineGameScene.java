@@ -1,11 +1,9 @@
 package org.settlersofcatan;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -25,25 +23,12 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class Scenes 
-{
-	public static Node titleScene(Button startButton) 
-	{
-		VBox root = new VBox();
-		root.setAlignment(Pos.CENTER);
-		root.setSpacing(100);
-		
-		//Components
-		ImageView image = new ImageView(new Image("res/logo.png"));
-		startButton.setPrefSize(100, 25);
-		root.getChildren().addAll(image, startButton);
-		return root;
-	}
+public class OfflineGameScene extends StackPane{
 	
-	public static Node offlineGameScene() 
-	{
-		//Stack Pane
-		StackPane root = new StackPane();
+	public OfflineGameScene() 
+	{		
+		//Initializing StackPane
+		super();
 		
 		//StackPane Layer 1: Ocean
 		Group oceanLayer = new Group();
@@ -167,8 +152,6 @@ public class Scenes
 		borderPane.setRight(rightBox);
 		borderPane.setCenter(center);
 		
-		root.getChildren().addAll(oceanLayer, borderPane);
-		
-		return root;
+		getChildren().addAll(oceanLayer, borderPane);
 	}
 }

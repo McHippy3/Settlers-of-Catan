@@ -48,7 +48,7 @@ public class SettlersOfCatan extends Application
 		stage.setTitle("Settlers of Catan");
 		stage.getIcons().add(new Image("res/window_icon.png"));
 		stage.setMaximized(true);
-		stage.setResizable(false);
+		stage.setResizable(true);
 		stage.show();
 		startButton.setOnMouseClicked(
 				(MouseEvent e) -> setOfflineGameScene()
@@ -58,7 +58,8 @@ public class SettlersOfCatan extends Application
 	
 	private void setOfflineGameScene() 
 	{
-		mainScene.setRoot((Parent) Scenes.offlineGameScene());
+		//mainScene.setRoot((Parent) Scenes.offlineGameScene());
+		mainScene.setRoot(new OfflineGameScene());
 	}
 	
 	public static void main(String[] args) 
