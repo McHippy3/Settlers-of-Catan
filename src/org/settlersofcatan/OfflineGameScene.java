@@ -3,6 +3,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.shape.Rectangle;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -93,20 +94,30 @@ public class OfflineGameScene extends StackPane{
         leftBox.getChildren().addAll(playerTiles[0], playerTiles[1]);
         rightBox.getChildren().addAll(playerTiles[2], playerTiles[3]);
         
-        //Center 
+        /* Center */ 
         VBox center = new VBox();
         center.setSpacing(50);
         center.setAlignment(Pos.CENTER);
         
-        //Game Tiles
+        // Game Tiles
         Group gameTiles = new Group();
         int numOfColumns = 3;
-        double sf = 0.70;
+        double sf = 0.60;
+        
+        //Space for Ships
+        double xOffSet = 65 * sf;
+        double yOffSet = 125 * sf;
+        
+        //Rectangle to establish size
+        Rectangle rect = new Rectangle(0,0, 1200 * sf, 1200 * sf);
+        rect.setFill(Color.TRANSPARENT);
+        gameTiles.getChildren().add(rect);
+        
         for(int r = 0; r < 5; r++) 
         {
         	for(int c = 0; c < numOfColumns; c++) 
         	{
-        		ImageView img = new ImageView(new Image("res/tile_photos/desert.png"));
+        		ImageView img = new ImageView(new Image("res/tile_photos/mountains.png"));
         		img.setFitHeight(210 * sf);
         		img.setFitWidth(240 * sf);
         		img.setRotate(90);
@@ -123,8 +134,8 @@ public class OfflineGameScene extends StackPane{
         			x += 105;
         		}
         		
-        		img.setX((int) (x * sf));
-        		img.setY(180 * r * sf);
+        		img.setX((int) (x * sf) + xOffSet);
+        		img.setY(180 * r * sf + yOffSet);
         		gameTiles.getChildren().add(img);
         	}
         	
@@ -135,16 +146,51 @@ public class OfflineGameScene extends StackPane{
         	else numOfColumns--;
         }
         
+        //Ships/Harbors
+        String shipImages[] = 
+        	{
+        		"res/ships/brick_ship.png",
+        		"res/ships/log_ship.png",
+        		"res/ships/rock_ship.png",
+        		"res/ships/sheep_ship.png",
+        		"res/ships/wheat_ship.png",
+        		"res/ships/ship.png",
+        		"res/ships/ship.png",
+        		"res/ships/ship.png",
+        		"res/ships/ship.png"
+        	};
+        double x[] = {950, 660, 80, 650, 80, 250, 250, 950, 1150};
+        double y[] = {875, 1050, 350, 10, 725, 10, 1050, 170, 530};
+        double rotation[] = {335, 330, 130, 200, 70, 150, 30, 200, 270};
+        for(int i = 0; i < 9; i++) 
+        {
+        	ImageView img = new ImageView(new Image(shipImages[i]));
+        	img.setFitHeight(100 * sf);
+        	img.setFitWidth(74 * sf);
+        	img.setX(x[i] * sf);
+        	img.setY(y[i] * sf);
+        	img.setRotate(rotation[i]);
+        	gameTiles.getChildren().add(img);
+        }
+        
+        //Settlements
+        for(int r = 0; r < 12; r++) 
+        {
+        	for(int c = 0; c < 11; c++) 
+        	{
+        		
+        	}
+        }
+        
         //Command Panel
         HBox commandPanel = new HBox();
-        commandPanel.setMinSize(1300, 250);
-        commandPanel.setMaxSize(1300, 250);
+        commandPanel.setMinSize(1300, 200);
+        commandPanel.setMaxSize(1300, 200);
         commandPanel.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
         commandPanel.setBorder(new Border
         		(new BorderStroke
         				(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(0), new BorderWidths(1))
         		));
-        commandPanel.setPadding(new Insets(25));
         
         center.getChildren().addAll(gameTiles, commandPanel);
 		

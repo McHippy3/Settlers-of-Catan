@@ -37,8 +37,6 @@ public class SettlersOfCatan extends Application
 	{
 		this.stage = stage;
 		
-		//TODO Getting Screen info
-		
 		Button startButton = new Button("Start Game");
 		
 		mainScene = new Scene((Parent) Scenes.titleScene(startButton));
