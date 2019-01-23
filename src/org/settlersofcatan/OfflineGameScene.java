@@ -176,9 +176,13 @@ public class OfflineGameScene extends StackPane{
         
         //Settlements
         y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
-        Vertex v = new Vertex(3, 1);
-        Circle cir = new Circle(105 * v.getGridCol() * sf + xOffSet, y[v.getGridRow()] * sf + yOffSet, 3);
-        gameTiles.getChildren().add(cir);
+        Vertex v = new Vertex(0, 5);
+        ImageView settlementImg = new ImageView(new Image("res/settlements/blue_settlement.png"));
+        settlementImg.setFitHeight(30);
+        settlementImg.setFitWidth(30);
+        settlementImg.setX(v.getGridCol() * 105 * sf + xOffSet - 15);
+        settlementImg.setY(y[v.getGridRow()] * sf + yOffSet - 25);
+        gameTiles.getChildren().add(settlementImg);
         
         //Command Panel
         HBox commandPanel = new HBox();
