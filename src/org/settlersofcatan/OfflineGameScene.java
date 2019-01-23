@@ -176,14 +176,9 @@ public class OfflineGameScene extends StackPane{
         
         //Settlements
         y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
-        for(int r = 0; r < 12; r++) 
-        {
-        	for(int c = 0; c < 11; c++) 
-			{
-				Circle cir = new Circle( xOffSet + c * 105 * sf, yOffSet + y[r] * sf - 10, 3);
-				gameTiles.getChildren().add(cir);
-        	}
-        }
+        Vertex v = new Vertex(3, 1);
+        Circle cir = new Circle(105 * v.getGridCol() * sf + xOffSet, y[v.getGridRow()] * sf + yOffSet, 3);
+        gameTiles.getChildren().add(cir);
         
         //Command Panel
         HBox commandPanel = new HBox();
