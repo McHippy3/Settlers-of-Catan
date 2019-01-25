@@ -176,14 +176,57 @@ public class OfflineGameScene extends StackPane{
         
         //Settlements
         y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
-        Vertex v = new Vertex(0, 5);
+        Vertex v = new Vertex(7, 3);
         ImageView settlementImg = new ImageView(new Image("res/settlements/blue_settlement.png"));
+        /*for(int r = 0; r < 12; r++) 
+        {
+        	for(int c = 0; c < 11; c++) 
+			{
+				Circle cir = new Circle( xOffSet + c * 105 * sf, yOffSet + y[r] * sf - 10, 3);
+				gameTiles.getChildren().add(cir);
+        	}
+        }*/
         settlementImg.setFitHeight(30);
         settlementImg.setFitWidth(30);
         settlementImg.setX(v.getGridCol() * 105 * sf + xOffSet - 15);
         settlementImg.setY(y[v.getGridRow()] * sf + yOffSet - 25);
         gameTiles.getChildren().add(settlementImg);
         
+        y = new double[] { 15, 120, 200, 300, 380, 480, 560, 660, 740, 840, 910, 1040, 100, 1210};
+        Edge e = new Edge(6, 3);
+        ImageView roadImg = new ImageView(new Image("res/roads/blue_road.png"));
+        for(int r = 0; r < 11; r++) 
+        {
+        	for(int c = 0; c < 11; c++) 
+			{
+				Circle cir = new Circle(((r%2)*30)+ (xOffSet/2) + c * 104 * sf, yOffSet + y[r] * sf, 3);
+				gameTiles.getChildren().add(cir);
+				if(r==6&&c==3)
+				{
+					System.out.println(((r%2)*30)+ (xOffSet/2) + c * 104 * sf);
+					System.out.println( yOffSet + y[r] * sf);
+				}
+        	}
+        }
+        roadImg.setFitHeight(45);
+        roadImg.setFitWidth(15);
+        roadImg.setX((((e.getGridRow()%2)*30)+ (xOffSet/2) + e.getGridCol() * 104 * sf)+20);
+        roadImg.setY(( yOffSet + y[e.getGridRow()] * sf)+25);
+        if (e.getGridRow()%2!=0)
+        {
+        	if (e.getGridCol()%2==1)
+        		roadImg.setRotate(300);
+        	if (e.getGridCol()%2==0)
+        		roadImg.setRotate(60);
+        }
+        else
+        {
+              roadImg.setRotate(0);
+        }
+        System.out.println(((e.getGridRow()%2)*30)+ (xOffSet/2) + e.getGridCol() * 104 * sf);
+		System.out.println( yOffSet + y[e.getGridRow()] * sf);
+        gameTiles.getChildren().add(roadImg);
+        //System.out.println(y[e.getGridRow()]);
         //Command Panel
         HBox commandPanel = new HBox();
         commandPanel.setMinSize(1300, 200);
