@@ -28,18 +28,29 @@ import java.net.UnknownHostException;
 
 public class OfflineGameScene extends StackPane{
 	private Vertex vertexes[][];
+	private double xOffSet, yOffSet, sf;
+	private Group gameTiles;
+	private BorderPane borderPane;
+	private VBox center, leftBox, rightBox;
+	private HBox commandPanel;
 	
 	public OfflineGameScene() 
 	{		
 		//Initializing StackPane
 		super();
 		
+		//Integer properties
+		sf = 0.60;
+        xOffSet = 65 * sf;
+        yOffSet = 125 * sf;
+        
 		//Creating GUI and initializing
 		initializeVertexes();
+		initializeGUI();
 		updateGUI();
 	}
 	
-	private void updateGUI() 
+	private void initializeGUI() 
 	{
 		//StackPane Layer 1: Ocean
 		Group oceanLayer = new Group();
@@ -54,17 +65,18 @@ public class OfflineGameScene extends StackPane{
 				oceanPic.setY(yPos);
 			}
 		}
+		getChildren().add(oceanLayer);
 		
 		//StackPane Layer 2: BorderPane
-		BorderPane borderPane = new BorderPane();
+		borderPane = new BorderPane();
 
 		//leftBox 
-		VBox leftBox = new VBox();
+		leftBox = new VBox();
 		leftBox.setPadding(new Insets(25));
 		leftBox.setSpacing(25);
 		
 		//rightBox
-		VBox rightBox = new VBox();
+		rightBox = new VBox();
 		rightBox.setPadding(new Insets(25));
 		rightBox.setSpacing(25);
 		
@@ -105,18 +117,13 @@ public class OfflineGameScene extends StackPane{
         rightBox.getChildren().addAll(playerTiles[2], playerTiles[3]);
         
         /* Center */ 
-        VBox center = new VBox();
+        center = new VBox();
         center.setSpacing(50);
         center.setAlignment(Pos.CENTER);
         
         // Game Tiles
-        Group gameTiles = new Group();
+        gameTiles = new Group();
         int numOfColumns = 3;
-        double sf = 0.60;
-        
-        //Space for Ships
-        double xOffSet = 65 * sf;
-        double yOffSet = 125 * sf;
         
         //Rectangle to establish size
         Rectangle rect = new Rectangle(0,0, 1200 * sf, 1200 * sf);
@@ -183,6 +190,46 @@ public class OfflineGameScene extends StackPane{
         	gameTiles.getChildren().add(img);
         }
         
+        //Settlements + Vertexes
+        y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
+        for(int r = 0; r < 12; r++) 
+        {
+        	for(int c = 0; c < 11; c++) 
+			{
+				/*Circle cir = new Circle( xOffSet + c * 105 * sf, yOffSet + y[r] * sf - 10, 3);
+				gameTiles.getChildren().add(cir);*/
+				if(vertexes[r][c].getExists()) 
+				{
+					vertexes[r][c].setLayoutX(xOffSet + c * 105 * sf - 15);
+			        vertexes[r][c].setLayoutY(yOffSet + y[r] * sf - 25);
+			        gameTiles.getChildren().add(vertexes[r][c]);
+				}
+				
+        	}
+        }
+        
+        //Command Panel
+        commandPanel = new HBox();
+        commandPanel.setMinSize(1300, 200);
+        commandPanel.setMaxSize(1300, 200);
+        commandPanel.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        commandPanel.setBorder(new Border
+        		(new BorderStroke
+        				(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(0), new BorderWidths(1))
+        		));
+        
+        center.getChildren().addAll(gameTiles, commandPanel);
+        
+        //Adding
+        borderPane.setLeft(leftBox);
+		borderPane.setRight(rightBox);
+		borderPane.setCenter(center);
+		
+		getChildren().add(borderPane);
+	}
+	
+	private void updateGUI() 
+	{
         //Roads
         Edge e = new Edge(5,6);
         
@@ -226,13 +273,11 @@ public class OfflineGameScene extends StackPane{
         }*/
         
         //Settlements + Vertexes
-        y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
+        double[] y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
         for(int r = 0; r < 12; r++) 
         {
         	for(int c = 0; c < 11; c++) 
 			{
-				/*Circle cir = new Circle( xOffSet + c * 105 * sf, yOffSet + y[r] * sf - 10, 3);
-				gameTiles.getChildren().add(cir);*/
 				if(vertexes[r][c].getExists() && vertexes[r][c].getHasBuilding()) 
 				{
 			        ImageView settlementImg = new ImageView(new Image("res/settlements/blue_settlement.png"));
@@ -241,33 +286,11 @@ public class OfflineGameScene extends StackPane{
 			        settlementImg.setFitHeight(30);
 			        settlementImg.setFitWidth(30);
 			        gameTiles.getChildren().add(settlementImg);
-			        
-			        vertexes[r][c].setLayoutX(xOffSet + c * 105 * sf - 15);
-			        vertexes[r][c].setLayoutY(yOffSet + y[r] * sf - 25);
-			        gameTiles.getChildren().add(vertexes[r][c]);
-			        
 				}
 				
         	}
         }
         
-        //Command Panel
-        HBox commandPanel = new HBox();
-        commandPanel.setMinSize(1300, 200);
-        commandPanel.setMaxSize(1300, 200);
-        commandPanel.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
-        commandPanel.setBorder(new Border
-        		(new BorderStroke
-        				(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(0), new BorderWidths(1))
-        		));
-        
-        center.getChildren().addAll(gameTiles, commandPanel);
-		
-		borderPane.setLeft(leftBox);
-		borderPane.setRight(rightBox);
-		borderPane.setCenter(center);
-		
-		getChildren().addAll(oceanLayer, borderPane);
 	}
 	
 	private void initializeVertexes() 
@@ -284,12 +307,24 @@ public class OfflineGameScene extends StackPane{
 				if(count != rowExists.length && r == rowExists[count] && c == colExists[count]) 
 				{
 					vertexes[r][c] = new Vertex(r, c, true);
-					vertexes[r][c].setHasBuilding(true);
-					vertexes[r][c].setPrefSize(15, 15);
+					vertexes[r][c].setHasBuilding(false);
+					vertexes[r][c].setMaxSize(30, 30);
+					vertexes[r][c].setPrefSize(30, 30);
+					vertexes[r][c].setStyle("-fx-background-color: transparent;");
 					vertexes[r][c].setOnMouseClicked(
 							(MouseEvent e) -> {
 								Vertex v = (Vertex) e.getSource();
+								v.setHasBuilding(true);
 								System.out.println("Vertex Clicked " + v.getGridRow() + " " + v.getGridCol());
+								Platform.runLater(new Runnable() 
+								{
+									@Override
+									public void run() 
+									{
+										System.out.println("Updating");
+										updateGUI();
+									}
+								});
 							}
 							);
 					count++;
