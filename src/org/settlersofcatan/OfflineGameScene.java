@@ -1,6 +1,7 @@
 package org.settlersofcatan;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.shape.Circle;
@@ -26,12 +27,20 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class OfflineGameScene extends StackPane{
+	private Vertex vertexes[][];
 	
 	public OfflineGameScene() 
 	{		
 		//Initializing StackPane
 		super();
 		
+		//Creating GUI and initializing
+		initializeVertexes();
+		updateGUI();
+	}
+	
+	private void updateGUI() 
+	{
 		//StackPane Layer 1: Ocean
 		Group oceanLayer = new Group();
 		for(int r = 0; r < 10; r ++) 
@@ -216,31 +225,31 @@ public class OfflineGameScene extends StackPane{
         	}
         }*/
         
-        //Settlements
+        //Settlements + Vertexes
         y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
-        Vertex v = new Vertex(e.getMainGridRowStart(), e.getMainGridColStart());
-        Vertex v2 = new Vertex(e.getMainGridRowEnd(), e.getMainGridColEnd());
-        ImageView settlementImg = new ImageView(new Image("res/settlements/blue_settlement.png"));
-        /*for(int r = 0; r < 12; r++) 
+        for(int r = 0; r < 12; r++) 
         {
         	for(int c = 0; c < 11; c++) 
 			{
-				Circle cir = new Circle( xOffSet + c * 105 * sf, yOffSet + y[r] * sf - 10, 3);
-				gameTiles.getChildren().add(cir);
+				/*Circle cir = new Circle( xOffSet + c * 105 * sf, yOffSet + y[r] * sf - 10, 3);
+				gameTiles.getChildren().add(cir);*/
+				if(vertexes[r][c].getExists() && vertexes[r][c].getHasBuilding()) 
+				{
+			        ImageView settlementImg = new ImageView(new Image("res/settlements/blue_settlement.png"));
+			        settlementImg.setX(xOffSet + c * 105 * sf - 15);
+			        settlementImg.setY(yOffSet + y[r] * sf - 25);
+			        settlementImg.setFitHeight(30);
+			        settlementImg.setFitWidth(30);
+			        gameTiles.getChildren().add(settlementImg);
+			        
+			        vertexes[r][c].setLayoutX(xOffSet + c * 105 * sf - 15);
+			        vertexes[r][c].setLayoutY(yOffSet + y[r] * sf - 25);
+			        gameTiles.getChildren().add(vertexes[r][c]);
+			        
+				}
+				
         	}
-        }*/
-        settlementImg.setFitHeight(30);
-        settlementImg.setFitWidth(30);
-        settlementImg.setX(v.getGridCol() * 105 * sf + xOffSet - 15);
-        settlementImg.setY(y[v.getGridRow()] * sf + yOffSet - 25);
-        gameTiles.getChildren().add(settlementImg);
-        
-        settlementImg = new ImageView(new Image("res/settlements/blue_settlement.png"));
-        settlementImg.setFitHeight(30);
-        settlementImg.setFitWidth(30);
-        settlementImg.setX(v2.getGridCol() * 105 * sf + xOffSet - 15);
-        settlementImg.setY(y[v2.getGridRow()] * sf + yOffSet - 25);
-        gameTiles.getChildren().add(settlementImg);
+        }
         
         //Command Panel
         HBox commandPanel = new HBox();
@@ -259,5 +268,38 @@ public class OfflineGameScene extends StackPane{
 		borderPane.setCenter(center);
 		
 		getChildren().addAll(oceanLayer, borderPane);
+	}
+	
+	private void initializeVertexes() 
+	{
+		vertexes = new Vertex[12][11];
+		//List of all the vertexes based on the main grid system
+		int[] rowExists = {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11};
+		int[] colExists = {3, 5, 7, 2, 4, 6, 8, 2, 4, 6, 8, 1, 3, 5, 7, 9, 1, 3, 5, 7, 9, 0, 2, 4, 6, 8, 10, 0, 2, 4, 6, 8, 10, 1, 3, 5, 7, 9, 1, 3, 5, 7, 9, 2, 4, 6, 8, 2, 4, 6, 8, 3, 5, 7};
+		int count = 0;
+		for(int r = 0; r < 12; r++) 
+		{
+			for(int c = 0; c < 11; c++) 
+			{
+				if(count != rowExists.length && r == rowExists[count] && c == colExists[count]) 
+				{
+					vertexes[r][c] = new Vertex(r, c, true);
+					vertexes[r][c].setHasBuilding(true);
+					vertexes[r][c].setPrefSize(15, 15);
+					vertexes[r][c].setOnMouseClicked(
+							(MouseEvent e) -> {
+								Vertex v = (Vertex) e.getSource();
+								System.out.println("Vertex Clicked " + v.getGridRow() + " " + v.getGridCol());
+							}
+							);
+					count++;
+				}
+				else 
+				{
+					vertexes[r][c] = new Vertex(r, c, false);
+				}
+					
+			}
+		}
 	}
 }
