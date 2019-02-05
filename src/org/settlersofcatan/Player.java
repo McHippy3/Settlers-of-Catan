@@ -3,9 +3,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import javax.annotation.Resources;
+
 public class Player 
 {
-	ArrayList<ResourceCard> resourceCards = new ArrayList<>();
+	ArrayList<ResourceCard>resourceCards = new ArrayList<ResourceCard>();
 	ArrayList<DevelopementCard> developementCards = new ArrayList<>();
 	ArrayList<Player> players = new ArrayList<>();
 	int victorypoints = 0;
@@ -15,18 +17,21 @@ public class Player
 	String playerName;
 	String input;
 	static String vertex[][];
+	static String edge[][];
 	int playernumber;
 	static Scanner sc = new Scanner(System.in);
 	
-	public Player(String name, int number, ArrayList<ResourceCard> resource, ArrayList<Player> player, String vertex[][])
+	public Player(String name, int number, ArrayList<ResourceCard> c, ArrayList<Player> player, String vertex[][], String edge[][])
 	{
 		this.playerName = name.toUpperCase();
 		this.playernumber = number;
-		this.resourceCards = resource;
+		this.resourceCards = c;
 		this.players = player;
 		Player.vertex = vertex;
+		Player.edge = edge;
 	}
-	
+	/*
+	 
 	public static void trade(Player p1, Player p2)
 	{
 		Scanner sc = new Scanner(System.in);
@@ -221,7 +226,7 @@ public class Player
 		{
 			return;
 		}
-	}
+	}*/
 	
 	public void turn()
 	{
@@ -243,7 +248,7 @@ public class Player
 			{
 				if(p2trade.equalsIgnoreCase(players.get(x).getName()))
 				{
-					trade(this,players.get(x));
+					//trade(this,players.get(x));
 				}
 			}
 		}	
@@ -253,28 +258,99 @@ public class Player
 		input = sc.nextLine();
 		if(input.equalsIgnoreCase("y"))
 		{
+			System.out.println("Sheep: " + resourceCards.get(this.playernumber).getSheep(this));
+			System.out.println("Brick: " + resourceCards.get(this.playernumber).getBrick(this));
+			System.out.println("Grain: " + resourceCards.get(this.playernumber).getGrain(this));
+			System.out.println("Ore: " + resourceCards.get(this.playernumber).getOre(this));
+			System.out.println("Wood: " + resourceCards.get(this.playernumber).getWood(this));
+			
 			//Build
-			System.out.println();
-			for(String[] row : vertex)
-				System.out.println(Arrays.toString(row));
-		
-			System.out.print("Enter number to build: ");
-			String buildtest = sc.nextLine();
-		
-			for (int r = 0; r < vertex.length; r++) 		  
-				//Loop through all elements of current row 
-				for (int c = 0; c < vertex[r].length; c++) 
+			System.out.println("What do you want to build?");
+			System.out.println("1. Road");
+			System.out.println("2. Settlement");
+			System.out.println("3. Upgrade Settlement");
+			input = sc.nextLine();
+			switch(input)
+			{
+				case "1": 
 				{
-					if(vertex[r][c].equalsIgnoreCase(buildtest) && build(r,c) == true)
+					if(resourceCards.get(this.playernumber).getBrick(this) >= 1 && resourceCards.get(this.playernumber).getWood(this) >= 1)
 					{
-						String playernum = Integer.toString(this.playernumber);
-						vertex[r][c] = playernum + " ";
+						resourceCards.get(this.playernumber).subtractBrick(1, this);
+						resourceCards.get(this.playernumber).subtractWood(1, this);
+						System.out.println();
+						for(String[] row:edge)
+							System.out.println(Arrays.toString(row));
+						
+						System.out.print("enter number to build: ");
+						String buildtest = sc.nextLine();
+						
+						for(int r = 0; r < edge.length; r++)
+							for(int c = 0; c < edge[r].length; c++)
+							{
+								if(edge[r][c].equalsIgnoreCase(buildtest))
+								{
+									String playernum = Integer.toString(this.playernumber);
+									edge[r][c] = playernum + " ";
+								}
+							}
+						System.out.println("Sheep: " + resourceCards.get(this.playernumber).getSheep(this));
+						System.out.println("Brick: " + resourceCards.get(this.playernumber).getBrick(this));
+						System.out.println("Grain: " + resourceCards.get(this.playernumber).getGrain(this));
+						System.out.println("Ore: " + resourceCards.get(this.playernumber).getOre(this));
+						System.out.println("Wood: " + resourceCards.get(this.playernumber).getWood(this));
+						
 					}
+					else
+					{
+						System.out.println("Not enough resources for Road.");
+					}
+					break;
 				}
+				case "2": 
+				{
+					//Settlement
+					if(resourceCards.get(this.playernumber).getBrick(this) >= 1 && resourceCards.get(this.playernumber).getGrain(this) >= 1 && resourceCards.get(this.playernumber).getSheep(this) >= 1 && resourceCards.get(this.playernumber).getWood(this) >= 1)
+					{
+						resourceCards.get(this.playernumber).subtractBrick(1, this);
+						resourceCards.get(this.playernumber).subtractGrain(1, this);
+						resourceCards.get(this.playernumber).subtractSheep(1, this);
+						resourceCards.get(this.playernumber).subtractWood(1, this);
+						System.out.println();
+						for(String[] row : vertex)
+							System.out.println(Arrays.toString(row));
+		
+						System.out.print("Enter number to build: ");
+						String buildtest = sc.nextLine();
+		
+						for (int r = 0; r < vertex.length; r++) 		  
+							//Loop through all elements of current row 
+							for (int c = 0; c < vertex[r].length; c++) 
+							{
+								if(vertex[r][c].equalsIgnoreCase(buildtest) && checkAround(r,c) == true)
+								{
+									String playernum = Integer.toString(this.playernumber);
+									vertex[r][c] = playernum + " ";
+								}
+							}
+						this.victorypoints++;
+						System.out.println("Sheep: " + resourceCards.get(this.playernumber).getSheep(this));
+						System.out.println("Brick: " + resourceCards.get(this.playernumber).getBrick(this));
+						System.out.println("Grain: " + resourceCards.get(this.playernumber).getGrain(this));
+						System.out.println("Ore: " + resourceCards.get(this.playernumber).getOre(this));
+						System.out.println("Wood: " + resourceCards.get(this.playernumber).getWood(this));
+					}
+					else
+					{
+						System.out.println("Not enough resources for Settlement.");
+					}
+					break;
+				}
+			}
 		}
 	}
 	
-	public static Boolean build(int r, int c)
+	public static Boolean checkAround(int r, int c)
 	{
 		Boolean output = true;
 		if (vertex[r][c-1] == "0 " || vertex[r][c-1] == "1 " || vertex[r][c-1] == "2 " || vertex[r][c-1] == "3 ")
@@ -287,7 +363,7 @@ public class Player
 	    	System.out.println("building to your bottom");
 	    	output=false;
 	    }	        
-	    if (vertex[r][c+1] == "0 " || vertex[r][c+1] == "1 " || vertex[r][c+1] == "2 " || vertex[r][c+1] == "3 ")
+	    if (vertex[r][c+1] == "0" || vertex[r][c+1] == "1" || vertex[r][c+1] == "2 " || vertex[r][c+1] == "3 ")
 	    {          
 	    	System.out.println("building to your right");
 	    	output=false;
@@ -311,7 +387,7 @@ public class Player
 		victorypoints = n;
 	}
 	
-	public int[] countInventory()
+	/*public int[] countInventory()
 	{
 		int[] resources = new int[5];
 		int sheepCount = 0;
@@ -349,9 +425,9 @@ public class Player
 		resources[4] = stoneCount;
 		
 		return resources;
-	}
+	}*/
 	
-	public void listInventory()
+	/*public void listInventory()
 	{
 		ArrayList<ResourceCard>temp = resourceCards;
 		int sheepCount = 0;
@@ -388,10 +464,10 @@ public class Player
 		System.out.println(woodCount+" "+"wood");
 		System.out.println(stoneCount+" "+"stone");
 		
-	}
-	
+	}*/
 	public String getName()
 	{
-		return this.playerName;
+		return playerName;
 	}
 }
+
