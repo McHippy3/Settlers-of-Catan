@@ -28,6 +28,7 @@ import java.net.UnknownHostException;
 
 public class OfflineGameScene extends StackPane{
 	private Vertex vertexes[][];
+	private Edge edges[][];
 	private double xOffSet, yOffSet, sf;
 	private Group gameTiles;
 	private BorderPane borderPane;
@@ -46,6 +47,7 @@ public class OfflineGameScene extends StackPane{
         
 		//Creating GUI and initializing
 		initializeVertexes();
+		initializeEdges();
 		initializeGUI();
 		updateGUI();
 	}
@@ -208,6 +210,21 @@ public class OfflineGameScene extends StackPane{
         	}
         }
         
+        //Edge Buttons
+        y = new double[] { 15, 120, 200, 300, 380, 480, 560, 660, 740, 840, 910, 1040, 100, 1210};
+        for(int r = 0; r < 11; r++) 
+        {
+        	for(int c = 0; c < 11; c++) 
+        	{
+        		if(edges[r][c].getExists() && !edges[r][c].getHasRoad()) 
+        		{
+	        		edges[r][c].setLayoutX((r%2)*30+ (xOffSet/2) + c * 104 * sf - 20);
+					edges[r][c].setLayoutY(yOffSet + y[r] * sf - 20);
+					gameTiles.getChildren().add(edges[r][c]);
+        		}
+        	}
+        }
+        
         //Command Panel
         commandPanel = new HBox();
         commandPanel.setMinSize(1300, 200);
@@ -230,50 +247,47 @@ public class OfflineGameScene extends StackPane{
 	
 	private void updateGUI() 
 	{
-        //Roads
-        Edge e = new Edge(5,6);
-        
-        /*
-        y = new double[] { 15, 120, 200, 300, 380, 480, 560, 660, 740, 840, 910, 1040, 100, 1210};
+        //Roads        
+        double[] y = new double[] { 15, 120, 200, 300, 380, 480, 560, 660, 740, 840, 910, 1040, 100, 1210};
         for(int r = 0; r < 11; r++) 
         {
         	for(int c = 0; c < 11; c++) 
 			{
-				Circle cir = new Circle(((r%2)*30)+ (xOffSet/2) + c * 104 * sf, yOffSet + y[r] * sf, 3);
-				gameTiles.getChildren().add(cir);
-				Edge e = new Edge(r, c);
-		        ImageView roadImg = new ImageView(new Image("res/roads/blue_road.png"));
-		        roadImg.setFitHeight(48);
-		        roadImg.setFitWidth(12);
-		        roadImg.setX((((e.getGridRow()%2)*30)+ (xOffSet/2) + e.getGridCol() * 104 * sf)-10);
-		        roadImg.setY(( yOffSet + y[e.getGridRow()] * sf)-25);
-		        if (e.getGridRow()%2==0)
-		        {
-		        	if (e.getGridRow()%4==0)
-		        	{	
-		        		if (e.getGridCol()%2==1)
-		        			roadImg.setRotate(60);
-		        		if (e.getGridCol()%2==0)
-		        			roadImg.setRotate(300);
-		        	}
-		        	if (e.getGridRow()%4==2)
-		        	{	
-		        		if (e.getGridCol()%2==1)
-		        			roadImg.setRotate(300);
-		        		if (e.getGridCol()%2==0)
-		        			roadImg.setRotate(60);
-		        	}
-		        }
-		        else
-		        {
-		              roadImg.setRotate(0);
-		        }
-		        gameTiles.getChildren().add(roadImg);
+        		if(edges[r][c].exists && edges[r][c].getHasRoad()) 
+        		{
+					ImageView roadImg = new ImageView(new Image("res/roads/blue_road.png"));
+			        roadImg.setFitHeight(48);
+			        roadImg.setFitWidth(12);
+			        roadImg.setX((((edges[r][c].getGridRow()%2)*30)+ (xOffSet/2) + edges[r][c].getGridCol() * 104 * sf)-10);
+			        roadImg.setY(( yOffSet + y[edges[r][c].getGridRow()] * sf)-25);
+			        if (edges[r][c].getGridRow()%2==0)
+			        {
+			        	if (edges[r][c].getGridRow()%4==0)
+			        	{	
+			        		if (edges[r][c].getGridCol()%2==1)
+			        			roadImg.setRotate(60);
+			        		if (edges[r][c].getGridCol()%2==0)
+			        			roadImg.setRotate(300);
+			        	}
+			        	if (edges[r][c].getGridRow()%4==2)
+			        	{	
+			        		if (edges[r][c].getGridCol()%2==1)
+			        			roadImg.setRotate(300);
+			        		if (edges[r][c].getGridCol()%2==0)
+			        			roadImg.setRotate(60);
+			        	}
+			        }
+			        else
+			        {
+			              roadImg.setRotate(0);
+			        }
+			        gameTiles.getChildren().add(roadImg);
+        		}
         	}
-        }*/
+        }
         
         //Settlements + Vertexes
-        double[] y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
+        y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
         for(int r = 0; r < 12; r++) 
         {
         	for(int c = 0; c < 11; c++) 
@@ -315,6 +329,7 @@ public class OfflineGameScene extends StackPane{
 							(MouseEvent e) -> {
 								Vertex v = (Vertex) e.getSource();
 								v.setHasBuilding(true);
+								v.setDisable(true);
 								System.out.println("Vertex Clicked " + v.getGridRow() + " " + v.getGridCol());
 								Platform.runLater(new Runnable() 
 								{
@@ -327,11 +342,86 @@ public class OfflineGameScene extends StackPane{
 								});
 							}
 							);
+					vertexes[r][c].setOnMouseEntered(
+							(me) -> 
+							{
+								Vertex v = (Vertex) me.getSource();
+								v.setStyle("-fx-background-color: #fcffaa");
+							}
+						);
+					vertexes[r][c].setOnMouseExited(
+							(me) -> 
+							{
+								Vertex v = (Vertex) me.getSource();
+								v.setStyle("-fx-background-color: transparent");
+							}
+						);
 					count++;
 				}
 				else 
 				{
 					vertexes[r][c] = new Vertex(r, c, false);
+				}
+					
+			}
+		}
+	}
+	
+	private void initializeEdges() 
+	{
+		edges = new Edge[11][11];
+		int[] rowExists = {0,0,0,0,0,0,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,9,9,9,9,10,10,10,10,10,10};
+		int[] colExists = {3,4,5,6,7,8,2,4,6,8,2,3,4,5,6,7,8,9,1,3,5,7,9,1,2,3,4,5,6,7,8,9,10,0,2,4,6,8,10,1,2,3,4,5,6,7,8,9,10,1,3,5,7,9,2,3,4,5,6,7,8,9,2,4,6,8,3,4,5,6,7,8};
+		
+		int count = 0;
+		for(int r = 0; r < 11; r++) 
+		{
+			for(int c = 0; c < 11; c++) 
+			{
+				if(count != rowExists.length && r == rowExists[count] && c == colExists[count]) 
+				{
+					edges[r][c] = new Edge(r, c, true);
+					edges[r][c].setHasRoad(false);
+					edges[r][c].setMaxSize(30, 30);
+					edges[r][c].setPrefSize(30, 30);
+					edges[r][c].setStyle("-fx-background-color: transparent;");
+					edges[r][c].setOnMouseClicked(
+							(MouseEvent me) -> 
+							{
+								Edge e = (Edge) me.getSource();
+								e.setHasRoad(true);
+								e.setDisable(true);
+								System.out.println("Edge Clicked " + e.getGridRow() + " " + e.getGridCol());
+								Platform.runLater(new Runnable() 
+								{
+									@Override
+									public void run() 
+									{
+										System.out.println("Updating");
+										updateGUI();
+									}
+								});
+							}
+							);
+					edges[r][c].setOnMouseEntered(
+							(me) -> 
+							{
+								Edge e = (Edge) me.getSource();
+								e.setStyle("-fx-background-color: #aafffa");
+							}
+						);
+					edges[r][c].setOnMouseExited(
+							(me) -> 
+							{
+								Edge e = (Edge) me.getSource();
+								e.setStyle("-fx-background-color: transparent");
+							}
+						);
+					count++;
+				}
+				else 
+				{
+					edges[r][c] = new Edge(r, c, false);
 				}
 					
 			}
