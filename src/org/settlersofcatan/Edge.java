@@ -1,12 +1,16 @@
 package org.settlersofcatan;
 
-public class Edge {
+import javafx.scene.control.Button;
+
+public class Edge extends Button{
 	int gridRow, gridCol;
 	int mainGridRowStart, mainGridColStart;
 	int mainGridRowEnd, mainGridColEnd;
-
-	public Edge(int row, int col) 
+	boolean hasRoad, exists;
+	
+	public Edge(int row, int col, boolean exists) 
 	{
+		this.exists = exists;
 		gridRow = row;		
 		gridCol = col;
 		
@@ -70,6 +74,27 @@ public class Edge {
 	public int getGridCol() 
 	{
 		return gridCol;
+	}
+	
+	public boolean getHasRoad() 
+	{
+		return hasRoad;
+	}
+
+	public void setHasRoad(boolean hasRoad) 
+	{
+		this.hasRoad = hasRoad;
+	}
+	
+	
+	public boolean getExists() 
+	{
+		return exists;
+	}
+
+	public void setExists(boolean exists) 
+	{
+		this.exists = exists;
 	}
 
 	public int getMainGridRowStart() {
