@@ -62,7 +62,7 @@ public class main
 		
 		
 		
-		/*	/*Player p1 = new Player();
+		/*Player p1 = new Player();
 		p1.playerName = "David";
 		Player p2 = new Player();
 		p2.playerName = "Chris";
@@ -92,7 +92,7 @@ public class main
 		
 		Tile[]r1A = {t1, t2, t3};
 		
-		Line r1 = new Line(r1A); 
+		Line r1 = new Line(r1A); */
 		
 		// 19 Total Tiles
 		Tile[] tileArray = new Tile[19];
@@ -118,300 +118,8 @@ public class main
 		Line five = new Line(ar5);
 		
 		ArrayList<VertexLink>vertexLinkList = new ArrayList<VertexLink>();
-		
-		
-		
-		// Line 1 Checked
-		
-		for(int i = 0;i<one.tiles.length;i++)
-		{
-			
-			vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(0, one.tiles[i].tileID)}));
-			
-			if(one.tiles[i].hasRight(one) == true)
-			{
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(5, one.tiles[i].getRight(one, i).tileID)}));
-			}
-			
-			
-			
-			if(one.tiles[i].hasBelowRight(one, two, i) == true && one.tiles[i].hasRight(one) == true)
-			{
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(4, one.tiles[i].getRight(one, i).tileID), new Vertex(0, one.tiles[i].getBelowRight(one, two, i).tileID)}));
-			}
-			
-			
-			
-			if(one.tiles[i].hasBelowRight(one, two, i) == true && one.tiles[i].hasRight(one) == false)
-			{
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(0, one.tiles[i].getBelowRight(one, two, i).tileID)}));
-			}
-			
-			
-			
-			if(one.tiles[i].hasBelowLeft(one, two, i) == true && one.tiles[i].hasLeft(one) == true)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(0, one.tiles[i].getBelowLeft(one, two, i).tileID), new Vertex(2, one.tiles[i].getLeft(one, i).tileID)}));
-			}
-			
-			
-			
-			if(one.tiles[i].hasBelowLeft(one, two, i) == true && one.tiles[i].hasLeft(one) == false)
-			{
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(0, one.tiles[i].getBelowLeft(one, two, i).tileID)}));
-			}
-			
-			
-			
-			if(one.tiles[i].hasLeft(one) == true)
-			{
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(1, one.tiles[i].getLeft(one, i).tileID)}));
-			}
 
-			
-			
-			if(one.tiles[i].hasLeft(one) == false)
-			{
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(5, one.tiles[i].tileID)}));
-			}
-			
-			if(one.tiles[i].hasRight(one) == false)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(1, one.tiles[i].tileID)}));
-			}
-		}
-		
-		
-		
-		// Line 2 Checked
-		
-		for(int i = 0;i<two.tiles.length;i++)
-		{
-			
-			if(two.tiles[i].hasAbove(one, two, i) == true)
-			{
-				if(two.tiles[i].hasAboveRight(one, two, i) == true)
-				{
-					vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(4, two.tiles[i].getAboveRight(one, two, i).tileID)}));
-				}
-				
-				if(two.tiles[i].hasAboveLeft(one, two, i) == true)
-				{	
-					vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(2, two.tiles[i].getAboveLeft(one, two, i).tileID)}));
-				}
-			}
-			
-			
-			
-			if(two.tiles[i].hasRight(two) == true)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(5, two.tiles[i].getRight(two, i).tileID)}));
-			}
-			
-			
-			
-			if(two.tiles[i].hasBelowRight(two, three, i) == true && two.tiles[i].hasRight(two) == true)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(0, two.tiles[i].getBelowRight(two, three, i).tileID), new Vertex(4, two.tiles[i].getRight(two, i).tileID)}));
-			}
-			
-			
-			
-			if(two.tiles[i].hasBelowRight(two, three, i) == true && two.tiles[i].hasRight(two) == false)
-			{
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(0, two.tiles[i].getBelowRight(two, three, i).tileID)}));
-			}
-			
-			
-			
-			if(two.tiles[i].hasBelowLeft(two, three, i) == true && two.tiles[i].hasLeft(two) == true)
-			{
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(0, two.tiles[i].getBelowLeft(two, three, i).tileID), new Vertex(2, two.tiles[i].getLeft(two, i).tileID)}));
-			}
-			
-			
-			
-			if(two.tiles[i].hasBelowLeft(two, three, i) == true && two.tiles[i].hasLeft(two) == false)
-			{
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(0, two.tiles[i].getBelowLeft(two, three, i).tileID)}));
-			}
-			
-			
-			
-			if(two.tiles[i].hasLeft(two) == true)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(1, two.tiles[i].getLeft(two, i).tileID)}));
-			}
-			
-			
-			
-			if(two.tiles[i].hasLeft(two) == false)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(5, two.tiles[i].tileID)}));
-			}
-			
-			
-			
-			if(two.tiles[i].hasRight(two) == false)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(1, two.tiles[i].tileID)}));
-			}
-		}
-		
-		
-		
-		// Line 3 Checked
-		
-		for(int i = 0;i<three.tiles.length;i++)
-		{
-			
-			if(three.tiles[i].hasAbove(two, three, i) == true)
-			{
-				if(three.tiles[i].hasAboveRight(two, three, i) == true)
-				{	
-					vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(4, three.tiles[i].getAboveRight(two, three, i).tileID)}));
-				}
-				
-				if(three.tiles[i].hasAboveLeft(two, three, i) == true)
-				{	
-					vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(2, three.tiles[i].getAboveLeft(two, three, i).tileID)}));
-				}
-			}
-			
-			if(three.tiles[i].hasRight(three) == true)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(5, three.tiles[i].getRight(three, i).tileID)}));
-			}
-			
-			
-			
-			if(three.tiles[i].hasBelowRight(three, four, i) == true && three.tiles[i].hasRight(three) == true)
-			{
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(0, three.tiles[i].getBelowRight(three, four, i).tileID), new Vertex(4, three.tiles[i].getRight(three, i).tileID)}));
-			}
-			
-			
-			
-			if(three.tiles[i].hasBelowLeft(three, four, i) == true && three.tiles[i].hasLeft(three) == true)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(0, three.tiles[i].getBelowLeft(three, four, i).tileID), new Vertex(2, three.tiles[i].getLeft(three, i).tileID)}));
-			}
-			
-			
-			
-			if(three.tiles[i].hasLeft(three) == true)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(1, three.tiles[i].getLeft(three, i).tileID)}));
-			}
-			
-			
-			
-			if(three.tiles[i].hasLeft(three) == false)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(5, three.tiles[i].tileID)}));
-			}
-			
-			
-			
-			if(three.tiles[i].hasRight(three) == false)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(1, three.tiles[i].tileID)}));
-			}
-		}
-		
-		
-		
-		// Line 4 
-		
-		for(int i = 0;i<four.tiles.length;i++)
-		{
-			vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(0, four.tiles[i].tileID), new Vertex(2, four.tiles[i].getAboveLeft(three, four, i).tileID), new Vertex(4, four.tiles[i].getAboveRight(three, four, i).tileID)}));
-			
-			if(four.tiles[i].hasRight(four) == true)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(5, four.tiles[i].getRight(four, i).tileID)}));
-			}
-			
-			if(four.tiles[i].hasBelowRight(four, five, i) == true && four.tiles[i].hasRight(four) == true)
-			{
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(0, four.tiles[i].getBelowRight(four, five, i).tileID), new Vertex(4, four.tiles[i].getRight(four, i).tileID)}));
-			}
-			
-			if(four.tiles[i].hasBelowLeft(four, five, i) == true && four.tiles[i].hasLeft(four) == true)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(0, four.tiles[i].getBelowLeft(four, five, i).tileID), new Vertex(2, four.tiles[i].getLeft(four, i).tileID)}));
-			}
-			
-			if(four.tiles[i].hasLeft(four) == true)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(1, three.tiles[i].getLeft(three, i).tileID)}));
-			}
-			
-			if(four.tiles[i].hasLeft(four) == false)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(3, four.tiles[i].getAboveLeft(three, four, i).tileID), new Vertex(5, four.tiles[i].tileID)}));
-				
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(4, four.tiles[i].tileID)}));
-			}
-			
-			if(four.tiles[i].hasRight(four) == false)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(1, four.tiles[i].getAboveLeft(three, four, i).tileID), new Vertex(1, four.tiles[i].tileID)}));
-				
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(2, four.tiles[i].tileID)}));
-			}
-		}
-		
-		
-		
-		// Line 5
-		for(int i = 0;i<five.tiles.length;i++)
-		{	
-			vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(3, five.tiles[i].tileID)}));
-			
-			
-					
-			vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(4, five.tiles[i].getAboveRight(four, five, i).tileID), new Vertex(3, five.tiles[i].getAboveRight(four, five, i).tileID)}));
-			
-				
-					
-			vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(3, five.tiles[i].getAboveLeft(four, five, i).tileID), new Vertex(2, five.tiles[i].getAboveLeft(four, five, i).tileID)}));
-			
-			
-			
-			if(five.tiles[i].hasRight(five) == true)
-			{	
-				vertexLinkList.add(new VertexLink( new Vertex[] { new Vertex(5, five.tiles[i].getRight(five, i).tileID), new Vertex(3, five.tiles[i].getAboveRight(four, five, i).tileID)}));
-				
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(4, five.tiles[i].getRight(five, i).tileID)}));
-			}
-			
-			if(five.tiles[i].hasLeft(five) == true)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(1, five.tiles[i].getLeft(five, i).tileID), new Vertex(3, five.tiles[i].getAboveLeft(four, five, i).tileID)}));
-				
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(2, five.tiles[i].getLeft(five, i).tileID)}));
-			}
-			
-			if(five.tiles[i].hasLeft(five) == false)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(3, five.tiles[i].getAboveLeft(four, five, i).tileID), new Vertex(5, five.tiles[i].tileID)}));
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(4, five.tiles[i].tileID)}));
-			}
-			
-			if(five.tiles[i].hasRight(five) == false)
-			{	
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(3, five.tiles[i].getAboveRight(four, five, i).tileID), new Vertex(1, five.tiles[i].tileID)}));
-				
-				vertexLinkList.add(new VertexLink(new Vertex[] { new Vertex(2, five.tiles[i].tileID)}));
-			}
-		}
-
-		
 		VertexLink[][]grid = new VertexLink[12][11];
-		
-		int ends = 3;
-		boolean flag = false;
 		
 		for(int x = 0;x<12;x++)
 		{
@@ -423,269 +131,440 @@ public class main
 		
 		grid = loadGrid(grid);
 		
+		// Line 1 Checked
 		
-			
-		int t = 0;
-			
-		for(int i = 0;i<12;i++)
+		for(int i = 0;i<one.tiles.length;i++)
 		{
-			for(int k = 0;k<11;k++)
+			// i = current tile ID
+			int ends = 3;
+			
+			// Done
+			grid[0][ends + (i % ends) * 2] = new VertexLink(new Vertex[] { new Vertex(0, one.tiles[i].tileID)});
+			
+			
+			// Done
+			if(one.tiles[i].hasLeft(one) == false)
 			{
-				if(grid[i][k] != null && vertexLinkList.get(t).v[0].tileID == i)
+				ends = 2;
+				grid[1][ends + (i % 2) * i] = (new VertexLink(new Vertex[] { new Vertex(5, one.tiles[i].tileID)}));
+			}
+			
+			
+			// Done
+			if(one.tiles[i].hasRight(one) == false)
+			{	
+				ends = 2;
+				grid[1][ends + (ends * i) + i] = (new VertexLink(new Vertex[] { new Vertex(1, one.tiles[i].tileID)}));
+			}
+			
+			
+			// Done
+			if(one.tiles[i].hasRight(one) == true)
+			{
+				ends = 2;
+				grid[1][ends + (ends * one.tiles[i].getRight(one, i).tileID)] = (new VertexLink(new Vertex[] { new Vertex(5, one.tiles[i].getRight(one, i).tileID)}));
+			}
+			
+			
+			// Done
+			if(one.tiles[i].hasBelowLeft(one, two, i) == true && one.tiles[i].hasLeft(one) == true)
+			{	
+				ends = 2;
+				grid[2][ends + (one.tiles[i].getLeft(one, i).tileID * 2) + 2] = (new VertexLink(new Vertex[] { new Vertex(0, one.tiles[i].getBelowLeft(one, two, i).tileID), new Vertex(2, one.tiles[i].getLeft(one, i).tileID)}));
+			}
+			
+			
+			// Done
+			if(one.tiles[i].hasBelowLeft(one, two, i) == true && one.tiles[i].hasLeft(one) == false)
+			{
+				ends = 2;
+				grid[2][ends + (i % 2) * i] = (new VertexLink(new Vertex[] { new Vertex(0, one.tiles[i].getBelowLeft(one, two, i).tileID)}));
+			}
+			
+			
+			// Done
+			if(one.tiles[i].hasBelowRight(one, two, i) == true && one.tiles[i].hasRight(one) == true)
+			{
+				grid[2][ends + (ends * one.tiles[i].getRight(one, i).tileID)] = (new VertexLink(new Vertex[] { new Vertex(4, one.tiles[i].getRight(one, i).tileID), new Vertex(0, one.tiles[i].getBelowRight(one, two, i).tileID)}));
+			}
+			
+			
+			// Check
+			if(one.tiles[i].hasBelowRight(one, two, i) == true && one.tiles[i].hasRight(one) == false)
+			{
+				ends = 2;
+				grid[2][ends + (one.tiles[i].getBelowRight(one, two, i).tileID /2 ) * i] = (new VertexLink(new Vertex[] { new Vertex(0, one.tiles[i].getBelowRight(one, two, i).tileID)}));
+			}
+			
+			
+			
+			if(one.tiles[i].hasLeft(one) == true)
+			{
+				ends = 2;
+				grid[1][ends + (ends * i)] = (new VertexLink(new Vertex[] { new Vertex(1, one.tiles[i].getLeft(one, i).tileID)}));
+			}
+		}
+		
+		
+		
+		// Line 2 Checked
+		
+		for(int i = 0;i<two.tiles.length;i++)
+		{
+			
+			if(two.tiles[i].hasLeft(two) == false)
+			{
+				grid[3][1] = (new VertexLink(new Vertex[] { new Vertex(5, two.tiles[i].tileID)}));
+			}
+			
+			
+			
+			if(two.tiles[i].hasRight(two) == false)
+			{
+				grid[3][9] = (new VertexLink(new Vertex[] { new Vertex(1, two.tiles[i].tileID)}));
+			}
+			
+			
+
+			if(two.tiles[i].hasRight(two) == true)
+			{
+				switch(i)
 				{
-					grid[i][k] = vertexLinkList.get(t);
-					t += 1;
+				case 0:
+					grid[3][3] = (new VertexLink(new Vertex[] { new Vertex(5, two.tiles[i].getRight(two, i).tileID)}));
+					break;
+				case 1:
+					grid[3][5] = (new VertexLink(new Vertex[] { new Vertex(5, two.tiles[i].getRight(two, i).tileID)}));
+					break;
+				case 2:
+					grid[3][7] = (new VertexLink(new Vertex[] { new Vertex(5, two.tiles[i].getRight(two, i).tileID)}));
+					break;
+				}
+			}
+			
+			
+			
+			if(two.tiles[i].hasBelowLeft(two, three, i) == true && two.tiles[i].hasLeft(two) == true)
+			{	
+				switch(i)
+				{
+				case 1:
+					grid[4][3] = (new VertexLink(new Vertex[] { new Vertex(0, two.tiles[i].getBelowLeft(two, three, i).tileID), new Vertex(2, two.tiles[i].getLeft(two, i).tileID)}));
+					break;
+				case 2:
+					grid[4][5] = (new VertexLink(new Vertex[] { new Vertex(0, two.tiles[i].getBelowLeft(two, three, i).tileID), new Vertex(2, two.tiles[i].getLeft(two, i).tileID)}));
+					break;
+				case 3:
+					grid[4][7] = (new VertexLink(new Vertex[] { new Vertex(0, two.tiles[i].getBelowLeft(two, three, i).tileID), new Vertex(2, two.tiles[i].getLeft(two, i).tileID)}));
+					break;
+				}
+			}
+			
+			
+			if(two.tiles[i].hasBelowLeft(two, three, i) == true && two.tiles[i].hasLeft(two) == false)
+			{
+				grid[4][1] = (new VertexLink(new Vertex[] { new Vertex(0, one.tiles[i].getBelowLeft(two, three, i).tileID)}));
+			}
+			
+			
+	
+			if(two.tiles[i].hasBelowRight(two, three, i) == true && two.tiles[i].hasRight(two) == true)
+			{
+				switch(i)
+				{
+				case 0:
+					grid[4][3] = (new VertexLink(new Vertex[] { new Vertex(4, two.tiles[i].getRight(two, i).tileID), new Vertex(0, two.tiles[i].getBelowRight(two, three, i).tileID)}));
+					break;
+				case 1:
+					grid[4][5] = (new VertexLink(new Vertex[] { new Vertex(4, two.tiles[i].getRight(two, i).tileID), new Vertex(0, two.tiles[i].getBelowRight(two, three, i).tileID)}));
+					break;
+				case 2:
+					grid[4][7] = (new VertexLink(new Vertex[] { new Vertex(4, two.tiles[i].getRight(two, i).tileID), new Vertex(0, two.tiles[i].getBelowRight(two, three, i).tileID)}));
+					break;
+				}
+			}
+			
+			
+			
+			if(two.tiles[i].hasBelowRight(two, three, i) == true && two.tiles[i].hasRight(two) == false)
+			{
+				grid[4][9] = (new VertexLink(new Vertex[] { new Vertex(0, two.tiles[i].getBelowRight(two, three, i).tileID)}));
+			}
+			
+			
+			
+			if(two.tiles[i].hasLeft(two) == true)
+			{
+				switch(i)
+				{
+				case 1:
+					grid[3][3] = (new VertexLink(new Vertex[] { new Vertex(1, two.tiles[i].getLeft(two, i).tileID)}));
+					break;
+				case 2:
+					grid[3][5] = (new VertexLink(new Vertex[] { new Vertex(1, two.tiles[i].getLeft(two, i).tileID)}));
+					break;
+				case 3:
+					grid[3][7] = (new VertexLink(new Vertex[] { new Vertex(1, two.tiles[i].getLeft(two, i).tileID)}));
+					break;
 				}
 			}
 		}
 		
-	}
-	
-	// Dice Trade Build
-	
-	public static int rollDice()
-	{
-		Random r = new Random();
-		return r.nextInt(11) + 2;
-	}
-	
-	//sheepCount+" "+brickCount+" "+wheatCount+" "+woodCount+" "+stoneCount;
-	
-	public static void trade(Player p1, Player p2)
-	{
-		Scanner sc = new Scanner(System.in);
 		
-		int[]p1Inventory = p1.countInventory();
-		int[]p2Inventory = p2.countInventory();
 		
-		boolean tradeWorks = false;
+		// Line 3 Checked
 		
-		p1.listInventory();
-		
-		p2.listInventory();
-		
-		System.out.println(p1.playerName+", what item do you want from "+p2.playerName+"?: ");
-		String ans1 = sc.nextLine();
-		
-		int qS1 = 0;
-		int qB1 = 0;
-		int qWh1 = 0;
-		int qWo1 = 0;
-		int qSt1 = 0;
-		
-		int qS2 = 0;
-		int qB2 = 0;
-		int qWh2 = 0;
-		int qWo2 = 0;
-		int qSt2 = 0;
-		
-		switch(ans1)
+		for(int i = 0;i<three.tiles.length;i++)
 		{
-		case "sheep":
-			System.out.println("How many?: ");
-			qS1 = sc.nextInt();
-			// Trade
-			if(qS1 <= p2Inventory[0])
-			{
-				tradeWorks = true;
-			}
-			// Don't trade
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-			break;
-		case "brick":
-			System.out.println("How many?: ");
-			qB1 = sc.nextInt();
-			if(qB1 <= p2Inventory[1])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "wheat":
-			System.out.println("How many?: ");
-			qWh1 = sc.nextInt();
-			if(qWh1 <= p2Inventory[2])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "wood":
-			System.out.println("How many?: ");
-			qWo1 = sc.nextInt();
-			if(qWo1 <= p2Inventory[3])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "stone":
-			System.out.println("How many?: ");
-			qSt1 = sc.nextInt();
-			if(qSt1 <= p2Inventory[4])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		}
-		
-		
-		
-		System.out.println(p2.playerName+", what item do you want from "+p1.playerName+"?: ");
-		String ans2 = sc.next();
-		
-		switch(ans2)
-		{
-		case "sheep":
-			System.out.println("How many?: ");
-			qS2 = sc.nextInt();
-			// Trade
-			if(qS2 <= p2Inventory[0])
-			{
-				tradeWorks = true;
-				break;
-			}
-			// Don't trade
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "brick":
-			System.out.println("How many?: ");
-			qB2 = sc.nextInt();
-			if(qB2 <= p2Inventory[1])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "wheat":
-			System.out.println("How many?: ");
-			qWh2 = sc.nextInt();
-			if(qWh2 <= p2Inventory[2])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "wood":
-			System.out.println("How many?: ");
-			qWo2 = sc.nextInt();
-			if(qWo2 <= p2Inventory[3])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "stone":
-			System.out.println("How many?: ");
-			qSt2 = sc.nextInt();
-			if(qSt2 <= p2Inventory[4])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		}
-		
-		if(tradeWorks == true)
-		{
-			p2Inventory[0] += qS1;
-			p2Inventory[1] += qB1;
-			p2Inventory[2] += qWh1;
-			p2Inventory[3] += qWo1;
-			p2Inventory[4] += qS1;
 			
-			p1Inventory[0] += qS2;
-			p1Inventory[1] += qB2;
-			p1Inventory[2] += qWh2;
-			p1Inventory[3] += qWo2;
-			p1Inventory[4] += qS2;
+			if(three.tiles[i].hasLeft(three) == false)
+			{
+				grid[5][0] = (new VertexLink(new Vertex[] { new Vertex(5, three.tiles[i].tileID)}));
+				grid[6][0] = (new VertexLink(new Vertex[] { new Vertex(4, three.tiles[i].tileID)}));
+			}
+			
+			
+			
+			if(three.tiles[i].hasRight(three) == false)
+			{
+				grid[5][10] = (new VertexLink(new Vertex[] { new Vertex(1, three.tiles[i].tileID)}));
+				grid[6][10] = (new VertexLink(new Vertex[] { new Vertex(2, three.tiles[i].tileID)}));
+			}
+			
+			
+
+			if(three.tiles[i].hasRight(three) == true)
+			{
+				switch(i)
+				{
+				case 0:
+					grid[5][2] = (new VertexLink(new Vertex[] { new Vertex(5, three.tiles[i].getRight(three, i).tileID)}));
+					break;
+				case 1:
+					grid[5][4] = (new VertexLink(new Vertex[] { new Vertex(5, three.tiles[i].getRight(three, i).tileID)}));
+					break;
+				case 2:
+					grid[5][6] = (new VertexLink(new Vertex[] { new Vertex(5, three.tiles[i].getRight(three, i).tileID)}));
+					break;
+				case 3:
+					grid[5][8] = (new VertexLink(new Vertex[] { new Vertex(5, three.tiles[i].getRight(three, i).tileID)}));
+					break;
+				}
+			}
+			
+			
+			
+			if(three.tiles[i].hasBelowLeft(three, four, i) == true && three.tiles[i].hasLeft(three) == true)
+			{	
+				switch(i)
+				{
+				case 1:
+					grid[6][2] = (new VertexLink(new Vertex[] { new Vertex(0, three.tiles[i].getBelowLeft(three, four, i).tileID), new Vertex(2, three.tiles[i].getLeft(three, i).tileID)}));
+					break;
+				case 2:
+					grid[6][4] = (new VertexLink(new Vertex[] { new Vertex(0, three.tiles[i].getBelowLeft(three, four, i).tileID), new Vertex(2, three.tiles[i].getLeft(three, i).tileID)}));
+					break;
+				case 3:
+					grid[6][6] = (new VertexLink(new Vertex[] { new Vertex(0, three.tiles[i].getBelowLeft(three, four, i).tileID), new Vertex(2, three.tiles[i].getLeft(three, i).tileID)}));
+					break;
+				case 4:
+					grid[6][8] = (new VertexLink(new Vertex[] { new Vertex(0, three.tiles[i].getBelowLeft(three, four, i).tileID), new Vertex(2, three.tiles[i].getLeft(three, i).tileID)}));
+					break;
+				}
+			}
+			
+			
+	
+			if(three.tiles[i].hasBelowRight(three, four, i) == true && three.tiles[i].hasRight(three) == true)
+			{
+				switch(i)
+				{
+				case 0:
+					grid[6][2] = (new VertexLink(new Vertex[] { new Vertex(4, three.tiles[i].getRight(three, i).tileID), new Vertex(0, three.tiles[i].getBelowRight(three, four, i).tileID)}));
+					break;
+				case 1:
+					grid[6][4] = (new VertexLink(new Vertex[] { new Vertex(4, three.tiles[i].getRight(three, i).tileID), new Vertex(0, three.tiles[i].getBelowRight(three, four, i).tileID)}));
+					break;
+				case 2:
+					grid[6][6] = (new VertexLink(new Vertex[] { new Vertex(4, three.tiles[i].getRight(three, i).tileID), new Vertex(0, three.tiles[i].getBelowRight(three, four, i).tileID)}));
+					break;
+				case 3:
+					grid[6][8] = (new VertexLink(new Vertex[] { new Vertex(4, three.tiles[i].getRight(three, i).tileID), new Vertex(0, three.tiles[i].getBelowRight(three, four, i).tileID)}));
+					break;
+					
+				}
+			}
 		}
-		else
+		
+		
+		
+		// Line 4 
+		
+		for(int i = 0;i<four.tiles.length;i++)
 		{
-			return;
+			if(four.tiles[i].hasLeft(four) == false)
+			{
+				grid[7][1] = (new VertexLink(new Vertex[] { new Vertex(5, four.tiles[i].tileID), new Vertex(3, four.tiles[i].getAboveLeft(three, four, i).tileID)}));
+				grid[8][1] = (new VertexLink(new Vertex[] { new Vertex(4, four.tiles[i].tileID)}));
+			}
+			
+			
+			
+			if(four.tiles[i].hasRight(four) == false)
+			{
+				grid[7][9] = (new VertexLink(new Vertex[] { new Vertex(1, four.tiles[i].tileID), new Vertex(3, four.tiles[i].getAboveRight(three, four, i).tileID)}));
+				grid[8][9] = (new VertexLink(new Vertex[] { new Vertex(2, four.tiles[i].tileID)}));
+			}
+			
+			
+
+			if(four.tiles[i].hasRight(four) == true)
+			{
+				switch(i)
+				{
+				case 0:
+					grid[7][3] = (new VertexLink(new Vertex[] { new Vertex(5, four.tiles[i].getRight(four, i).tileID)}));
+					break;
+				case 1:
+					grid[7][5] = (new VertexLink(new Vertex[] { new Vertex(5, four.tiles[i].getRight(four, i).tileID)}));
+					break;
+				case 2:
+					grid[7][7] = (new VertexLink(new Vertex[] { new Vertex(5, four.tiles[i].getRight(four, i).tileID)}));
+					break;
+				}
+			}
+			
+			
+			
+			if(four.tiles[i].hasBelowLeft(four, five, i) == true && four.tiles[i].hasLeft(four) == true)
+			{	
+				switch(i)
+				{
+				case 1:
+					grid[8][2] = (new VertexLink(new Vertex[] { new Vertex(0, four.tiles[i].getBelowLeft(four, five, i).tileID), new Vertex(2, four.tiles[i].getLeft(four, i).tileID)}));
+					break;
+				case 2:
+					grid[8][4] = (new VertexLink(new Vertex[] { new Vertex(0, four.tiles[i].getBelowLeft(four, five, i).tileID), new Vertex(2, four.tiles[i].getLeft(four, i).tileID)}));
+					break;
+				case 3:
+					grid[8][6] = (new VertexLink(new Vertex[] { new Vertex(0, four.tiles[i].getBelowLeft(four, five, i).tileID), new Vertex(2, four.tiles[i].getLeft(four, i).tileID)}));
+					break;
+				}
+			}
+			
+			
+	
+			if(four.tiles[i].hasBelowRight(four, five, i) == true && four.tiles[i].hasRight(four) == true)
+			{
+				switch(i)
+				{
+				case 0:
+					grid[8][3] = (new VertexLink(new Vertex[] { new Vertex(4, four.tiles[i].getRight(four, i).tileID), new Vertex(0, four.tiles[i].getBelowRight(four, five, i).tileID)}));
+					break;
+				case 1:
+					grid[8][5] = (new VertexLink(new Vertex[] { new Vertex(4, four.tiles[i].getRight(four, i).tileID), new Vertex(0, four.tiles[i].getBelowRight(four, five, i).tileID)}));
+					break;
+				case 2:
+					grid[8][7] = (new VertexLink(new Vertex[] { new Vertex(4, four.tiles[i].getRight(four, i).tileID), new Vertex(0, four.tiles[i].getBelowRight(four, five, i).tileID)}));
+					break;
+				}
+			}
+
+			
+			
+			/*if(three.tiles[i].hasLeft(three) == true)
+			{
+				switch(i)
+				{
+				case 1:
+					grid[4][2] = (new VertexLink(new Vertex[] { new Vertex(1, three.tiles[i].getLeft(three, i).tileID)}));
+					break;
+				case 2:
+					grid[4][2] = (new VertexLink(new Vertex[] { new Vertex(1, three.tiles[i].getLeft(three, i).tileID)}));
+					break;
+				case 3:
+					grid[4][2] = (new VertexLink(new Vertex[] { new Vertex(1, three.tiles[i].getLeft(three, i).tileID)}));
+					break;
+				case 4:
+					grid[4][2] = (new VertexLink(new Vertex[] { new Vertex(1, three.tiles[i].getLeft(three, i).tileID)}));
+					break;
+				}
+			}*/
+		}
+		
+		
+		
+		// Line 5
+		for(int i = 0;i<five.tiles.length;i++)
+		{	
+			switch(i)
+			{
+			case 0:
+				grid[11][3] = (new VertexLink(new Vertex[] { new Vertex(3, five.tiles[i].tileID)}));
+				break;
+			case 1:
+				grid[11][5] = (new VertexLink(new Vertex[] { new Vertex(3, five.tiles[i].tileID)}));
+				break;
+			case 2:
+				grid[11][7] = (new VertexLink(new Vertex[] { new Vertex(3, five.tiles[i].tileID)}));
+				break;
+				
+			}
+			if(five.tiles[i].hasLeft(five) == false)
+			{
+				grid[9][1] = (new VertexLink(new Vertex[] { new Vertex(5, five.tiles[i].tileID), new Vertex(3, five.tiles[i].getAboveLeft(four, five, i).tileID)}));
+				grid[10][1] = (new VertexLink(new Vertex[] { new Vertex(4, five.tiles[i].tileID)}));
+			}
+			
+			
+			
+			if(five.tiles[i].hasRight(five) == false)
+			{
+				grid[9][8] = (new VertexLink(new Vertex[] { new Vertex(1, five.tiles[i].tileID), new Vertex(3, five.tiles[i].getAboveRight(four, five, i).tileID)}));
+				grid[10][8] = (new VertexLink(new Vertex[] { new Vertex(2, five.tiles[i].tileID)}));
+			}
+			
+			
+
+			if(five.tiles[i].hasRight(five) == true)
+			{
+				switch(i)
+				{
+				case 0:
+					grid[9][4] = (new VertexLink(new Vertex[] { new Vertex(5, five.tiles[i].getRight(five, i).tileID)}));
+					grid[10][4] = (new VertexLink(new Vertex[] { new Vertex(4, five.tiles[i].getRight(five, i).tileID)}));
+					break;
+				case 1:
+					grid[9][4] = (new VertexLink(new Vertex[] { new Vertex(5, five.tiles[i].getRight(five, i).tileID)}));
+					grid[10][4] = (new VertexLink(new Vertex[] { new Vertex(4, five.tiles[i].getRight(five, i).tileID)}));
+					break;
+				}
+			}
+
+			/*if(three.tiles[i].hasLeft(three) == true)
+			{
+				switch(i)
+				{
+				case 1:
+					grid[4][2] = (new VertexLink(new Vertex[] { new Vertex(1, three.tiles[i].getLeft(three, i).tileID)}));
+					break;
+				case 2:
+					grid[4][2] = (new VertexLink(new Vertex[] { new Vertex(1, three.tiles[i].getLeft(three, i).tileID)}));
+					break;
+				case 3:
+					grid[4][2] = (new VertexLink(new Vertex[] { new Vertex(1, three.tiles[i].getLeft(three, i).tileID)}));
+					break;
+				case 4:
+					grid[4][2] = (new VertexLink(new Vertex[] { new Vertex(1, three.tiles[i].getLeft(three, i).tileID)}));
+					break;
+				}
+			}*/
 		}
 	}
+	
 	
 	// Use method at the beginning of every single turn
-	public static boolean checkWin(ArrayList<Player> p)
-	{
-		for(int i = 0;i<p.size();i++)
-		{
-			if(p.get(i).victoryPoints >= 10)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-		
-	public void turn(Player p)
-	{
-		Scanner sc = new Scanner(System.in);
-		// Roll Dice, get resources
-		int current = rollDice();
-		
-		
-		
-		
-		
-		// Trade
-		System.out.println("Do you want to trade?(Y/N): ");
-		String ans = sc.nextLine();
-		if(ans.equalsIgnoreCase("y"))
-		{
-			System.out.println("Who do you want to trade with?: ");
-			String n = sc.nextLine();
-			for(int i = 0;i<playerList.size();i++)
-			{
-				if(n.equalsIgnoreCase(playerList.get(i).playerName))
-				{
-					trade(p, playerList.get(i));
-				}
-			}
-		}
-		// Build
-	}
+	
 	
 	public static VertexLink[][] loadGrid(VertexLink[][] grid)
 	{
@@ -837,7 +716,6 @@ public class main
 		
 		return grid;
 	}
-	*/
 		
 		
 		
@@ -866,7 +744,6 @@ public class main
 		
 		
 		
-	}
 	
 	// End of Main
 	
@@ -880,15 +757,15 @@ public class main
 		
 		for(int x = 0; x < playernumber; x++)
 		{
-			ArrayList<ResourceCard> resourcedeck = new ArrayList<>();
-			resourcedeck.add(new ResourceCard("brick"));
-			resourcedeck.add(new ResourceCard("ore"));
-			resourcedeck.add(new ResourceCard("grain"));
-			resourcedeck.add(new ResourceCard("sheep"));
-			resourcedeck.add(new ResourceCard("wood"));
+			ArrayList<ResourceCard> resList = new ArrayList<>();
+			resList.add(new ResourceCard("brick"));
+			resList.add(new ResourceCard("ore"));
+			resList.add(new ResourceCard("grain"));
+			resList.add(new ResourceCard("sheep"));
+			resList.add(new ResourceCard("wood"));
 			System.out.print("Enter player name: ");
 			playername = sc.nextLine();
-			players.add(new Player(playername, x, resourcedeck, players, vertex, edges));
+			players.add(new Player(playername, x, resList, players, vertex, edges));
 		}
 	}
 	

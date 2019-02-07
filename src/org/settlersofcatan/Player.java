@@ -7,9 +7,11 @@ import javax.annotation.Resources;
 
 public class Player 
 {
-	ArrayList<ResourceCard>resourceCards = new ArrayList<ResourceCard>();
+	ArrayList<ResourceCard>resList = new ArrayList<ResourceCard>();
 	ArrayList<DevelopementCard> developementCards = new ArrayList<>();
 	ArrayList<Player> players = new ArrayList<>();
+	ArrayList<Settlement> settleList = new ArrayList<Settlement>();
+	ArrayList<Road> roadList = new ArrayList<Road>();
 	int victorypoints = 0;
 	ArrayList<Settlement> settlements = new ArrayList<>();
 	ArrayList<Road> roads = new ArrayList<>();
@@ -25,7 +27,7 @@ public class Player
 	{
 		this.playerName = name.toUpperCase();
 		this.playernumber = number;
-		this.resourceCards = c;
+		this.resList = c;
 		this.players = player;
 		Player.vertex = vertex;
 		Player.edge = edge;
@@ -258,11 +260,11 @@ public class Player
 		input = sc.nextLine();
 		if(input.equalsIgnoreCase("y"))
 		{
-			System.out.println("Sheep: " + resourceCards.get(this.playernumber).getSheep(this));
-			System.out.println("Brick: " + resourceCards.get(this.playernumber).getBrick(this));
-			System.out.println("Grain: " + resourceCards.get(this.playernumber).getGrain(this));
-			System.out.println("Ore: " + resourceCards.get(this.playernumber).getOre(this));
-			System.out.println("Wood: " + resourceCards.get(this.playernumber).getWood(this));
+			System.out.println("Sheep: " + resList.get(this.playernumber).getWool(this));
+			System.out.println("Brick: " + resList.get(this.playernumber).getBrick(this));
+			System.out.println("Grain: " + resList.get(this.playernumber).getGrain(this));
+			System.out.println("Ore: " + resList.get(this.playernumber).getOre(this));
+			System.out.println("Wood: " + resList.get(this.playernumber).getWood(this));
 			
 			//Build
 			System.out.println("What do you want to build?");
@@ -274,77 +276,11 @@ public class Player
 			{
 				case "1": 
 				{
-					if(resourceCards.get(this.playernumber).getBrick(this) >= 1 && resourceCards.get(this.playernumber).getWood(this) >= 1)
-					{
-						resourceCards.get(this.playernumber).subtractBrick(1, this);
-						resourceCards.get(this.playernumber).subtractWood(1, this);
-						System.out.println();
-						for(String[] row:edge)
-							System.out.println(Arrays.toString(row));
-						
-						System.out.print("enter number to build: ");
-						String buildtest = sc.nextLine();
-						
-						for(int r = 0; r < edge.length; r++)
-							for(int c = 0; c < edge[r].length; c++)
-							{
-								if(edge[r][c].equalsIgnoreCase(buildtest))
-								{
-									String playernum = Integer.toString(this.playernumber);
-									edge[r][c] = playernum + " ";
-								}
-							}
-						System.out.println("Sheep: " + resourceCards.get(this.playernumber).getSheep(this));
-						System.out.println("Brick: " + resourceCards.get(this.playernumber).getBrick(this));
-						System.out.println("Grain: " + resourceCards.get(this.playernumber).getGrain(this));
-						System.out.println("Ore: " + resourceCards.get(this.playernumber).getOre(this));
-						System.out.println("Wood: " + resourceCards.get(this.playernumber).getWood(this));
-						
-					}
-					else
-					{
-						System.out.println("Not enough resources for Road.");
-					}
-					break;
+					
 				}
 				case "2": 
 				{
-					//Settlement
-					if(resourceCards.get(this.playernumber).getBrick(this) >= 1 && resourceCards.get(this.playernumber).getGrain(this) >= 1 && resourceCards.get(this.playernumber).getSheep(this) >= 1 && resourceCards.get(this.playernumber).getWood(this) >= 1)
-					{
-						resourceCards.get(this.playernumber).subtractBrick(1, this);
-						resourceCards.get(this.playernumber).subtractGrain(1, this);
-						resourceCards.get(this.playernumber).subtractSheep(1, this);
-						resourceCards.get(this.playernumber).subtractWood(1, this);
-						System.out.println();
-						for(String[] row : vertex)
-							System.out.println(Arrays.toString(row));
-		
-						System.out.print("Enter number to build: ");
-						String buildtest = sc.nextLine();
-		
-						for (int r = 0; r < vertex.length; r++) 		  
-							//Loop through all elements of current row 
-							for (int c = 0; c < vertex[r].length; c++) 
-							{
-								if(vertex[r][c].equalsIgnoreCase(buildtest) && checkAround(r,c) == true)
-								{
-									String playernum = Integer.toString(this.playernumber);
-									vertex[r][c] = playernum + " ";
-								}
-							}
-						this.victorypoints++;
-						System.out.println("Sheep: " + resourceCards.get(this.playernumber).getSheep(this));
-						System.out.println("Brick: " + resourceCards.get(this.playernumber).getBrick(this));
-						System.out.println("Grain: " + resourceCards.get(this.playernumber).getGrain(this));
-						System.out.println("Ore: " + resourceCards.get(this.playernumber).getOre(this));
-						System.out.println("Wood: " + resourceCards.get(this.playernumber).getWood(this));
-					}
-					else
-					{
-						System.out.println("Not enough resources for Settlement.");
-					}
-					break;
+				
 				}
 			}
 		}
@@ -371,9 +307,107 @@ public class Player
 	    return output;
 	}
 	
+	public Boolean buildRoad()
+	{
+		int w = this.getWood();
+		int b = this.getBrick();
+		
+		if(w >= 1 && b >= 1)
+		{
+			Road r = new Road(this);
+			this.roadList.add(r);
+			return true;
+		}
+		else
+			return false;
+	}
+	
+	public Boolean buildSettlement()
+	{
+		int w = this.getWood();
+		int b = this.getBrick();
+		int s = this.getWool();
+		int g = this.getGrain();
+		
+		if(w >= 1 && b >= 1 && s >= 1 && g >= 1)
+		{
+			Settlement r = new Settlement(this);
+			this.settleList.add(r);
+			return true;
+		}
+		else
+			return false;
+	}
+	
+	
 	public void upgrade(Settlement s)
 	{
 		
+	}
+	
+	public int getBrick()
+	{
+		int r = 0;
+		for(int i = 0;i<this.resList.size();i++)
+		{
+			if(this.resList.get(i).cardType.equalsIgnoreCase("brick"))
+			{
+				r += 1;
+			}
+		}
+		return r;
+	}
+	
+	public int getWood()
+	{
+		int r = 0;
+		for(int i = 0;i<this.resList.size();i++)
+		{
+			if(this.resList.get(i).cardType.equalsIgnoreCase("wood"))
+			{
+				r += 1;
+			}
+		}
+		return r;
+	}
+	
+	public int getWool()
+	{
+		int r = 0;
+		for(int i = 0;i<this.resList.size();i++)
+		{
+			if(this.resList.get(i).cardType.equalsIgnoreCase("wool"))
+			{
+				r += 1;
+			}
+		}
+		return r;
+	}
+	
+	public int getGrain()
+	{
+		int r = 0;
+		for(int i = 0;i<this.resList.size();i++)
+		{
+			if(this.resList.get(i).cardType.equalsIgnoreCase("grain"))
+			{
+				r += 1;
+			}
+		}
+		return r;
+	}
+	
+	public int getOre()
+	{
+		int r = 0;
+		for(int i = 0;i<this.resList.size();i++)
+		{
+			if(this.resList.get(i).cardType.equalsIgnoreCase("ore"))
+			{
+				r += 1;
+			}
+		}
+		return r;
 	}
 	
 	public int getVP()

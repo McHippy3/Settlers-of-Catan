@@ -19,6 +19,11 @@ public class Building
 		this.gridCol = gc;
 	}
 	
+	public Building(Player p)
+	{
+		player = p;
+	}
+	
 	public int getGridRow()
 	{
 		return gridRow;
