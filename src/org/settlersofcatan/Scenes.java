@@ -27,6 +27,7 @@ import java.net.UnknownHostException;
 
 public class Scenes 
 {
+	//Main Menu
 	public static Node titleScene(Button startButton) 
 	{
 		VBox root = new VBox();
@@ -37,6 +38,33 @@ public class Scenes
 		ImageView image = new ImageView(new Image("res/logo.png"));
 		startButton.setPrefSize(100, 25);
 		root.getChildren().addAll(image, startButton);
+		return root;
+	}
+	
+	//Scene for inputting player names
+	public static Node nameScene(Button submitButton, TextField name1, TextField name2, TextField name3, TextField name4) 
+	{
+		VBox root = new VBox();
+		root.setAlignment(Pos.CENTER);
+		root.setSpacing(35);
+		
+		//Components
+		name1.setMaxWidth(200);
+		name1.setPromptText("Player 1 Name");
+		
+		name2.setMaxWidth(200);
+		name2.setPromptText("Player 2 Name");
+	
+		name3.setMaxWidth(200);
+		name3.setPromptText("Player 3 Name");
+		
+		name4.setMaxWidth(200);
+		name4.setPromptText("Player 4 Name");
+		
+		submitButton.setPrefSize(100, 25);
+		
+		root.getChildren().addAll(name1, name2, name3, name4, submitButton);
+		
 		return root;
 	}
 }

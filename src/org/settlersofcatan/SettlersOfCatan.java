@@ -32,6 +32,8 @@ public class SettlersOfCatan extends Application
 	
 	private Scene mainScene;
 	private Stage stage;
+	private Vertex vertexes[][];
+	private Edge edges[][];
 	
 	public void start(Stage stage) 
 	{
@@ -49,15 +51,30 @@ public class SettlersOfCatan extends Application
 		stage.setResizable(true);
 		stage.show();
 		startButton.setOnMouseClicked(
+				(MouseEvent e) -> setNameScene()
+				);
+	}
+	
+	private void setNameScene() 
+	{
+		Button submitButton = new Button("Submit Names");
+		TextField name1 = new TextField();
+		TextField name2 = new TextField();
+		TextField name3 = new TextField();
+		TextField name4 = new TextField();
+		
+		mainScene.setRoot((Parent) Scenes.nameScene(submitButton, name1, name2, name3, name4));
+		
+		submitButton.setOnMouseClicked(
 				(MouseEvent e) -> setOfflineGameScene()
 				);
 	}
-
 	
 	private void setOfflineGameScene() 
 	{
-		//mainScene.setRoot((Parent) Scenes.offlineGameScene());
-		mainScene.setRoot(new OfflineGameScene());
+		vertexes = new Vertex[12][11];
+		edges = new Edge[11][11];
+		mainScene.setRoot(new OfflineGameScene(vertexes, edges));
 	}
 	
 	public static void main(String[] args) 
