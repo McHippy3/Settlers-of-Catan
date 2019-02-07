@@ -26,16 +26,17 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class OfflineGameScene extends StackPane{
+public class OfflineGameScene extends StackPane
+{
 	private Vertex vertexes[][];
 	private Edge edges[][];
 	private double xOffSet, yOffSet, sf;
-	private Group gameTiles;
+	private Group gameTiles, resourceImages;
 	private BorderPane borderPane;
 	private VBox center, leftBox, rightBox;
 	private HBox commandPanel;
 	
-	public OfflineGameScene() 
+	public OfflineGameScene(Vertex[][] vertexes, Edge[][] edges) 
 	{		
 		//Initializing StackPane
 		super();
@@ -44,6 +45,10 @@ public class OfflineGameScene extends StackPane{
 		sf = 0.60;
         xOffSet = 65 * sf;
         yOffSet = 125 * sf;
+        
+        //Copying matrices
+        this.vertexes = vertexes;
+        this.edges = edges;
         
 		//Creating GUI and initializing
 		initializeVertexes();
@@ -227,6 +232,7 @@ public class OfflineGameScene extends StackPane{
         
         //Command Panel
         commandPanel = new HBox();
+        commandPanel.setAlignment(Pos.CENTER);
         commandPanel.setMinSize(1300, 200);
         commandPanel.setMaxSize(1300, 200);
         commandPanel.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -236,6 +242,21 @@ public class OfflineGameScene extends StackPane{
         		));
         
         center.getChildren().addAll(gameTiles, commandPanel);
+        
+        //Drawing Resource Cards
+        resourceImages = new Group();
+        String[] resourceImageLoc = {"res/resource_cards/brick.jpg", "res/resource_cards/grain.jpg", "res/resource_cards/ore.jpg", "res/resource_cards/sheep.jpg", "res/resource_cards/wood.jpg"};
+        for(int i = 0; i < 5; i++) 
+        {
+        	ImageView cardImg = new ImageView(resourceImageLoc[i]);
+        	cardImg.setX(650 + 130 * i);
+        	cardImg.setY(23);
+        	cardImg.setFitHeight(154);
+        	cardImg.setFitWidth(100);
+        	
+        	resourceImages.getChildren().add(cardImg);
+        }
+        commandPanel.getChildren().add(resourceImages);
         
         //Adding
         borderPane.setLeft(leftBox);
@@ -305,11 +326,15 @@ public class OfflineGameScene extends StackPane{
         	}
         }
         
+        //Placing Numbers Beside Resource Cards
+        for(int i = 0; i < 5; i++) 
+        {
+        	Text numLabel = new Text();
+        }
 	}
 	
 	private void initializeVertexes() 
 	{
-		vertexes = new Vertex[12][11];
 		//List of all the vertexes based on the main grid system
 		int[] rowExists = {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11};
 		int[] colExists = {3, 5, 7, 2, 4, 6, 8, 2, 4, 6, 8, 1, 3, 5, 7, 9, 1, 3, 5, 7, 9, 0, 2, 4, 6, 8, 10, 0, 2, 4, 6, 8, 10, 1, 3, 5, 7, 9, 1, 3, 5, 7, 9, 2, 4, 6, 8, 2, 4, 6, 8, 3, 5, 7};
@@ -369,7 +394,6 @@ public class OfflineGameScene extends StackPane{
 	
 	private void initializeEdges() 
 	{
-		edges = new Edge[11][11];
 		int[] rowExists = {0,0,0,0,0,0,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,9,9,9,9,10,10,10,10,10,10};
 		int[] colExists = {3,4,5,6,7,8,2,4,6,8,2,3,4,5,6,7,8,9,1,3,5,7,9,1,2,3,4,5,6,7,8,9,10,0,2,4,6,8,10,1,2,3,4,5,6,7,8,9,10,1,3,5,7,9,2,3,4,5,6,7,8,9,2,4,6,8,3,4,5,6,7,8};
 		
