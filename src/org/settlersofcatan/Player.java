@@ -18,19 +18,15 @@ public class Player
 	ArrayList<City> cities = new ArrayList<>();
 	String playerName;
 	String input;
-	static String vertex[][];
-	static String edge[][];
 	int playernumber;
 	static Scanner sc = new Scanner(System.in);
 	
-	public Player(String name, int number, ArrayList<ResourceCard> c, ArrayList<Player> player, String vertex[][], String edge[][])
+	public Player(String name, int number, ArrayList<ResourceCard> c, ArrayList<Player> player)
 	{
 		this.playerName = name.toUpperCase();
 		this.playernumber = number;
 		this.resList = c;
 		this.players = player;
-		Player.vertex = vertex;
-		Player.edge = edge;
 	}
 	/*
 	 
@@ -233,10 +229,7 @@ public class Player
 	public void turn()
 	{
 		String p2trade;
-		System.out.println("Player: " + playerName + "'s turn");	
-		//Roll Dice
-		main.rollDice();
-		
+		System.out.println("Player: " + playerName + "'s turn");
 		
 		//Trade
 		System.out.println("Do you want to trade? (Y/N)");
@@ -285,28 +278,7 @@ public class Player
 			}
 		}
 	}
-	
-	public static Boolean checkAround(int r, int c)
-	{
-		Boolean output = true;
-		if (vertex[r][c-1] == "0 " || vertex[r][c-1] == "1 " || vertex[r][c-1] == "2 " || vertex[r][c-1] == "3 ")
-		{  
-			System.out.println("building to your left");
-			output=false;
-	    }
-	    if (vertex[r+1][c] == "0 " || vertex[r+1][c] == "1 " || vertex[r+1][c] == "2 " || vertex[r+1][c] == "3 ")
-	    {          
-	    	System.out.println("building to your bottom");
-	    	output=false;
-	    }	        
-	    if (vertex[r][c+1] == "0" || vertex[r][c+1] == "1" || vertex[r][c+1] == "2 " || vertex[r][c+1] == "3 ")
-	    {          
-	    	System.out.println("building to your right");
-	    	output=false;
-	    }
-	    return output;
-	}
-	
+		
 	public Boolean buildRoad()
 	{
 		int w = this.getWood();
@@ -502,6 +474,11 @@ public class Player
 	public String getName()
 	{
 		return playerName;
+	}
+	
+	public ArrayList<ResourceCard> getResList() 
+	{
+		return resList;
 	}
 }
 

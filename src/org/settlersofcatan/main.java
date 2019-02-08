@@ -765,7 +765,7 @@ public class main
 			resList.add(new ResourceCard("wood"));
 			System.out.print("Enter player name: ");
 			playername = sc.nextLine();
-			players.add(new Player(playername, x, resList, players, vertex, edges));
+			players.add(new Player(playername, x, resList, players));
 		}
 	}
 	

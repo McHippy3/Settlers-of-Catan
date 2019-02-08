@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 public class OfflineGameScene extends StackPane
 {
@@ -35,8 +36,9 @@ public class OfflineGameScene extends StackPane
 	private BorderPane borderPane;
 	private VBox center, leftBox, rightBox;
 	private HBox commandPanel;
+	private ArrayList<Player> players;
 	
-	public OfflineGameScene(Vertex[][] vertexes, Edge[][] edges) 
+	public OfflineGameScene(Vertex[][] vertexes, Edge[][] edges, ArrayList<Player> players) 
 	{		
 		//Initializing StackPane
 		super();
@@ -49,6 +51,9 @@ public class OfflineGameScene extends StackPane
         //Copying matrices
         this.vertexes = vertexes;
         this.edges = edges;
+        
+        //Getting Players
+        this.players = players;
         
 		//Creating GUI and initializing
 		initializeVertexes();
@@ -448,6 +453,59 @@ public class OfflineGameScene extends StackPane
 					edges[r][c] = new Edge(r, c, false);
 				}
 					
+			}
+		}
+	}
+
+	private void playTurn(int playerNum) 
+	{
+		String p2trade;
+		System.out.println("Player: " + players.get(playerNum) + "'s turn");
+		
+		//Trade
+		System.out.println("Do you want to trade? (Y/N)");
+		input = sc.nextLine();
+		if(input.equalsIgnoreCase("y"))
+		{
+			System.out.println("Who do you want to trade with: ");
+			p2trade = sc.nextLine();
+			p2trade = p2trade.toUpperCase();
+			for(int x = 0; x < 3; x++)
+			{
+				if(p2trade.equalsIgnoreCase(players.get(x).getName()))
+				{
+					//trade(this,players.get(x));
+				}
+			}
+		}	
+		
+		
+		System.out.println("Do you want to build? (Y/N)");
+		input = sc.nextLine();
+		if(input.equalsIgnoreCase("y"))
+		{
+			System.out.println("Sheep: " );
+			System.out.println("Brick: " );
+			System.out.println("Grain: " );
+			System.out.println("Ore: " );
+			System.out.println("Wood: " );
+			
+			//Build
+			System.out.println("What do you want to build?");
+			System.out.println("1. Road");
+			System.out.println("2. Settlement");
+			System.out.println("3. Upgrade Settlement");
+			input = sc.nextLine();
+			switch(input)
+			{
+				case "1": 
+				{
+					
+				}
+				case "2": 
+				{
+				
+				}
 			}
 		}
 	}

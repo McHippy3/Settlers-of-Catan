@@ -26,6 +26,9 @@ import javafx.geometry.Rectangle2D;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
 
 public class SettlersOfCatan extends Application
 {
@@ -35,6 +38,9 @@ public class SettlersOfCatan extends Application
 	private Vertex vertexes[][];
 	private Edge edges[][];
 	
+	/*********************************************
+	 * GUI STUFF *
+	 *********************************************/
 	public void start(Stage stage) 
 	{
 		this.stage = stage;
@@ -66,7 +72,12 @@ public class SettlersOfCatan extends Application
 		mainScene.setRoot((Parent) Scenes.nameScene(submitButton, name1, name2, name3, name4));
 		
 		submitButton.setOnMouseClicked(
-				(MouseEvent e) -> setOfflineGameScene()
+				(MouseEvent e) -> {
+					String[] names = {name1.getText(), name2.getText(), name3.getText(), name4.getText()};
+					gameStart(names);
+					setOfflineGameScene();
+					//play();
+					}
 				);
 	}
 	
@@ -74,12 +85,99 @@ public class SettlersOfCatan extends Application
 	{
 		vertexes = new Vertex[12][11];
 		edges = new Edge[11][11];
-		mainScene.setRoot(new OfflineGameScene(vertexes, edges));
+		mainScene.setRoot(new OfflineGameScene(vertexes, edges, players));
 	}
 	
 	public static void main(String[] args) 
 	{
 		launch(args);
+	}
+	
+	/*********************************************
+	 * GAME STUFF *
+	 *********************************************/
+	private String vertex[][] = 
+	{
+	      {"        ","  ","  ","  ","  ","  ","  ","  ","          "},
+	      {"        ","01","02","03","04","05","06","07","          "},
+		 {"    ","11","12","13","14","15","16","17","18","19 ","     "},
+	    {"","21","22","23","24","25","26","27","28","29","210","211",""},
+	    {"","31","32","33","34","35","36","37","38","39","310","311",""},
+		 {"    ","41","42","43","44","45","46","47","48","49 ","     "},
+	      {"        ","51","52","53","54","55","56","57","          "},
+	      {"        ","  ","  ","  ","  ","  ","  ","  ","          "}
+	};
+	private String edgey[][] = 
+	{
+			       {"		", "01", "02", "03", "04", "05", "06", "		"},
+				         {"                   ", "21", "22", "23", "24", "                  "},
+		     {"	    ", "31", "32", "33", "34", "35", "36", "37", "38", "          "},
+		            {"                 ", "41", "42", "43", "44", "45", "                "},
+		{"	", "51", "52", "53", "54", "55", "56", "57", "58", "59", "510", "	"},
+		           {"		", "61", "62", "63", "64", "65", "66", "		"},
+		     {"	    ", "71", "72", "73", "74", "75", "76", "77", "78", "          "},
+		           {"	        ", "81", "82", "83", "84", "85", "86", "		"},
+		                 {"                   ", "91", "92", "93", "94", "                  "},
+		        {"   	     ", "101", "102", "103", "104", "105", "106", "	        "}
+		
+	};
+	private ArrayList<Player> players = new ArrayList<>();
+	private Boolean gameloop = true;
+	private int playernumber = 0;
+	private Scanner sc = new Scanner(System.in);
+	private String input;
+	private Boolean playagain = false;
+	
+	//Starting Game/Initialization
+	public void gameStart(String[] names) 
+	{
+		for(int i = 0; i < names.length; i++)
+		{
+			ArrayList<ResourceCard> resList = new ArrayList<>();
+			resList.add(new ResourceCard("brick"));
+			resList.add(new ResourceCard("ore"));
+			resList.add(new ResourceCard("grain"));
+			resList.add(new ResourceCard("sheep"));
+			resList.add(new ResourceCard("wood"));
+			players.add(new Player(names[i], i, resList, players));
+		}
+	}
+	
+	//Main game loop
+	private void play()
+	{
+		do
+		{	
+			for(int x = 0; x < players.size(); x++)
+			{
+				for(int w = 0; w < players.size(); w++)
+				{
+					if(players.get(w).getVP() >= 10)
+					{
+						gameloop = false;
+						System.out.println("Player " + players.get(0).getName() + " wins!");
+					}
+				}
+				if(!gameloop)
+					break;
+				
+				players.get(x).turn();
+				System.out.println("Are you finished with your turn? (Y/N)");
+				sc.nextLine();
+								
+				if(x == 3)
+				{
+					x = -1;
+				}
+			}
+		}
+		while(gameloop == true);
+	}
+	
+	private int rollDice()
+	{
+		Random r = new Random();
+		return r.nextInt(11) + 2;
 	}
 
 }
