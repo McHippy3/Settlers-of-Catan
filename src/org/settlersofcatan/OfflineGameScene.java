@@ -32,6 +32,7 @@ public class OfflineGameScene extends StackPane
 	private Vertex vertexes[][];
 	private Edge edges[][];
 	private double xOffSet, yOffSet, sf;
+	private boolean buildMode;
 	private Group gameTiles, resourceImages;
 	private BorderPane borderPane;
 	private VBox center, leftBox, rightBox;
@@ -54,6 +55,9 @@ public class OfflineGameScene extends StackPane
         
         //Getting Players
         this.players = players;
+        
+        //Other Variables
+        buildMode = false;
         
 		//Creating GUI and initializing
 		initializeVertexes();
@@ -102,7 +106,7 @@ public class OfflineGameScene extends StackPane
             playerTiles[i].setPadding(new Insets((10)));
             playerTiles[i].setVgap(5);
             playerTiles[i].setHgap(5);
-            playerTiles[i].add(new Text("Player " + (i + 1)), 0, 0, 2, 1);
+            playerTiles[i].add(new Text(players.get(i).getName()), 0, 0, 2, 1);
             playerTiles[i].add(new Text("Points: " + i), 0, 1, 1, 1);
 
             //Setting Color
@@ -248,27 +252,142 @@ public class OfflineGameScene extends StackPane
         
         center.getChildren().addAll(gameTiles, commandPanel);
         
-        //Drawing Resource Cards
-        resourceImages = new Group();
-        String[] resourceImageLoc = {"res/resource_cards/brick.jpg", "res/resource_cards/grain.jpg", "res/resource_cards/ore.jpg", "res/resource_cards/sheep.jpg", "res/resource_cards/wood.jpg"};
-        for(int i = 0; i < 5; i++) 
-        {
-        	ImageView cardImg = new ImageView(resourceImageLoc[i]);
-        	cardImg.setX(650 + 130 * i);
-        	cardImg.setY(23);
-        	cardImg.setFitHeight(154);
-        	cardImg.setFitWidth(100);
-        	
-        	resourceImages.getChildren().add(cardImg);
-        }
-        commandPanel.getChildren().add(resourceImages);
-        
         //Adding
         borderPane.setLeft(leftBox);
 		borderPane.setRight(rightBox);
 		borderPane.setCenter(center);
 		
 		getChildren().add(borderPane);
+	}
+	
+	private void initializeVertexes() 
+	{
+		//List of all the vertexes based on the main grid system
+		int[] rowExists = {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11};
+		int[] colExists = {3, 5, 7, 2, 4, 6, 8, 2, 4, 6, 8, 1, 3, 5, 7, 9, 1, 3, 5, 7, 9, 0, 2, 4, 6, 8, 10, 0, 2, 4, 6, 8, 10, 1, 3, 5, 7, 9, 1, 3, 5, 7, 9, 2, 4, 6, 8, 2, 4, 6, 8, 3, 5, 7};
+		int count = 0;
+		for(int r = 0; r < 12; r++) 
+		{
+			for(int c = 0; c < 11; c++) 
+			{
+				//If vertex exists, then set it up
+				if(count != rowExists.length && r == rowExists[count] && c == colExists[count]) 
+				{
+					//Setting properties
+					vertexes[r][c] = new Vertex(r, c, true);
+					vertexes[r][c].setHasBuilding(false);
+					vertexes[r][c].setMaxSize(30, 30);
+					vertexes[r][c].setPrefSize(30, 30);
+					vertexes[r][c].setDisable(true);
+					vertexes[r][c].setStyle("-fx-background-color: transparent;");
+					
+					//MouseEvents
+					vertexes[r][c].setOnMouseClicked(
+							(MouseEvent e) -> {
+								Vertex v = (Vertex) e.getSource();
+								v.setHasBuilding(true);
+								//Disable buttons after build
+								disableBuild();
+								System.out.println("Vertex Clicked " + v.getGridRow() + " " + v.getGridCol());
+								Platform.runLater(new Runnable() 
+								{
+									@Override
+									public void run() 
+									{
+										System.out.println("Updating");
+										updateGUI();
+									}
+								});
+							}
+							);
+					vertexes[r][c].setOnMouseEntered(
+							(me) -> 
+							{
+								Vertex v = (Vertex) me.getSource();
+								v.setStyle("-fx-background-color: #fcffaa");
+							}
+						);
+					vertexes[r][c].setOnMouseExited(
+							(me) -> 
+							{
+								Vertex v = (Vertex) me.getSource();
+								v.setStyle("-fx-background-color: transparent");
+							}
+						);
+					count++;
+				}
+				else 
+				{
+					vertexes[r][c] = new Vertex(r, c, false);
+				}
+					
+			}
+		}
+	}
+	
+	private void initializeEdges() 
+	{
+		//Lists of edges that exist
+		int[] rowExists = {0,0,0,0,0,0,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,9,9,9,9,10,10,10,10,10,10};
+		int[] colExists = {3,4,5,6,7,8,2,4,6,8,2,3,4,5,6,7,8,9,1,3,5,7,9,1,2,3,4,5,6,7,8,9,10,0,2,4,6,8,10,1,2,3,4,5,6,7,8,9,10,1,3,5,7,9,2,3,4,5,6,7,8,9,2,4,6,8,3,4,5,6,7,8};
+		
+		int count = 0;
+		for(int r = 0; r < 11; r++) 
+		{
+			for(int c = 0; c < 11; c++) 
+			{
+				//Only initialize edge if it exists on the grid
+				if(count != rowExists.length && r == rowExists[count] && c == colExists[count]) 
+				{
+					edges[r][c] = new Edge(r, c, true);
+					edges[r][c].setHasRoad(false);
+					edges[r][c].setMaxSize(30, 30);
+					edges[r][c].setPrefSize(30, 30);
+					edges[r][c].setDisable(true);
+					edges[r][c].setStyle("-fx-background-color: transparent;");
+					//MouseEvents 
+					edges[r][c].setOnMouseClicked(
+							(MouseEvent me) -> 
+							{
+								Edge e = (Edge) me.getSource();
+								e.setHasRoad(true);
+								System.out.println("Edge Clicked " + e.getGridRow() + " " + e.getGridCol());
+								//Disable after build
+								disableBuild();
+								Platform.runLater(new Runnable() 
+								{
+									@Override
+									public void run() 
+									{
+										System.out.println("Updating");
+										updateGUI();
+									}
+								});
+							}
+							);
+					edges[r][c].setOnMouseEntered(
+							(me) -> 
+							{
+								Edge e = (Edge) me.getSource();
+								e.setStyle("-fx-background-color: #aafffa");
+							}
+						);
+					edges[r][c].setOnMouseExited(
+							(me) -> 
+							{
+								Edge e = (Edge) me.getSource();
+								e.setStyle("-fx-background-color: transparent");
+							}
+						);
+					count++;
+				}
+				else 
+				{
+					edges[r][c] = new Edge(r, c, false);
+				}
+					
+			}
+		}
 	}
 	
 	private void updateGUI() 
@@ -279,13 +398,14 @@ public class OfflineGameScene extends StackPane
         {
         	for(int c = 0; c < 11; c++) 
 			{
-        		if(edges[r][c].exists && edges[r][c].getHasRoad()) 
+        		if(edges[r][c].getExists() && edges[r][c].getHasRoad()) 
         		{
 					ImageView roadImg = new ImageView(new Image("res/roads/blue_road.png"));
 			        roadImg.setFitHeight(48);
 			        roadImg.setFitWidth(12);
 			        roadImg.setX((((edges[r][c].getGridRow()%2)*30)+ (xOffSet/2) + edges[r][c].getGridCol() * 104 * sf)-10);
 			        roadImg.setY(( yOffSet + y[edges[r][c].getGridRow()] * sf)-25);
+			        //Determine whether road is slanted, on even row, odd row, etc.
 			        if (edges[r][c].getGridRow()%2==0)
 			        {
 			        	if (edges[r][c].getGridRow()%4==0)
@@ -331,182 +451,120 @@ public class OfflineGameScene extends StackPane
         	}
         }
         
+        //Command Panel Elements/Nodes
+        //Removing all nodes from the command panel so that they don't stack
+        commandPanel.getChildren().clear();
+        
+        //Build Options
+        if(buildMode) 
+        {
+        	VBox buildOptions = new VBox();
+    		Text buildLabel = new Text("Would you like to build?");
+    		Button yesButton = new Button("Yes");
+    		Button noButton = new Button("No");
+    		
+    		//Enable all build buttons
+    		yesButton.setOnMouseClicked(
+    				(MouseEvent e) -> enableBuild()
+    				);
+    		
+    		//Disable all build buttons
+    		noButton.setOnMouseClicked(
+    				(MouseEvent e) -> 
+    				{
+    					disableBuild(); 
+    					buildMode = false;
+    				});
+    		
+    		buildOptions.getChildren().addAll(buildLabel, yesButton, noButton);
+    		
+    		commandPanel.getChildren().add(buildOptions);
+        }
+        
+        //Drawing Resource Cards
+        resourceImages = new Group();
+        String[] resourceImageLoc = {"res/resource_cards/brick.jpg", "res/resource_cards/grain.jpg", "res/resource_cards/ore.jpg", "res/resource_cards/sheep.jpg", "res/resource_cards/wood.jpg"};
+        for(int i = 0; i < 5; i++) 
+        {
+        	ImageView cardImg = new ImageView(resourceImageLoc[i]);
+        	cardImg.setX(650 + 130 * i);
+        	cardImg.setY(23);
+        	cardImg.setFitHeight(154);
+        	cardImg.setFitWidth(100);
+        	
+        	resourceImages.getChildren().add(cardImg);
+        }
+        
         //Placing Numbers Beside Resource Cards
         for(int i = 0; i < 5; i++) 
         {
-        	Text numLabel = new Text();
+        	Text t = new Text(730 + i * 130, 170, "" + i);
+        	t.setFont(Font.font("Arial", 20));
+        	t.setFill(Color.WHITE);
+        	t.setStroke(Color.WHITE);
+        	t.setStrokeWidth(1);
+        	resourceImages.getChildren().add(t);
         }
-	}
-	
-	private void initializeVertexes() 
-	{
-		//List of all the vertexes based on the main grid system
-		int[] rowExists = {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11};
-		int[] colExists = {3, 5, 7, 2, 4, 6, 8, 2, 4, 6, 8, 1, 3, 5, 7, 9, 1, 3, 5, 7, 9, 0, 2, 4, 6, 8, 10, 0, 2, 4, 6, 8, 10, 1, 3, 5, 7, 9, 1, 3, 5, 7, 9, 2, 4, 6, 8, 2, 4, 6, 8, 3, 5, 7};
-		int count = 0;
-		for(int r = 0; r < 12; r++) 
-		{
-			for(int c = 0; c < 11; c++) 
-			{
-				if(count != rowExists.length && r == rowExists[count] && c == colExists[count]) 
-				{
-					vertexes[r][c] = new Vertex(r, c, true);
-					vertexes[r][c].setHasBuilding(false);
-					vertexes[r][c].setMaxSize(30, 30);
-					vertexes[r][c].setPrefSize(30, 30);
-					vertexes[r][c].setStyle("-fx-background-color: transparent;");
-					vertexes[r][c].setOnMouseClicked(
-							(MouseEvent e) -> {
-								Vertex v = (Vertex) e.getSource();
-								v.setHasBuilding(true);
-								v.setDisable(true);
-								System.out.println("Vertex Clicked " + v.getGridRow() + " " + v.getGridCol());
-								Platform.runLater(new Runnable() 
-								{
-									@Override
-									public void run() 
-									{
-										System.out.println("Updating");
-										updateGUI();
-									}
-								});
-							}
-							);
-					vertexes[r][c].setOnMouseEntered(
-							(me) -> 
-							{
-								Vertex v = (Vertex) me.getSource();
-								v.setStyle("-fx-background-color: #fcffaa");
-							}
-						);
-					vertexes[r][c].setOnMouseExited(
-							(me) -> 
-							{
-								Vertex v = (Vertex) me.getSource();
-								v.setStyle("-fx-background-color: transparent");
-							}
-						);
-					count++;
-				}
-				else 
-				{
-					vertexes[r][c] = new Vertex(r, c, false);
-				}
-					
-			}
-		}
-	}
-	
-	private void initializeEdges() 
-	{
-		int[] rowExists = {0,0,0,0,0,0,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,9,9,9,9,10,10,10,10,10,10};
-		int[] colExists = {3,4,5,6,7,8,2,4,6,8,2,3,4,5,6,7,8,9,1,3,5,7,9,1,2,3,4,5,6,7,8,9,10,0,2,4,6,8,10,1,2,3,4,5,6,7,8,9,10,1,3,5,7,9,2,3,4,5,6,7,8,9,2,4,6,8,3,4,5,6,7,8};
-		
-		int count = 0;
-		for(int r = 0; r < 11; r++) 
-		{
-			for(int c = 0; c < 11; c++) 
-			{
-				if(count != rowExists.length && r == rowExists[count] && c == colExists[count]) 
-				{
-					edges[r][c] = new Edge(r, c, true);
-					edges[r][c].setHasRoad(false);
-					edges[r][c].setMaxSize(30, 30);
-					edges[r][c].setPrefSize(30, 30);
-					edges[r][c].setStyle("-fx-background-color: transparent;");
-					edges[r][c].setOnMouseClicked(
-							(MouseEvent me) -> 
-							{
-								Edge e = (Edge) me.getSource();
-								e.setHasRoad(true);
-								e.setDisable(true);
-								System.out.println("Edge Clicked " + e.getGridRow() + " " + e.getGridCol());
-								Platform.runLater(new Runnable() 
-								{
-									@Override
-									public void run() 
-									{
-										System.out.println("Updating");
-										updateGUI();
-									}
-								});
-							}
-							);
-					edges[r][c].setOnMouseEntered(
-							(me) -> 
-							{
-								Edge e = (Edge) me.getSource();
-								e.setStyle("-fx-background-color: #aafffa");
-							}
-						);
-					edges[r][c].setOnMouseExited(
-							(me) -> 
-							{
-								Edge e = (Edge) me.getSource();
-								e.setStyle("-fx-background-color: transparent");
-							}
-						);
-					count++;
-				}
-				else 
-				{
-					edges[r][c] = new Edge(r, c, false);
-				}
-					
-			}
-		}
+        commandPanel.getChildren().add(resourceImages);
 	}
 
-	private void playTurn(int playerNum) 
+	private void enableBuild() 
 	{
-		String p2trade;
-		System.out.println("Player: " + players.get(playerNum) + "'s turn");
+		//Enables all build spots that haven't been used
 		
-		//Trade
-		System.out.println("Do you want to trade? (Y/N)");
-		input = sc.nextLine();
-		if(input.equalsIgnoreCase("y"))
+		for(Edge[] r: edges) 
 		{
-			System.out.println("Who do you want to trade with: ");
-			p2trade = sc.nextLine();
-			p2trade = p2trade.toUpperCase();
-			for(int x = 0; x < 3; x++)
+			for(Edge e: r) 
 			{
-				if(p2trade.equalsIgnoreCase(players.get(x).getName()))
+				if(e.getExists() && !e.getHasRoad()) 
 				{
-					//trade(this,players.get(x));
-				}
-			}
-		}	
-		
-		
-		System.out.println("Do you want to build? (Y/N)");
-		input = sc.nextLine();
-		if(input.equalsIgnoreCase("y"))
-		{
-			System.out.println("Sheep: " );
-			System.out.println("Brick: " );
-			System.out.println("Grain: " );
-			System.out.println("Ore: " );
-			System.out.println("Wood: " );
-			
-			//Build
-			System.out.println("What do you want to build?");
-			System.out.println("1. Road");
-			System.out.println("2. Settlement");
-			System.out.println("3. Upgrade Settlement");
-			input = sc.nextLine();
-			switch(input)
-			{
-				case "1": 
-				{
-					
-				}
-				case "2": 
-				{
-				
+					e.setDisable(false);
 				}
 			}
 		}
+		
+		for(Vertex[] r: vertexes) 
+		{
+			for(Vertex v: r) 
+			{
+				if(v.getExists() && !v.getHasBuilding()) 
+				{
+					v.setDisable(false);
+				}
+			}
+		}
+	}
+	
+	private void disableBuild() 
+	{
+		//Disables all build spots that haven't been used
+		
+		for(Edge[] r: edges) 
+		{
+			for(Edge e: r) 
+			{
+				if(e.getExists() && !e.getHasRoad()) 
+				{
+					e.setDisable(true);
+				}
+			}
+		}
+		
+		for(Vertex[] r: vertexes) 
+		{
+			for(Vertex v: r) 
+			{
+				if(v.getExists() && !v.getHasBuilding()) 
+				{
+					v.setDisable(true);
+				}
+			}
+		}
+	}
+	
+	public void requestBuild(int playerNum) 
+	{
+		buildMode = true;
+		updateGUI();
 	}
 }

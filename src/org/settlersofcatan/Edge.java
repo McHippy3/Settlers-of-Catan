@@ -9,18 +9,18 @@ import java.io.*;
 import java.lang.Math;
 
 public class Edge extends Button{
-	int gridRow, gridCol;
-	int mainGridRowStart, mainGridColStart;
-	int mainGridRowEnd, mainGridColEnd;
-	boolean hasRoad, exists;
-	int gridX;
-	int gridY;
-	int startGridRow;
-	int endGridRow;
-	int startGridCollum;
-	int endGridCollum;
-	int tileID, edgeID;
-	Road r;
+	private int gridRow, gridCol;
+	private int mainGridRowStart, mainGridColStart;
+	private int mainGridRowEnd, mainGridColEnd;
+	private boolean hasRoad, exists;
+	private int gridX;
+	private int gridY;
+	private int startGridRow;
+	private int endGridRow;
+	private int startGridCollum;
+	private int endGridCollum;
+	private int tileID, edgeID;
+	private Road r;
 	
 	public Edge()
 	{

@@ -16,7 +16,8 @@ public class EdgeLink
 	
 	public String toString(Edge e)
 	{
-		return e.tileID+", "+e.edgeID;
+		//return e.tileID+", "+e.edgeID;
+		return "";
 	}
 	
 

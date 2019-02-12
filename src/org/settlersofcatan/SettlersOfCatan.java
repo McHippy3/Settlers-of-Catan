@@ -34,6 +34,7 @@ public class SettlersOfCatan extends Application
 {
 	
 	private Scene mainScene;
+	private OfflineGameScene offlineGameScene;
 	private Stage stage;
 	private Vertex vertexes[][];
 	private Edge edges[][];
@@ -63,6 +64,7 @@ public class SettlersOfCatan extends Application
 	
 	private void setNameScene() 
 	{
+		//Getting Player Names
 		Button submitButton = new Button("Submit Names");
 		TextField name1 = new TextField();
 		TextField name2 = new TextField();
@@ -71,6 +73,7 @@ public class SettlersOfCatan extends Application
 		
 		mainScene.setRoot((Parent) Scenes.nameScene(submitButton, name1, name2, name3, name4));
 		
+		//Starts Game
 		submitButton.setOnMouseClicked(
 				(MouseEvent e) -> {
 					String[] names = {name1.getText(), name2.getText(), name3.getText(), name4.getText()};
@@ -85,7 +88,9 @@ public class SettlersOfCatan extends Application
 	{
 		vertexes = new Vertex[12][11];
 		edges = new Edge[11][11];
-		mainScene.setRoot(new OfflineGameScene(vertexes, edges, players));
+		offlineGameScene = new OfflineGameScene(vertexes, edges, players);
+		mainScene.setRoot(offlineGameScene);
+		offlineGameScene.requestBuild(0);
 	}
 	
 	public static void main(String[] args) 
@@ -152,6 +157,7 @@ public class SettlersOfCatan extends Application
 			{
 				for(int w = 0; w < players.size(); w++)
 				{
+					//Check if Player has won
 					if(players.get(w).getVP() >= 10)
 					{
 						gameloop = false;
@@ -172,6 +178,61 @@ public class SettlersOfCatan extends Application
 			}
 		}
 		while(gameloop == true);
+	}
+	
+	//Individual Player Turns
+	private void playTurn(int playerNum) 
+	{
+		/*
+		String p2trade;
+		System.out.println("Player: " + players.get(playerNum) + "'s turn");
+		
+		//Trade
+		System.out.println("Do you want to trade? (Y/N)");
+		input = sc.nextLine();
+		if(input.equalsIgnoreCase("y"))
+		{
+			System.out.println("Who do you want to trade with: ");
+			p2trade = sc.nextLine();
+			p2trade = p2trade.toUpperCase();
+			for(int x = 0; x < 3; x++)
+			{
+				if(p2trade.equalsIgnoreCase(players.get(x).getName()))
+				{
+					//trade(this,players.get(x));
+				}
+			}
+		}*/
+		
+		
+		System.out.println("Do you want to build? (Y/N)");
+		input = sc.nextLine();
+		if(input.equalsIgnoreCase("y"))
+		{
+			System.out.println("Sheep: " );
+			System.out.println("Brick: " );
+			System.out.println("Grain: " );
+			System.out.println("Ore: " );
+			System.out.println("Wood: " );
+			
+			//Build
+			System.out.println("What do you want to build?");
+			System.out.println("1. Road");
+			System.out.println("2. Settlement");
+			System.out.println("3. Upgrade Settlement");
+			input = sc.nextLine();
+			switch(input)
+			{
+				case "1": 
+				{
+					
+				}
+				case "2": 
+				{
+				
+				}
+			}
+		}
 	}
 	
 	private int rollDice()
