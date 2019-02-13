@@ -15,7 +15,6 @@ public class VertexLink
 		v = null;
 	}
 	
-	
 	public VertexLink(Vertex[] v1)
 	{
 		v = v1;
@@ -25,4 +24,17 @@ public class VertexLink
 	{
 		return v.tileID+", "+v.vertexID;
 	}
+	
+	/*public boolean hasCluster()
+	{
+		if(v[0].vertexID == 2 && v[1].vertexID == 4 && v[2].vertexID == 0)
+		{
+			return true;
+		}
+		
+		if()
+		{
+			
+		}
+	}*/
 }

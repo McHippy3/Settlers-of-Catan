@@ -144,7 +144,7 @@ public class SettlersOfCatan extends Application
 			resList.add(new ResourceCard("grain"));
 			resList.add(new ResourceCard("sheep"));
 			resList.add(new ResourceCard("wood"));
-			players.add(new Player(names[i], i, resList, players));
+			players.add(new Player(null, names[i], i, resList));
 		}
 	}
 	

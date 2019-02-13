@@ -1,67 +1,23 @@
 package org.settlersofcatan;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.Scanner;
+
+import java.io.*;
+import java.lang.*;
+import static java.lang.System.*;
+import java.util.*;
+import org.settlersofcatan.*;
+
 public class main 
-{	
-	static String vertex[][] = 
-	{
-	      {"        ","  ","  ","  ","  ","  ","  ","  ","          "},
-	      {"        ","01","02","03","04","05","06","07","          "},
-		 {"    ","11","12","13","14","15","16","17","18","19 ","     "},
-	    {"","21","22","23","24","25","26","27","28","29","210","211",""},
-	    {"","31","32","33","34","35","36","37","38","39","310","311",""},
-		 {"    ","41","42","43","44","45","46","47","48","49 ","     "},
-	      {"        ","51","52","53","54","55","56","57","          "},
-	      {"        ","  ","  ","  ","  ","  ","  ","  ","          "}
-	};
-	static String edges[][] = 
-	{
-			       {"		", "01", "02", "03", "04", "05", "06", "		"},
-				         {"                   ", "21", "22", "23", "24", "                  "},
-		     {"	    ", "31", "32", "33", "34", "35", "36", "37", "38", "          "},
-		            {"                 ", "41", "42", "43", "44", "45", "                "},
-		{"	", "51", "52", "53", "54", "55", "56", "57", "58", "59", "510", "	"},
-		           {"		", "61", "62", "63", "64", "65", "66", "		"},
-		     {"	    ", "71", "72", "73", "74", "75", "76", "77", "78", "          "},
-		           {"	        ", "81", "82", "83", "84", "85", "86", "		"},
-		                 {"                   ", "91", "92", "93", "94", "                  "},
-		        {"   	     ", "101", "102", "103", "104", "105", "106", "	        "}
-		
-	};
-	static ArrayList<Player> players = new ArrayList<>();
-	static Boolean gameloop = true;
+{
+	static ArrayList<Player>players = new ArrayList<>();
+	static boolean gameLoop = true;
 	static int playernumber = 0;
 	static Scanner sc = new Scanner(System.in);
 	static String buildtest;
 	static String input;
-	static Boolean playagain = false;
+	static boolean playagain = false;
 	
-	//START
-	public static void main(String[] args)
+	public static void main(String[] agrs)
 	{
-		do
-		{
-			start();
-			play();
-		} while(playagain == true);
-		
-		
-		
-		
-		
-		
-		
-		
-		// Noah's Code Up top
-		// Chris's code down low
-		
-		
-		
-		
-		
-		
 		/*Player p1 = new Player();
 		p1.playerName = "David";
 		Player p2 = new Player();
@@ -116,8 +72,6 @@ public class main
 		
 		Tile[] ar5 = {tileArray[16], tileArray[17], tileArray[18]};
 		Line five = new Line(ar5);
-		
-		ArrayList<VertexLink>vertexLinkList = new ArrayList<VertexLink>();
 
 		VertexLink[][]grid = new VertexLink[12][11];
 		
@@ -562,8 +516,224 @@ public class main
 		}
 	}
 	
+	// Dice Trade Build
+	
+	public static int rollDice()
+	{
+		Random r = new Random();
+		return r.nextInt(11) + 2;
+	}
+	
+	//sheepCount+" "+brickCount+" "+wheatCount+" "+woodCount+" "+stoneCount;
+	
+	public static void trade(Player p1, Player p2)
+	{
+		Scanner sc = new Scanner(System.in);
+		
+		int[]p1Inventory = p1.countInventory();
+		int[]p2Inventory = p2.countInventory();
+		
+		boolean tradeWorks = false;
+		
+		p1.listInventory();
+		
+		p2.listInventory();
+		
+		System.out.println(p1.playerName+", what item do you want from "+p2.playerName+"?: ");
+		String ans1 = sc.nextLine();
+		
+		int qS1 = 0;
+		int qB1 = 0;
+		int qWh1 = 0;
+		int qWo1 = 0;
+		int qSt1 = 0;
+		
+		int qS2 = 0;
+		int qB2 = 0;
+		int qWh2 = 0;
+		int qWo2 = 0;
+		int qSt2 = 0;
+		
+		switch(ans1)
+		{
+		case "wool":
+			System.out.println("How many?: ");
+			qS1 = sc.nextInt();
+			// Trade
+			if(qS1 <= p2Inventory[0])
+			{
+				tradeWorks = true;
+			}
+			// Don't trade
+			else
+			{
+				tradeWorks = false;
+				break;
+			}
+			break;
+		case "brick":
+			System.out.println("How many?: ");
+			qB1 = sc.nextInt();
+			if(qB1 <= p2Inventory[1])
+			{
+				tradeWorks = true;
+				break;
+			}
+			else
+			{
+				tradeWorks = false;
+				break;
+			}
+		case "grain":
+			System.out.println("How many?: ");
+			qWh1 = sc.nextInt();
+			if(qWh1 <= p2Inventory[2])
+			{
+				tradeWorks = true;
+				break;
+			}
+			else
+			{
+				tradeWorks = false;
+				break;
+			}
+		case "wood":
+			System.out.println("How many?: ");
+			qWo1 = sc.nextInt();
+			if(qWo1 <= p2Inventory[3])
+			{
+				tradeWorks = true;
+				break;
+			}
+			else
+			{
+				tradeWorks = false;
+				break;
+			}
+		case "ore":
+			System.out.println("How many?: ");
+			qSt1 = sc.nextInt();
+			if(qSt1 <= p2Inventory[4])
+			{
+				tradeWorks = true;
+				break;
+			}
+			else
+			{
+				tradeWorks = false;
+				break;
+			}
+		}
+		
+		
+		
+		System.out.println(p2.playerName+", what item do you want from "+p1.playerName+"?: ");
+		String ans2 = sc.next();
+		
+		switch(ans2)
+		{
+		case "wool":
+			System.out.println("How many?: ");
+			qS2 = sc.nextInt();
+			// Trade
+			if(qS2 <= p2Inventory[0])
+			{
+				tradeWorks = true;
+				break;
+			}
+			// Don't trade
+			else
+			{
+				tradeWorks = false;
+				break;
+			}
+		case "brick":
+			System.out.println("How many?: ");
+			qB2 = sc.nextInt();
+			if(qB2 <= p2Inventory[1])
+			{
+				tradeWorks = true;
+				break;
+			}
+			else
+			{
+				tradeWorks = false;
+				break;
+			}
+		case "grain":
+			System.out.println("How many?: ");
+			qWh2 = sc.nextInt();
+			if(qWh2 <= p2Inventory[2])
+			{
+				tradeWorks = true;
+				break;
+			}
+			else
+			{
+				tradeWorks = false;
+				break;
+			}
+		case "wood":
+			System.out.println("How many?: ");
+			qWo2 = sc.nextInt();
+			if(qWo2 <= p2Inventory[3])
+			{
+				tradeWorks = true;
+				break;
+			}
+			else
+			{
+				tradeWorks = false;
+				break;
+			}
+		case "ore":
+			System.out.println("How many?: ");
+			qSt2 = sc.nextInt();
+			if(qSt2 <= p2Inventory[4])
+			{
+				tradeWorks = true;
+				break;
+			}
+			else
+			{
+				tradeWorks = false;
+				break;
+			}
+		}
+		
+		if(tradeWorks == true)
+		{
+			p2Inventory[0] += qS1;
+			p2Inventory[1] += qB1;
+			p2Inventory[2] += qWh1;
+			p2Inventory[3] += qWo1;
+			p2Inventory[4] += qS1;
+			
+			p1Inventory[0] += qS2;
+			p1Inventory[1] += qB2;
+			p1Inventory[2] += qWh2;
+			p1Inventory[3] += qWo2;
+			p1Inventory[4] += qS2;
+		}
+		else
+		{
+			return;
+		}
+	}
 	
 	// Use method at the beginning of every single turn
+	public static boolean checkWin(ArrayList<Player> p)
+	{
+		for(int i = 0;i<p.size();i++)
+		{
+			if(p.get(i).victoryPoints >= 10)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+		
 	
 	
 	public static VertexLink[][] loadGrid(VertexLink[][] grid)
@@ -716,36 +886,87 @@ public class main
 		
 		return grid;
 	}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 	
-	// End of Main
+	// n represents the number from the rollDice() method
+	// Create checkers for all 3 ^ 
+	// 0 == GetLeft, 1 == GetRight, 2 == Below
+	// Create method in Tile class w/ an int as an argument and then look through a Tile list to get tileType
+	public static void collectResources(int n, ArrayList<Player> p, ArrayList<Tile>x, Bank b)
+	{
+		for(int i = 0;i<p.size();i++)
+		{
+			for(int k = 0;k<p.get(i).settleList.size();k++)
+			{
+				for(int l = 0;l<p.get(i).settleList.get(k).v.v.length;l++)
+				{
+					if(p.get(i).settleList.get(k).v.v[l].tileID == n)
+					{
+						switch(getCardType(p.get(i).settleList.get(k).v.v[l].tileID, x))
+						{
+						case "brick":
+							ResourceCard.subtractBrick(1, p.get(i), b);
+							break;
+						case "wood":
+							ResourceCard.subtractWood(1, p.get(i), b);
+							break;
+						case "wool":
+							ResourceCard.subtractWool(1, p.get(i), b);
+							break;
+						case "grain":
+							ResourceCard.subtractGrain(1, p.get(i), b);
+							break;
+						case "ore":
+							ResourceCard.subtractOre(1, p.get(i), b);
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		for(int i = 0;i<p.size();i++)
+		{
+			for(int k = 0;k<p.get(i).cityList.size();k++)
+			{
+				for(int l = 0;l<p.get(i).cityList.get(k).v.v.length;l++)
+				{
+					if(p.get(i).cityList.get(k).v.v[l].tileID == n)
+					{
+						switch(getCardType(p.get(i).cityList.get(k).v.v[l].tileID, x))
+						{
+						case "brick":
+							ResourceCard.subtractBrick(2, p.get(i), b);
+							break;
+						case "wood":
+							ResourceCard.subtractWood(2, p.get(i), b);
+							break;
+						case "wool":
+							ResourceCard.subtractWool(2, p.get(i), b);
+							break;
+						case "grain":
+							ResourceCard.subtractGrain(2, p.get(i), b);
+							break;
+						case "ore":
+							ResourceCard.subtractOre(2, p.get(i), b);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public static String getCardType(int i, ArrayList<Tile>p)
+	{
+		for(int k = 0;k<p.size();k++)
+		{
+			if(p.get(k).tileID == i)
+			{
+				return p.get(k).type;
+			}
+		}
+		return null;
+	}
 	
 	public static void start()
 	{
@@ -758,70 +979,128 @@ public class main
 		for(int x = 0; x < playernumber; x++)
 		{
 			ArrayList<ResourceCard> resList = new ArrayList<>();
+			//Add one of each resource card to each player's deck
 			resList.add(new ResourceCard("brick"));
 			resList.add(new ResourceCard("ore"));
 			resList.add(new ResourceCard("grain"));
-			resList.add(new ResourceCard("sheep"));
+			resList.add(new ResourceCard("wool"));
 			resList.add(new ResourceCard("wood"));
 			System.out.print("Enter player name: ");
 			playername = sc.nextLine();
-			players.add(new Player(playername, x, resList, players));
+			players.add(new Player(x, playername, resList, players));
 		}
 	}
 	
+	// Where l = players
+	
+	public static void turn(Player p, ArrayList<Player> l)
+	{
+		Scanner sc = new Scanner(System.in);
+		String p2trade;
+		System.out.println("Player: " + p.playerName + "'s turn");	
+		//Roll Dice
+		main.rollDice();
+		
+		
+		//Trade
+		System.out.println("Do you want to trade? (Y/N)");
+		String input = sc.nextLine();
+		if(input.equalsIgnoreCase("y"))
+		{
+			System.out.println("Who do you want to trade with: ");
+			p2trade = sc.nextLine();
+			for(int x = 0; x < l.size(); x++)
+			{
+				if(p2trade.equalsIgnoreCase(l.get(x).playerName))
+				{
+					trade(p, players.get(x));
+				}
+			}
+		}	
+		
+		
+		System.out.println("Do you want to build? (Y/N)");
+		input = sc.nextLine();
+		if(input.equalsIgnoreCase("y"))
+		{
+			System.out.println("Wool: " + p.resList.get(p.playerNumber).getWool(p));
+			System.out.println("Brick: " + p.resList.get(p.playerNumber).getBrick(p));
+			System.out.println("Grain: " + p.resList.get(p.playerNumber).getGrain(p));
+			System.out.println("Ore: " + p.resList.get(p.playerNumber).getOre(p));
+			System.out.println("Wood: " + p.resList.get(p.playerNumber).getWood(p));
+			
+			//Build
+			System.out.println("What do you want to build?");
+			System.out.println("1. Road");
+			System.out.println("2. Settlement");
+			System.out.println("3. Upgrade Settlement");
+			input = sc.nextLine();
+			switch(input)
+			{
+				case "1": 
+				{
+					p.buildRoad();
+					System.out.println("Wool: " + p.resList.get(p.playerNumber).getWool(p));
+					System.out.println("Brick: " + p.resList.get(p.playerNumber).getBrick(p));
+					System.out.println("Grain: " + p.resList.get(p.playerNumber).getGrain(p));
+					System.out.println("Ore: " + p.resList.get(p.playerNumber).getOre(p));
+					System.out.println("Wood: " + p.resList.get(p.playerNumber).getWood(p));
+					break;
+				}
+				case "2": 
+				{
+					p.buildSettlement();
+					System.out.println("Wool: " + p.resList.get(p.playerNumber).getWool(p));
+					System.out.println("Brick: " + p.resList.get(p.playerNumber).getBrick(p));
+					System.out.println("Grain: " + p.resList.get(p.playerNumber).getGrain(p));
+					System.out.println("Ore: " + p.resList.get(p.playerNumber).getOre(p));
+					System.out.println("Wood: " + p.resList.get(p.playerNumber).getWood(p));
+					break;
+				}
+			}
+		}
+	}
+	
+	//Play method after you initialize the players
 	public static void play()
 	{
+		//Infinite loop until a player reaches 10 victory points
 		do
 		{	
+			//Loop through the arraylist of players 
 			for(int x = 0; x < players.size(); x++)
 			{
 				for(int w = 0; w < players.size(); w++)
 				{
+					//At the start of each turn, check if that player has won
 					if(players.get(w).getVP() >= 10)
 					{
-						gameloop = false;
-						System.out.println("Player " + players.get(0).getName() + " wins!");
+						gameLoop = false;
+						System.out.println("Player " + players.get(w).playerName+" wins!");
 						System.out.print("Do you want to play again?");
 						input = sc.nextLine();
 						if(input.equalsIgnoreCase("Y"))
-						{
 							playagain = true;
-						}
 						else
 							playagain = false;
 					}
 				}
-				if(gameloop == false)
+				//Breaks the infinite turn loop
+				if(gameLoop == false)
 					break;
 				
-				players.get(x).turn();
+				//Specific player's turn
+				turn(players.get(x), players);
 				System.out.println("Are you finished with your turn? (Y/N)");
 				sc.nextLine();
 				
-				//players.get(0).setVP(10);
-				
+				//Makes the loop go on forever 
 				if(x == 3)
 				{
 					x = -1;
 				}
 			}
 		}
-		while(gameloop == true);
-	}
-	
-	public void test()
-	{
-		
-	}
-	
-	public static int rollDice()
-	{
-		Random r = new Random();
-		return r.nextInt(11) + 2;
-	}
-	
-	public static void collectResources(int n)
-	{
-		
+		while(gameLoop == true);
 	}
 }
