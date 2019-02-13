@@ -459,9 +459,14 @@ public class OfflineGameScene extends StackPane
         if(buildMode) 
         {
         	VBox buildOptions = new VBox();
+        	buildOptions.setSpacing(25);
+        	buildOptions.setPadding(new Insets(10));
+        	buildOptions.setAlignment(Pos.CENTER);
     		Text buildLabel = new Text("Would you like to build?");
     		Button yesButton = new Button("Yes");
+    		yesButton.setPrefWidth(100);
     		Button noButton = new Button("No");
+    		noButton.setPrefWidth(100);
     		
     		//Enable all build buttons
     		yesButton.setOnMouseClicked(
@@ -474,6 +479,16 @@ public class OfflineGameScene extends StackPane
     				{
     					disableBuild(); 
     					buildMode = false;
+    					//Update GUI to remove build options
+    					Platform.runLater(new Runnable() 
+						{
+							@Override
+							public void run() 
+							{
+								System.out.println("Updating");
+								updateGUI();
+							}
+						});
     				});
     		
     		buildOptions.getChildren().addAll(buildLabel, yesButton, noButton);
@@ -543,7 +558,7 @@ public class OfflineGameScene extends StackPane
 		{
 			for(Edge e: r) 
 			{
-				if(e.getExists() && !e.getHasRoad()) 
+				if(e.getExists()) 
 				{
 					e.setDisable(true);
 				}
@@ -554,7 +569,7 @@ public class OfflineGameScene extends StackPane
 		{
 			for(Vertex v: r) 
 			{
-				if(v.getExists() && !v.getHasBuilding()) 
+				if(v.getExists()) 
 				{
 					v.setDisable(true);
 				}
