@@ -144,7 +144,7 @@ public class SettlersOfCatan extends Application
 			resList.add(new ResourceCard("grain"));
 			resList.add(new ResourceCard("sheep"));
 			resList.add(new ResourceCard("wood"));
-			players.add(new Player(null, names[i], i, resList));
+			players.add(new Player(null, 0, names[i], resList));
 		}
 	}
 	
@@ -167,7 +167,7 @@ public class SettlersOfCatan extends Application
 				if(!gameloop)
 					break;
 				
-				players.get(x).turn();
+				//players.get(x).turn();
 				System.out.println("Are you finished with your turn? (Y/N)");
 				sc.nextLine();
 								

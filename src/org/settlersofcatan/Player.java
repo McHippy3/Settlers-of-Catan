@@ -34,32 +34,19 @@ public class Player
 		playerName = "";
 	}
 	
-	public Player(Color color, int victoryPoints, String playerName)
+	public Player(Color color, int victoryPoints, String playerName, ArrayList<ResourceCard> resourceList)
 	{
 		this.color = color;
 		this.victoryPoints = victoryPoints;
 		this.playerName = playerName;
 		for(int i = 0;i<playerName.length();i++)
 		{
-			if(playerName.charAt(i) == ' ')
+			if(this.playerName.charAt(i) == ' ')
 			{
-				playerName.trim();
+				this.playerName.trim();
 			}
 		}
-	}
-	
-	public Player(int victoryPoints, String z, ArrayList<ResourceCard> x)
-	{
-		
-		this.victoryPoints = victoryPoints;
-		playerName = z;
-		for(int i = 0;i<playerName.length();i++)
-		{
-			if(playerName.charAt(i) == ' ')
-			{
-				playerName.trim();
-			}
-		}
+		this.resList = resourceList;
 	}
 	
 	public void listInventory()
