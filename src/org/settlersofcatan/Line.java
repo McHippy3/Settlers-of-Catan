@@ -6,6 +6,8 @@ import static java.lang.System.*;
 import java.util.*;
 import org.settlersofcatan.*;
 
+// The Line class is used to split up the board into 5 horizontal lines (3, 4, 5, 4, 3)
+
 public class Line
 {
 	Tile[] tiles;

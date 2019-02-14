@@ -8,6 +8,8 @@ import org.settlersofcatan.*;
 
 import javafx.scene.control.Button;
 
+// VertexLink is used whenever a Vertex is shared between two tiles, also used as a Vertex for whenever a Vertex ISN'T shared between 2 tiles
+
 public class VertexLink extends Button
 {
 	Vertex[] v;

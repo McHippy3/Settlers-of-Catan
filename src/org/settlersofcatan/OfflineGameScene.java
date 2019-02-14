@@ -444,10 +444,11 @@ public class OfflineGameScene extends StackPane
 		}
 	}
 	
-	public void requestBuild(int playerNum, Button build1Button, Button build2Button, Button build3Button, Button noButton)
+	public void requestBuild(int currentPlayer, Button build1Button, Button build2Button, Button build3Button, Button noButton)
 	{
 		buildMode = true;
-		currentPlayer = playerNum;
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
 		updateGUI(vertexes, edges, players);
 		
 		//Build Options
@@ -473,6 +474,6 @@ public class OfflineGameScene extends StackPane
 		noButton.setPrefWidth(150);
 		buildOptions.add(noButton, 3, 1);
 		    		
-		commandPanel.getChildren().add(buildOptions);
+		commandPanel.getChildren().add(0, buildOptions);
     }
 }

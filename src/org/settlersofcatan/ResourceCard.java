@@ -18,6 +18,7 @@ public class ResourceCard
 		cardType = s;
 	}
 	
+	// The add methods are used to add Resource Cards to a player's deck
 
 	public static void addBrick(int i, Player p)
 	{
@@ -59,6 +60,7 @@ public class ResourceCard
 		}
 	}
 	
+	// The get methods are used to get an amount of Resource Cards in a player's deck
 	
 	
 	public static int getBrick(Player p)
@@ -125,6 +127,8 @@ public class ResourceCard
 		}
 		return r;
 	}
+	
+	// The subtract methods are used when building roads, settlements and cities
 	
 	public static void subtractBrick(int i, Player p, Bank b)
 	{

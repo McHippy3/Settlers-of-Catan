@@ -108,17 +108,26 @@ public class SettlersOfCatan extends Application
 		//Build Button mouse events
 		Button build1Button = new Button("Road");
 		Button build2Button = new Button("Settlement");
-		Button build3Button = new Button("UpgradeSettlement");
+		Button build3Button = new Button("Upgrade Settlement");
 		Button noButton = new Button("No");
 
 		build1Button.setOnMouseClicked(
-				(MouseEvent e) -> offlineGameScene.enableBuild(1)
+				(MouseEvent e) -> {
+					offlineGameScene.disableBuild();
+					offlineGameScene.enableBuild(1);
+					}
 				);
 		build2Button.setOnMouseClicked(
-				(MouseEvent e) -> offlineGameScene.enableBuild(2)
+				(MouseEvent e) -> {
+					offlineGameScene.disableBuild();
+					offlineGameScene.enableBuild(2);
+					}
 				);
 		build3Button.setOnMouseClicked(
-				(MouseEvent e) -> offlineGameScene.enableBuild(3)
+				(MouseEvent e) -> {
+					offlineGameScene.disableBuild();
+					offlineGameScene.enableBuild(3);
+					}
 				);
 		
 		//Disable all build buttons
@@ -173,6 +182,8 @@ public class SettlersOfCatan extends Application
 									{
 										System.out.println("Updating");
 										offlineGameScene.updateGUI(vertexes, edges, players);
+										//Call build again after being clicked
+										build();
 									}
 								});
 							}
@@ -222,6 +233,7 @@ public class SettlersOfCatan extends Application
 					edges[r][c].setPrefSize(30, 30);
 					edges[r][c].setDisable(true);
 					edges[r][c].setStyle("-fx-background-color: transparent;");
+					
 					//MouseEvents 
 					edges[r][c].setOnMouseClicked(
 							(MouseEvent me) -> 
@@ -238,6 +250,8 @@ public class SettlersOfCatan extends Application
 									{
 										System.out.println("Updating");
 										offlineGameScene.updateGUI(vertexes, edges, players);
+										//Call build again
+										build();
 									}
 								});
 							}

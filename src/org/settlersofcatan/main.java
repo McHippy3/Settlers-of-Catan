@@ -482,14 +482,14 @@ public class main
 	
 	// Dice Trade Build
 	
+	// Rolls dice, gets random value 2-12
 	public static int rollDice()
 	{
 		Random r = new Random();
 		return r.nextInt(11) + 2;
 	}
 	
-	//sheepCount+" "+brickCount+" "+wheatCount+" "+woodCount+" "+stoneCount;
-	
+	// Trade method ( Old version ) 
 	public static void trade(Player p1, Player p2)
 	{
 		Scanner sc = new Scanner(System.in);
@@ -698,7 +698,7 @@ public class main
 		return false;
 	}
 		
-	
+	// LoadGrid is used to make the skeleton of the VertexLink grid, declares certain VertexLink null
 	
 	public static VertexLink[][] loadGrid(VertexLink[][] grid)
 	{
@@ -855,6 +855,8 @@ public class main
 	// Create checkers for all 3 ^ 
 	// 0 == GetLeft, 1 == GetRight, 2 == Below
 	// Create method in Tile class w/ an int as an argument and then look through a Tile list to get tileType
+	
+	// collectResources is used to get the resources from tiles whenever the dice are rolled ( Not 100% finished )
 	public static void collectResources(int n, ArrayList<Player> p, ArrayList<Tile>x, Bank b)
 	{
 		for(int i = 0;i<p.size();i++)
@@ -920,6 +922,7 @@ public class main
 		}
 	}
 	
+	// Used in the collectResources method whenever you need to get a cardType with an integer
 	public static String getCardType(int i, ArrayList<Tile>p)
 	{
 		for(int k = 0;k<p.size();k++)
@@ -932,6 +935,8 @@ public class main
 		return null;
 	}
 	
+	
+	// Used in the setup, declares x amount of players and gives them one of each Resource
 	public static void start()
 	{
 		String playername;
@@ -957,6 +962,7 @@ public class main
 	
 	// Where l = players
 	
+	// Allows each player to trade, and build
 	public static void turn(Player p, ArrayList<Player> l)
 	{
 		Scanner sc = new Scanner(System.in);
@@ -1026,6 +1032,7 @@ public class main
 	}
 	
 	//Play method after you initialize the players
+	// The method that runs turn in a loop
 	public static void play()
 	{
 		//Infinite loop until a player reaches 10 victory points
