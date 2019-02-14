@@ -15,7 +15,7 @@ import java.lang.Math;
 public class Vertex extends Button
 {
 	private int gridCol, gridRow;
-	private boolean hasBuilding, exists;
+	private boolean hasBuilding;
 	private Building building; 
 	int vertexID;
 	int tileID;
@@ -26,10 +26,11 @@ public class Vertex extends Button
 		tileID = 0;
 	}
 	
-	public Vertex(int x, int y)
+	//TODO: get rid of boolean b
+	public Vertex(int vertexID, int tileID, boolean b)
 	{
-		vertexID = x;
-		tileID = y;
+		this.vertexID = vertexID;
+		this.tileID = tileID;
 	}
 	
 	public Vertex(Vertex v)
@@ -38,10 +39,8 @@ public class Vertex extends Button
 		tileID = v.tileID;
 	}
 	
-	public Vertex(int row, int col, boolean exists) 
+	public Vertex(int row, int col) 
 	{
-		super("");
-		this.exists = exists;
 		gridRow = row;		
 		gridCol = col;
 	}
@@ -64,16 +63,6 @@ public class Vertex extends Button
 	public void setHasBuilding(boolean hasBuilding) 
 	{
 		this.hasBuilding = hasBuilding;
-	}
-
-	public boolean getExists() 
-	{
-		return exists;
-	}
-
-	public void setExists(boolean exists) 
-	{
-		this.exists = exists;
 	}
 
 	public Building getBuilding() 

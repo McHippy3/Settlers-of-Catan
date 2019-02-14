@@ -29,25 +29,28 @@ import java.util.ArrayList;
 
 public class OfflineGameScene extends StackPane
 {
-	private Vertex vertexes[][];
+	private VertexLink vertexes[][];
 	private Edge edges[][];
 	private double xOffSet, yOffSet, sf;
+	private int currentPlayer;
 	private boolean buildMode;
 	private Group gameTiles, resourceImages;
 	private BorderPane borderPane;
 	private VBox center, leftBox, rightBox;
 	private HBox commandPanel;
+	private GridPane[] playerTiles;
 	private ArrayList<Player> players;
 	
-	public OfflineGameScene(Vertex[][] vertexes, Edge[][] edges, ArrayList<Player> players) 
+	public OfflineGameScene(VertexLink[][] vertexes, Edge[][] edges, ArrayList<Player> players) 
 	{		
 		//Initializing StackPane
 		super();
 		
-		//Integer properties
+		//Numeric properties
 		sf = 0.60;
         xOffSet = 65 * sf;
         yOffSet = 125 * sf;
+        currentPlayer = -1;
         
         //Copying matrices
         this.vertexes = vertexes;
@@ -60,10 +63,8 @@ public class OfflineGameScene extends StackPane
         buildMode = false;
         
 		//Creating GUI and initializing
-		initializeVertexes();
-		initializeEdges();
 		initializeGUI();
-		updateGUI();
+		updateGUI(vertexes, edges, players);
 	}
 	
 	private void initializeGUI() 
@@ -97,7 +98,7 @@ public class OfflineGameScene extends StackPane
 		rightBox.setSpacing(25);
 		
 		//Player Tiles
-        GridPane[] playerTiles = new GridPane[4];
+        playerTiles = new GridPane[4];
         for(int i = 0; i < playerTiles.length; i++)
         {
             playerTiles[i] = new GridPane();
@@ -107,7 +108,7 @@ public class OfflineGameScene extends StackPane
             playerTiles[i].setVgap(5);
             playerTiles[i].setHgap(5);
             playerTiles[i].add(new Text(players.get(i).getName()), 0, 0, 2, 1);
-            playerTiles[i].add(new Text("Points: " + i), 0, 1, 1, 1);
+            playerTiles[i].add(new Text("Victory Points: " + players.get(i).getVP()), 0, 1, 1, 1);
 
             //Setting Color
             BackgroundFill backgroundFill;
@@ -214,7 +215,7 @@ public class OfflineGameScene extends StackPane
 			{
 				/*Circle cir = new Circle( xOffSet + c * 105 * sf, yOffSet + y[r] * sf - 10, 3);
 				gameTiles.getChildren().add(cir);*/
-				if(vertexes[r][c].getExists()) 
+				if(vertexes[r][c] != null) 
 				{
 					vertexes[r][c].setLayoutX(xOffSet + c * 105 * sf - 15);
 			        vertexes[r][c].setLayoutY(yOffSet + y[r] * sf - 25);
@@ -230,7 +231,7 @@ public class OfflineGameScene extends StackPane
         {
         	for(int c = 0; c < 11; c++) 
         	{
-        		if(edges[r][c].getExists() && !edges[r][c].getHasRoad()) 
+        		if(edges[r][c] != null && !edges[r][c].getHasRoad()) 
         		{
 	        		edges[r][c].setLayoutX((r%2)*30+ (xOffSet/2) + c * 104 * sf - 20);
 					edges[r][c].setLayoutY(yOffSet + y[r] * sf - 20);
@@ -247,7 +248,7 @@ public class OfflineGameScene extends StackPane
         commandPanel.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
         commandPanel.setBorder(new Border
         		(new BorderStroke
-        				(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(0), new BorderWidths(1))
+        				(Color.YELLOW, BorderStrokeStyle.SOLID, new CornerRadii(0), new BorderWidths(1))
         		));
         
         center.getChildren().addAll(gameTiles, commandPanel);
@@ -260,151 +261,52 @@ public class OfflineGameScene extends StackPane
 		getChildren().add(borderPane);
 	}
 	
-	private void initializeVertexes() 
+	public void updateGUI(VertexLink[][] vertexes, Edge[][] edges, ArrayList<Player> players) 
 	{
-		//List of all the vertexes based on the main grid system
-		int[] rowExists = {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11};
-		int[] colExists = {3, 5, 7, 2, 4, 6, 8, 2, 4, 6, 8, 1, 3, 5, 7, 9, 1, 3, 5, 7, 9, 0, 2, 4, 6, 8, 10, 0, 2, 4, 6, 8, 10, 1, 3, 5, 7, 9, 1, 3, 5, 7, 9, 2, 4, 6, 8, 2, 4, 6, 8, 3, 5, 7};
-		int count = 0;
-		for(int r = 0; r < 12; r++) 
-		{
-			for(int c = 0; c < 11; c++) 
-			{
-				//If vertex exists, then set it up
-				if(count != rowExists.length && r == rowExists[count] && c == colExists[count]) 
-				{
-					//Setting properties
-					vertexes[r][c] = new Vertex(r, c, true);
-					vertexes[r][c].setHasBuilding(false);
-					vertexes[r][c].setMaxSize(30, 30);
-					vertexes[r][c].setPrefSize(30, 30);
-					vertexes[r][c].setDisable(true);
-					vertexes[r][c].setStyle("-fx-background-color: transparent;");
-					
-					//MouseEvents
-					vertexes[r][c].setOnMouseClicked(
-							(MouseEvent e) -> {
-								Vertex v = (Vertex) e.getSource();
-								v.setHasBuilding(true);
-								//Disable buttons after build
-								disableBuild();
-								System.out.println("Vertex Clicked " + v.getGridRow() + " " + v.getGridCol());
-								Platform.runLater(new Runnable() 
-								{
-									@Override
-									public void run() 
-									{
-										System.out.println("Updating");
-										updateGUI();
-									}
-								});
-							}
-							);
-					vertexes[r][c].setOnMouseEntered(
-							(me) -> 
-							{
-								Vertex v = (Vertex) me.getSource();
-								v.setStyle("-fx-background-color: #fcffaa");
-							}
-						);
-					vertexes[r][c].setOnMouseExited(
-							(me) -> 
-							{
-								Vertex v = (Vertex) me.getSource();
-								v.setStyle("-fx-background-color: transparent");
-							}
-						);
-					count++;
-				}
-				else 
-				{
-					vertexes[r][c] = new Vertex(r, c, false);
-				}
-					
-			}
-		}
-	}
-	
-	private void initializeEdges() 
-	{
-		//Lists of edges that exist
-		int[] rowExists = {0,0,0,0,0,0,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,9,9,9,9,10,10,10,10,10,10};
-		int[] colExists = {3,4,5,6,7,8,2,4,6,8,2,3,4,5,6,7,8,9,1,3,5,7,9,1,2,3,4,5,6,7,8,9,10,0,2,4,6,8,10,1,2,3,4,5,6,7,8,9,10,1,3,5,7,9,2,3,4,5,6,7,8,9,2,4,6,8,3,4,5,6,7,8};
+		//Get most recent version of the game state
+		this.vertexes = vertexes;
+		this.edges = edges;
+		this.players = players;
 		
-		int count = 0;
-		for(int r = 0; r < 11; r++) 
+		//Player Tiles
+		for(int i = 0; i < 4; i++) 
 		{
-			for(int c = 0; c < 11; c++) 
+			//Finding and removing victory point labels
+			for(int i2 = 0; i2 < playerTiles[i].getChildren().size(); i2++) 
 			{
-				//Only initialize edge if it exists on the grid
-				if(count != rowExists.length && r == rowExists[count] && c == colExists[count]) 
+				Node node = playerTiles[i].getChildren().get(i2);
+				if(node instanceof Text && ((Text) node).getText().contains("Victory Points: "))
 				{
-					edges[r][c] = new Edge(r, c, true);
-					edges[r][c].setHasRoad(false);
-					edges[r][c].setMaxSize(30, 30);
-					edges[r][c].setPrefSize(30, 30);
-					edges[r][c].setDisable(true);
-					edges[r][c].setStyle("-fx-background-color: transparent;");
-					//MouseEvents 
-					edges[r][c].setOnMouseClicked(
-							(MouseEvent me) -> 
-							{
-								Edge e = (Edge) me.getSource();
-								e.setHasRoad(true);
-								System.out.println("Edge Clicked " + e.getGridRow() + " " + e.getGridCol());
-								//Disable after build
-								disableBuild();
-								Platform.runLater(new Runnable() 
-								{
-									@Override
-									public void run() 
-									{
-										System.out.println("Updating");
-										updateGUI();
-									}
-								});
-							}
-							);
-					edges[r][c].setOnMouseEntered(
-							(me) -> 
-							{
-								Edge e = (Edge) me.getSource();
-								e.setStyle("-fx-background-color: #aafffa");
-							}
-						);
-					edges[r][c].setOnMouseExited(
-							(me) -> 
-							{
-								Edge e = (Edge) me.getSource();
-								e.setStyle("-fx-background-color: transparent");
-							}
-						);
-					count++;
+					playerTiles[i].getChildren().remove(node);
+					break;
 				}
-				else 
-				{
-					edges[r][c] = new Edge(r, c, false);
-				}
-					
 			}
+			
+			//Updating victory points Text
+			Text updatedPlayerText = new Text("Victory Points: " + players.get(i).getVP());
+			playerTiles[i].add(updatedPlayerText, 0, 1, 1, 1);
+			
+			//Distinguish current player
+			if(currentPlayer == i) 
+            {
+				playerTiles[i].setBorder(new Border(new BorderStroke(Color.YELLOW, BorderStrokeStyle.SOLID, new CornerRadii(0), new BorderWidths(10))));
+            }
 		}
-	}
-	
-	private void updateGUI() 
-	{
+		
         //Roads        
         double[] y = new double[] { 15, 120, 200, 300, 380, 480, 560, 660, 740, 840, 910, 1040, 100, 1210};
         for(int r = 0; r < 11; r++) 
         {
         	for(int c = 0; c < 11; c++) 
 			{
-        		if(edges[r][c].getExists() && edges[r][c].getHasRoad()) 
+        		if(edges[r][c] != null && edges[r][c].getHasRoad()) 
         		{
 					ImageView roadImg = new ImageView(new Image("res/roads/blue_road.png"));
 			        roadImg.setFitHeight(48);
 			        roadImg.setFitWidth(12);
 			        roadImg.setX((((edges[r][c].getGridRow()%2)*30)+ (xOffSet/2) + edges[r][c].getGridCol() * 104 * sf)-10);
 			        roadImg.setY(( yOffSet + y[edges[r][c].getGridRow()] * sf)-25);
+			        
 			        //Determine whether road is slanted, on even row, odd row, etc.
 			        if (edges[r][c].getGridRow()%2==0)
 			        {
@@ -438,14 +340,15 @@ public class OfflineGameScene extends StackPane
         {
         	for(int c = 0; c < 11; c++) 
 			{
-				if(vertexes[r][c].getExists() && vertexes[r][c].getHasBuilding()) 
+				if(vertexes[r][c] != null && vertexes[r][c].getHasBuilding()) 
 				{
 			        ImageView settlementImg = new ImageView(new Image("res/settlements/blue_settlement.png"));
 			        settlementImg.setX(xOffSet + c * 105 * sf - 15);
 			        settlementImg.setY(yOffSet + y[r] * sf - 25);
 			        settlementImg.setFitHeight(30);
 			        settlementImg.setFitWidth(30);
-			        gameTiles.getChildren().add(settlementImg);
+			        //Place images at index 20 to be on top of tiles but below buttons
+			        gameTiles.getChildren().add(20, settlementImg);
 				}
 				
         	}
@@ -458,19 +361,41 @@ public class OfflineGameScene extends StackPane
         //Build Options
         if(buildMode) 
         {
-        	VBox buildOptions = new VBox();
-        	buildOptions.setSpacing(25);
-        	buildOptions.setPadding(new Insets(10));
+        	GridPane buildOptions = new GridPane();
+        	buildOptions.setPrefWidth(650);
         	buildOptions.setAlignment(Pos.CENTER);
+        	buildOptions.setVgap(25.0);
+        	buildOptions.setHgap(25.0);
+        	buildOptions.setPadding(new Insets(10));
     		Text buildLabel = new Text("Would you like to build?");
-    		Button yesButton = new Button("Yes");
-    		yesButton.setPrefWidth(100);
-    		Button noButton = new Button("No");
-    		noButton.setPrefWidth(100);
+    		buildOptions.add(buildLabel, 0, 0, 2, 2);
     		
-    		//Enable all build buttons
-    		yesButton.setOnMouseClicked(
-    				(MouseEvent e) -> enableBuild()
+    		//Build Buttons
+    		Button build1Button = new Button("Road");
+    		build1Button.setPrefWidth(150);
+    		buildOptions.add(build1Button, 2, 0);
+    		
+    		Button build2Button = new Button("Settlement");
+    		build2Button.setPrefWidth(150);
+    		buildOptions.add(build2Button, 3, 0);
+    		
+    		Button build3Button = new Button("Upgrade Settlement");
+    		build3Button.setPrefWidth(150);
+    		buildOptions.add(build3Button, 2, 1);
+
+    		Button noButton = new Button("No");
+    		noButton.setPrefWidth(150);
+    		buildOptions.add(noButton, 3, 1);
+    		
+    		//Build Button mouse events
+    		build1Button.setOnMouseClicked(
+    				(MouseEvent e) -> enableBuild(1)
+    				);
+    		build2Button.setOnMouseClicked(
+    				(MouseEvent e) -> enableBuild(2)
+    				);
+    		build3Button.setOnMouseClicked(
+    				(MouseEvent e) -> enableBuild(3)
     				);
     		
     		//Disable all build buttons
@@ -480,19 +405,13 @@ public class OfflineGameScene extends StackPane
     					disableBuild(); 
     					buildMode = false;
     					//Update GUI to remove build options
-    					Platform.runLater(new Runnable() 
+    					Platform.runLater(() ->
 						{
-							@Override
-							public void run() 
-							{
 								System.out.println("Updating");
-								updateGUI();
-							}
+								updateGUI(vertexes, edges, players);
 						});
     				});
-    		
-    		buildOptions.getChildren().addAll(buildLabel, yesButton, noButton);
-    		
+    		    		
     		commandPanel.getChildren().add(buildOptions);
         }
         
@@ -523,26 +442,32 @@ public class OfflineGameScene extends StackPane
         commandPanel.getChildren().add(resourceImages);
 	}
 
-	private void enableBuild() 
+	public void enableBuild(int buildCode) 
 	{
-		//Enables all build spots that haven't been used
-		
+		/*Allow build option according to a code
+		 * 1. New Road
+		 * 2. New Settlement
+		 * 3. Upgrade Settlement to City
+		 */
 		for(Edge[] r: edges) 
 		{
 			for(Edge e: r) 
 			{
-				if(e.getExists() && !e.getHasRoad()) 
+				if(e != null && !e.getHasRoad() && buildCode == 1) 
 				{
 					e.setDisable(false);
 				}
 			}
 		}
-		
-		for(Vertex[] r: vertexes) 
+		for(VertexLink[] r: vertexes) 
 		{
-			for(Vertex v: r) 
+			for(VertexLink v: r) 
 			{
-				if(v.getExists() && !v.getHasBuilding()) 
+				if(v != null && !v.getHasBuilding() && buildCode == 2) 
+				{
+					v.setDisable(false);
+				}
+				else if(v != null && v.getHasBuilding() && buildCode == 3) 
 				{
 					v.setDisable(false);
 				}
@@ -550,26 +475,25 @@ public class OfflineGameScene extends StackPane
 		}
 	}
 	
-	private void disableBuild() 
+	public void disableBuild() 
 	{
-		//Disables all build spots that haven't been used
-		
+		//Disables all build spots
 		for(Edge[] r: edges) 
 		{
 			for(Edge e: r) 
 			{
-				if(e.getExists()) 
+				if(e != null) 
 				{
 					e.setDisable(true);
 				}
 			}
 		}
 		
-		for(Vertex[] r: vertexes) 
+		for(VertexLink[] r: vertexes) 
 		{
-			for(Vertex v: r) 
+			for(VertexLink v: r) 
 			{
-				if(v.getExists()) 
+				if(v != null) 
 				{
 					v.setDisable(true);
 				}
@@ -577,9 +501,10 @@ public class OfflineGameScene extends StackPane
 		}
 	}
 	
-	public void requestBuild(int playerNum) 
+	public void requestBuild(int playerNum)
 	{
 		buildMode = true;
-		updateGUI();
+		currentPlayer = playerNum;
+		updateGUI(vertexes, edges, players);
 	}
 }

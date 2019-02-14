@@ -1,10 +1,6 @@
 package org.settlersofcatan;
 
-import java.io.*;
-import java.lang.*;
-import static java.lang.System.*;
 import java.util.*;
-import org.settlersofcatan.*;
 
 public class main 
 {
@@ -16,40 +12,8 @@ public class main
 	static String input;
 	static boolean playagain = false;
 	
-	public static void main(String[] agrs)
-	{
-		/*Player p1 = new Player();
-		p1.playerName = "David";
-		Player p2 = new Player();
-		p2.playerName = "Chris";
-		Player p3 = new Player();
-		p3.playerName = "Mathiew";
-		Player p4 = new Player();
-		p4.playerName = "Noah";
-		
-		playerList.add(p1);
-		playerList.add(p2);
-		playerList.add(p3);
-		playerList.add(p4);
-		
-		while(checkWin(playerList) == false)
-		{
-			if(checkWin(playerList) == true)
-			{
-				break;
-			}
-			
-			// Game loop
-		} 
-		
-		Tile t1 = new Tile("brick", 1);
-		Tile t2 = new Tile("sheep", 2);
-		Tile t3 = new Tile("stone", 3);
-		
-		Tile[]r1A = {t1, t2, t3};
-		
-		Line r1 = new Line(r1A); */
-		
+	public static void main(String[] args)
+	{	
 		// 19 Total Tiles
 		Tile[] tileArray = new Tile[19];
 		

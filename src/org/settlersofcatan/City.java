@@ -1,9 +1,31 @@
 package org.settlersofcatan;
 
-public class City extends Building
+import java.util.ArrayList;
+import java.util.Scanner;
+import static java.lang.System.*;
+import java.awt.Color;
+import java.io.*;
+import java.lang.Math;
+
+public class City 
 {
-	public City(int gridrow, int gridcol, Player player) 
+	Player p;
+	VertexLink v;
+	
+	public City()
 	{
-		super(gridrow, gridcol, player);
+		p = null;
+		v = null;
+	}
+	
+	public City(Player p)
+	{
+		this.p = p;
+	}
+	
+	public City(Player i, VertexLink l)
+	{
+		p = i;
+		v = l;
 	}
 }

@@ -12,7 +12,7 @@ public class Edge extends Button{
 	private int gridRow, gridCol;
 	private int mainGridRowStart, mainGridColStart;
 	private int mainGridRowEnd, mainGridColEnd;
-	private boolean hasRoad, exists;
+	private boolean hasRoad;
 	private int gridX;
 	private int gridY;
 	private int startGridRow;
@@ -35,9 +35,8 @@ public class Edge extends Button{
 		gridY = b;
 	}
 	
-	public Edge(int row, int col, boolean exists) 
+	public Edge(int row, int col) 
 	{
-		this.exists = exists;
 		gridRow = row;		
 		gridCol = col;	
 		
@@ -123,17 +122,6 @@ public class Edge extends Button{
 	public void setHasRoad(boolean hasRoad) 
 	{
 		this.hasRoad = hasRoad;
-	}
-	
-	
-	public boolean getExists() 
-	{
-		return exists;
-	}
-
-	public void setExists(boolean exists) 
-	{
-		this.exists = exists;
 	}
 
 	public int getMainGridRowStart() {

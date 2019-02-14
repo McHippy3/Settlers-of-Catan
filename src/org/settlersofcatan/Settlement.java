@@ -1,17 +1,31 @@
 package org.settlersofcatan;
 
-public class Settlement extends Building
-{	
+import java.util.ArrayList;
+import java.util.Scanner;
+import static java.lang.System.*;
+import java.awt.Color;
+import java.io.*;
+import java.lang.Math;
+
+public class Settlement 
+{
 	Player p;
-	public Settlement(int gridrow, int gridcol, Player player)
-	{
-		super(gridrow, gridcol, player);
-		p = null;
-	}	
+	VertexLink v;
 	
-	public Settlement(Player x)
+	public Settlement()
 	{
-		super(x);
+		p = null;
+		v = null;
 	}
 	
+	public Settlement(Player p)
+	{
+		this.p = p;
+	}
+	
+	public Settlement(Player i, VertexLink l)
+	{
+		p = i;
+		v = l;
+	}
 }

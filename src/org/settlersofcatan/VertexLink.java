@@ -6,9 +6,13 @@ import static java.lang.System.*;
 import java.util.*;
 import org.settlersofcatan.*;
 
-public class VertexLink 
+import javafx.scene.control.Button;
+
+public class VertexLink extends Button
 {
 	Vertex[] v;
+	int gridRow, gridCol;
+	boolean hasBuilding;
 	
 	public VertexLink()
 	{
@@ -20,6 +24,32 @@ public class VertexLink
 		v = v1;
 	}
 	
+	public VertexLink(int row, int col)
+	{
+		gridRow = row;
+		gridCol = col;
+	}
+	
+	public int getGridRow() 
+	{
+		return gridRow;
+	}
+	
+	public int getGridCol() 
+	{
+		return gridCol;
+	}
+	
+	public boolean getHasBuilding() 
+	{
+		return hasBuilding;
+	}
+
+	public void setHasBuilding(boolean hasBuilding) 
+	{
+		this.hasBuilding = hasBuilding;
+	}
+
 	public String toString(Vertex v)
 	{
 		return v.tileID+", "+v.vertexID;
