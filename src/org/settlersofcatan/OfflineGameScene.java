@@ -41,6 +41,11 @@ public class OfflineGameScene extends StackPane
 	private GridPane[] playerTiles;
 	private ArrayList<Player> players;
 	
+	/************************************************************************************
+	 ************************************************************************************
+	 * INITIALIZE GUI *
+	 ************************************************************************************
+	 ************************************************************************************/
 	public OfflineGameScene(VertexLink[][] vertexes, Edge[][] edges, ArrayList<Player> players) 
 	{		
 		//Initializing StackPane
@@ -261,6 +266,12 @@ public class OfflineGameScene extends StackPane
 		getChildren().add(borderPane);
 	}
 	
+	/************************************************************************************
+	 ************************************************************************************
+	 * UPDATE METHODS *
+	 ************************************************************************************
+	 ************************************************************************************/
+	
 	public void updateGUI(VertexLink[][] vertexes, Edge[][] edges, ArrayList<Player> players) 
 	{
 		//Get most recent version of the game state
@@ -269,6 +280,21 @@ public class OfflineGameScene extends StackPane
 		this.players = players;
 		
 		//Player Tiles
+		updatePlayerTiles();
+		
+		//Roads
+        updateRoads();
+        
+        //Settlements + Vertexes
+        updateBuildings();
+        
+        //Command Panel Elements/Nodes
+        updateCommandPanel();
+	}
+	
+	//Update GUI helper
+	private void updatePlayerTiles() 
+	{
 		for(int i = 0; i < 4; i++) 
 		{
 			//Finding and removing victory point labels
@@ -291,9 +317,16 @@ public class OfflineGameScene extends StackPane
             {
 				playerTiles[i].setBorder(new Border(new BorderStroke(Color.YELLOW, BorderStrokeStyle.SOLID, new CornerRadii(0), new BorderWidths(10))));
             }
+			else 
+			{
+				playerTiles[i].setBorder(null);
+			}
 		}
-		
-        //Roads        
+	}
+	
+	//UpdateGUI helper
+	private void updateRoads() 
+	{
         double[] y = new double[] { 15, 120, 200, 300, 380, 480, 560, 660, 740, 840, 910, 1040, 100, 1210};
         for(int r = 0; r < 11; r++) 
         {
@@ -333,9 +366,12 @@ public class OfflineGameScene extends StackPane
         		}
         	}
         }
-        
-        //Settlements + Vertexes
-        y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
+	}
+	
+	//Update GUI helper
+	private void updateBuildings() 
+	{
+		double[] y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
         for(int r = 0; r < 12; r++) 
         {
         	for(int c = 0; c < 11; c++) 
@@ -350,12 +386,14 @@ public class OfflineGameScene extends StackPane
 			        //Place images at index 20 to be on top of tiles but below buttons
 			        gameTiles.getChildren().add(20, settlementImg);
 				}
-				
         	}
         }
-        
-        //Command Panel Elements/Nodes
-        //Removing all nodes from the command panel so that they don't stack
+	}
+	
+	//Update GUI helper
+	private void updateCommandPanel() 
+	{
+		//Removing all nodes from the command panel so that they don't stack
         commandPanel.getChildren().clear();
         
         //Drawing Resource Cards
@@ -384,7 +422,7 @@ public class OfflineGameScene extends StackPane
         }
         commandPanel.getChildren().add(resourceImages);
 	}
-
+	
 	public void enableBuild(int buildCode) 
 	{
 		/*Allow build option according to a code

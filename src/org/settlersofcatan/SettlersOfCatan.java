@@ -135,12 +135,14 @@ public class SettlersOfCatan extends Application
 				(MouseEvent e) -> 
 				{
 					offlineGameScene.disableBuild(); 
-					//Update GUI to remove build options
-					Platform.runLater(() ->
+					System.out.println("Next Player Turn");
+					//offlineGameScene.updateGUI(vertexes, edges, players);
+					currentPlayer++;
+					if(currentPlayer == 4) 
 					{
-							System.out.println("Updating");
-							offlineGameScene.updateGUI(vertexes, edges, players);
-					});
+						currentPlayer = 0;
+					}
+					build();
 				});
 		offlineGameScene.requestBuild(currentPlayer, build1Button, build2Button, build3Button, noButton);
 	}
@@ -182,6 +184,10 @@ public class SettlersOfCatan extends Application
 									{
 										System.out.println("Updating");
 										offlineGameScene.updateGUI(vertexes, edges, players);
+										
+										//Grant Points to player that owns the Settlement/Upgraded
+										players.get(currentPlayer).victoryPoints++;
+										
 										//Call build again after being clicked
 										build();
 									}
