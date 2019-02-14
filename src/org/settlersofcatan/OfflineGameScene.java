@@ -358,63 +358,6 @@ public class OfflineGameScene extends StackPane
         //Removing all nodes from the command panel so that they don't stack
         commandPanel.getChildren().clear();
         
-        //Build Options
-        if(buildMode) 
-        {
-        	GridPane buildOptions = new GridPane();
-        	buildOptions.setPrefWidth(650);
-        	buildOptions.setAlignment(Pos.CENTER);
-        	buildOptions.setVgap(25.0);
-        	buildOptions.setHgap(25.0);
-        	buildOptions.setPadding(new Insets(10));
-    		Text buildLabel = new Text("Would you like to build?");
-    		buildOptions.add(buildLabel, 0, 0, 2, 2);
-    		
-    		//Build Buttons
-    		Button build1Button = new Button("Road");
-    		build1Button.setPrefWidth(150);
-    		buildOptions.add(build1Button, 2, 0);
-    		
-    		Button build2Button = new Button("Settlement");
-    		build2Button.setPrefWidth(150);
-    		buildOptions.add(build2Button, 3, 0);
-    		
-    		Button build3Button = new Button("Upgrade Settlement");
-    		build3Button.setPrefWidth(150);
-    		buildOptions.add(build3Button, 2, 1);
-
-    		Button noButton = new Button("No");
-    		noButton.setPrefWidth(150);
-    		buildOptions.add(noButton, 3, 1);
-    		
-    		//Build Button mouse events
-    		build1Button.setOnMouseClicked(
-    				(MouseEvent e) -> enableBuild(1)
-    				);
-    		build2Button.setOnMouseClicked(
-    				(MouseEvent e) -> enableBuild(2)
-    				);
-    		build3Button.setOnMouseClicked(
-    				(MouseEvent e) -> enableBuild(3)
-    				);
-    		
-    		//Disable all build buttons
-    		noButton.setOnMouseClicked(
-    				(MouseEvent e) -> 
-    				{
-    					disableBuild(); 
-    					buildMode = false;
-    					//Update GUI to remove build options
-    					Platform.runLater(() ->
-						{
-								System.out.println("Updating");
-								updateGUI(vertexes, edges, players);
-						});
-    				});
-    		    		
-    		commandPanel.getChildren().add(buildOptions);
-        }
-        
         //Drawing Resource Cards
         resourceImages = new Group();
         String[] resourceImageLoc = {"res/resource_cards/brick.jpg", "res/resource_cards/grain.jpg", "res/resource_cards/ore.jpg", "res/resource_cards/sheep.jpg", "res/resource_cards/wood.jpg"};
@@ -501,10 +444,35 @@ public class OfflineGameScene extends StackPane
 		}
 	}
 	
-	public void requestBuild(int playerNum)
+	public void requestBuild(int playerNum, Button build1Button, Button build2Button, Button build3Button, Button noButton)
 	{
 		buildMode = true;
 		currentPlayer = playerNum;
 		updateGUI(vertexes, edges, players);
-	}
+		
+		//Build Options
+    	GridPane buildOptions = new GridPane();
+    	buildOptions.setPrefWidth(650);
+    	buildOptions.setAlignment(Pos.CENTER);
+    	buildOptions.setVgap(25.0);
+    	buildOptions.setHgap(25.0);
+    	buildOptions.setPadding(new Insets(10));
+		Text buildLabel = new Text("Would you like to build?");
+		buildOptions.add(buildLabel, 0, 0, 2, 2);
+		
+		//Build Buttons
+		build1Button.setPrefWidth(150);
+		buildOptions.add(build1Button, 2, 0);
+		
+		build2Button.setPrefWidth(150);
+		buildOptions.add(build2Button, 3, 0);
+		
+		build3Button.setPrefWidth(150);
+		buildOptions.add(build3Button, 2, 1);
+
+		noButton.setPrefWidth(150);
+		buildOptions.add(noButton, 3, 1);
+		    		
+		commandPanel.getChildren().add(buildOptions);
+    }
 }

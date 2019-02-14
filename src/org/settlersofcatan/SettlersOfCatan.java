@@ -44,6 +44,7 @@ public class SettlersOfCatan extends Application
 	 ************************************************************************************
 	 ************************************************************************************/
 	
+	private int currentPlayer;
 	private Scene mainScene;
 	private OfflineGameScene offlineGameScene;
 	private Stage stage;
@@ -57,6 +58,8 @@ public class SettlersOfCatan extends Application
 		Button startButton = new Button("Start Game");
 		
 		mainScene = new Scene((Parent) Scenes.titleScene(startButton));
+		
+		currentPlayer = 0;
 
 		//Setting stage
 		stage.setScene(mainScene);
@@ -84,8 +87,7 @@ public class SettlersOfCatan extends Application
 		//Starts Game
 		submitButton.setOnMouseClicked(
 				(MouseEvent e) -> {
-					//String[] names = {name1.getText(), name2.getText(), name3.getText(), name4.getText()};
-					String[] names = {"Player 1", "Player 2", "Player 3", "Player 4"};
+					String[] names = {name1.getText(), name2.getText(), name3.getText(), name4.getText()};
 					gameStart(names);
 					setOfflineGameScene();
 					}
@@ -97,22 +99,41 @@ public class SettlersOfCatan extends Application
 		initializeVertexes();
 		initializeEdges();
 		offlineGameScene = new OfflineGameScene(vertexes, edges, players);
-		/*Task <Void> changeToBoardScene = new Task<Void> () 
-		{
-			@Override
-			protected Void call() 
-			{
-				System.out.println("Doing Stuff");
-				Platform.runLater(() -> mainScene.setRoot(offlineGameScene));
-				
-				return null;
-			}
-		};
-		new Thread(changeToBoardScene).start();*/
-		//new Thread(() -> mainScene.setRoot(offlineGameScene)).start();
 		mainScene.setRoot(offlineGameScene);
-		offlineGameScene.requestBuild(1);
-		//play();
+		build();
+	}
+	
+	private void build() 
+	{
+		//Build Button mouse events
+		Button build1Button = new Button("Road");
+		Button build2Button = new Button("Settlement");
+		Button build3Button = new Button("UpgradeSettlement");
+		Button noButton = new Button("No");
+
+		build1Button.setOnMouseClicked(
+				(MouseEvent e) -> offlineGameScene.enableBuild(1)
+				);
+		build2Button.setOnMouseClicked(
+				(MouseEvent e) -> offlineGameScene.enableBuild(2)
+				);
+		build3Button.setOnMouseClicked(
+				(MouseEvent e) -> offlineGameScene.enableBuild(3)
+				);
+		
+		//Disable all build buttons
+		noButton.setOnMouseClicked(
+				(MouseEvent e) -> 
+				{
+					offlineGameScene.disableBuild(); 
+					//Update GUI to remove build options
+					Platform.runLater(() ->
+					{
+							System.out.println("Updating");
+							offlineGameScene.updateGUI(vertexes, edges, players);
+					});
+				});
+		offlineGameScene.requestBuild(currentPlayer, build1Button, build2Button, build3Button, noButton);
 	}
 	
 	private void initializeVertexes() 
@@ -280,7 +301,7 @@ public class SettlersOfCatan extends Application
 	{
 		//Infinite loop until a player reaches 10 victory points
 		do
-		{	
+		{
 			//Loop through the list of players 
 			for(int x = 0; x < players.size(); x++)
 			{
@@ -300,10 +321,7 @@ public class SettlersOfCatan extends Application
 				//Breaks the infinite turn loop
 				if(gameInProgress == false)
 					break;
-				
-				//Specific player's turn
-				offlineGameScene.requestBuild(x);
-				
+								
 				//turn(players.get(x), players);
 				System.out.println("Are you finished with your turn? (Y/N)");
 				sc.nextLine();
