@@ -44,6 +44,7 @@ public class SettlersOfCatan extends Application
 	 ************************************************************************************
 	 ************************************************************************************/
 	
+	//TODO wool or sheep, order in listInventory()
 	private int currentPlayer;
 	private Scene mainScene;
 	private OfflineGameScene offlineGameScene;
@@ -287,12 +288,12 @@ public class SettlersOfCatan extends Application
 		}
 	}
 	
-	
 	/************************************************************************************
 	 ************************************************************************************
 	 * GAME STUFF *
 	 ************************************************************************************
 	 ************************************************************************************/
+	
 	private ArrayList<Player> players = new ArrayList<>();
 	private Boolean gameloop = true;
 	private int playernumber = 0;
@@ -309,7 +310,7 @@ public class SettlersOfCatan extends Application
 			resList.add(new ResourceCard("brick"));
 			resList.add(new ResourceCard("ore"));
 			resList.add(new ResourceCard("grain"));
-			resList.add(new ResourceCard("sheep"));
+			resList.add(new ResourceCard("wool"));
 			resList.add(new ResourceCard("wood"));
 			players.add(new Player(null, 0, names[i], resList));
 		}

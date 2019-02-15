@@ -46,6 +46,7 @@ public class OfflineGameScene extends StackPane
 	 * INITIALIZE GUI *
 	 ************************************************************************************
 	 ************************************************************************************/
+	
 	public OfflineGameScene(VertexLink[][] vertexes, Edge[][] edges, ArrayList<Player> players) 
 	{		
 		//Initializing StackPane
@@ -55,7 +56,7 @@ public class OfflineGameScene extends StackPane
 		sf = 0.60;
         xOffSet = 65 * sf;
         yOffSet = 125 * sf;
-        currentPlayer = -1;
+        currentPlayer = 0;
         
         //Copying matrices
         this.vertexes = vertexes;
@@ -413,7 +414,7 @@ public class OfflineGameScene extends StackPane
         //Placing Numbers Beside Resource Cards
         for(int i = 0; i < 5; i++) 
         {
-        	Text t = new Text(730 + i * 130, 170, "" + i);
+        	Text t = new Text(730 + i * 130, 170, "" + players.get(currentPlayer).countInventory()[i]);
         	t.setFont(Font.font("Arial", 20));
         	t.setFill(Color.WHITE);
         	t.setStroke(Color.WHITE);
