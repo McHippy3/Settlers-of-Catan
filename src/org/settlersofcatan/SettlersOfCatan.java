@@ -60,6 +60,7 @@ public class SettlersOfCatan extends Application
 		
 		mainScene = new Scene((Parent) Scenes.titleScene(startButton));
 		
+		//Integer properties
 		currentPlayer = 0;
 
 		//Setting stage
@@ -101,10 +102,10 @@ public class SettlersOfCatan extends Application
 		initializeEdges();
 		offlineGameScene = new OfflineGameScene(vertexes, edges, players);
 		mainScene.setRoot(offlineGameScene);
-		build();
+		tradeModePhase1();
 	}
 	
-	private void build() 
+	private void buildMode() 
 	{
 		//Build Button mouse events
 		Button build1Button = new Button("Road");
@@ -131,21 +132,80 @@ public class SettlersOfCatan extends Application
 					}
 				);
 		
-		//Disable all build buttons
+		//Disable all build buttons and move onto trading
 		noButton.setOnMouseClicked(
 				(MouseEvent e) -> 
 				{
 					offlineGameScene.disableBuild(); 
 					System.out.println("Next Player Turn");
-					//offlineGameScene.updateGUI(vertexes, edges, players);
 					currentPlayer++;
 					if(currentPlayer == 4) 
 					{
 						currentPlayer = 0;
 					}
-					build();
+					tradeModePhase1();
 				});
 		offlineGameScene.requestBuild(currentPlayer, build1Button, build2Button, build3Button, noButton);
+	}
+	
+	private void tradeModePhase1() 
+	{
+		Button yesButton = new Button("Yes");
+		Button noButton = new Button("No");
+		offlineGameScene.requestTradePhaseOne(currentPlayer, yesButton, noButton);
+		yesButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeModePhase2();
+				});
+		noButton.setOnMouseClicked((MouseEvent me) -> buildMode());
+	}
+	
+	private void tradeModePhase2() 
+	{
+		//Only non current turn players
+		int[] otherPlayers = new int[3];
+		int count = 0;
+		for(int i = 0; i < 4; i++) 
+		{
+			if(i != currentPlayer)
+			{
+				otherPlayers[count] = i;
+				count++;
+			}
+		}
+				
+		Button option1Button = new Button(players.get(otherPlayers[0]).getName());
+		Button option2Button = new Button(players.get(otherPlayers[1]).getName());
+		Button option3Button = new Button(players.get(otherPlayers[2]).getName());
+		Button cancelButton = new Button("Cancel");
+
+		offlineGameScene.requestTradePhaseTwo(currentPlayer, option1Button, option2Button, option3Button, cancelButton);
+		option1Button.setOnMouseClicked(
+				(MouseEvent me) -> {
+					buildMode();
+				});
+		option2Button.setOnMouseClicked(
+				(MouseEvent me) -> {
+					buildMode();
+				});
+		option3Button.setOnMouseClicked(
+				(MouseEvent me) -> {
+					buildMode();
+				});
+		cancelButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeModePhase1();
+				});
+	}
+	
+	private void tradeModePhase3() 
+	{
+		
+	}
+	
+	private void tradeModePhase4() 
+	{
+		
 	}
 	
 	private void initializeVertexes() 
@@ -190,7 +250,7 @@ public class SettlersOfCatan extends Application
 										players.get(currentPlayer).victoryPoints++;
 										
 										//Call build again after being clicked
-										build();
+										buildMode();
 									}
 								});
 							}
@@ -258,7 +318,7 @@ public class SettlersOfCatan extends Application
 										System.out.println("Updating");
 										offlineGameScene.updateGUI(vertexes, edges, players);
 										//Call build again
-										build();
+										buildMode();
 									}
 								});
 							}

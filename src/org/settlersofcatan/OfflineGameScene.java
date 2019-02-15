@@ -33,7 +33,6 @@ public class OfflineGameScene extends StackPane
 	private Edge edges[][];
 	private double xOffSet, yOffSet, sf;
 	private int currentPlayer;
-	private boolean buildMode;
 	private Group gameTiles, resourceImages;
 	private BorderPane borderPane;
 	private VBox center, leftBox, rightBox;
@@ -64,10 +63,7 @@ public class OfflineGameScene extends StackPane
         
         //Getting Players
         this.players = players;
-        
-        //Other Variables
-        buildMode = false;
-        
+                
 		//Creating GUI and initializing
 		initializeGUI();
 		updateGUI(vertexes, edges, players);
@@ -399,7 +395,7 @@ public class OfflineGameScene extends StackPane
         
         //Drawing Resource Cards
         resourceImages = new Group();
-        String[] resourceImageLoc = {"res/resource_cards/brick.jpg", "res/resource_cards/grain.jpg", "res/resource_cards/ore.jpg", "res/resource_cards/sheep.jpg", "res/resource_cards/wood.jpg"};
+        String[] resourceImageLoc = {"res/resource_cards/brick.jpg", "res/resource_cards/grain.jpg", "res/resource_cards/ore.jpg", "res/resource_cards/wood.jpg", "res/resource_cards/wool.jpg"};
         for(int i = 0; i < 5; i++) 
         {
         	ImageView cardImg = new ImageView(resourceImageLoc[i]);
@@ -423,6 +419,12 @@ public class OfflineGameScene extends StackPane
         }
         commandPanel.getChildren().add(resourceImages);
 	}
+	
+	/************************************************************************************
+	 ************************************************************************************
+	 * BUILD METHODS *
+	 ************************************************************************************
+	 ************************************************************************************/
 	
 	public void enableBuild(int buildCode) 
 	{
@@ -485,7 +487,6 @@ public class OfflineGameScene extends StackPane
 	
 	public void requestBuild(int currentPlayer, Button build1Button, Button build2Button, Button build3Button, Button noButton)
 	{
-		buildMode = true;
 		this.currentPlayer = currentPlayer;
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
@@ -515,4 +516,84 @@ public class OfflineGameScene extends StackPane
 		    		
 		commandPanel.getChildren().add(0, buildOptions);
     }
+
+	/************************************************************************************
+	 ************************************************************************************
+	 * TRADE METHODS *
+	 ************************************************************************************
+	 ************************************************************************************/
+	
+	/*
+	 * Phase 1: yes or no to trade
+	 * Phase 2: if yes, request player to trade with
+	 * Phase 3: player 1 chooses what to request
+	 * Phase 4: player 2 chooses what to take in exchange
+	 */
+	public void requestTradePhaseOne(int currentPlayer, Button yesButton, Button noButton) 
+	{
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane tradeOptions = new GridPane();
+    	tradeOptions.setPrefWidth(650);
+    	tradeOptions.setAlignment(Pos.CENTER);
+    	tradeOptions.setVgap(25.0);
+    	tradeOptions.setHgap(25.0);
+    	tradeOptions.setPadding(new Insets(10));
+		Text tradeLabel = new Text("Would you like to trade?");
+		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
+		
+		//Build Buttons
+		yesButton.setPrefWidth(150);
+		tradeOptions.add(yesButton, 2, 0);
+
+		noButton.setPrefWidth(150);
+		tradeOptions.add(noButton, 2, 1);
+		    		
+		commandPanel.getChildren().add(0, tradeOptions);
+	}
+	
+	public void requestTradePhaseTwo(int currentPlayer, Button option1Button, Button option2Button, Button option3Button, Button cancelButton) 
+	{
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane tradeOptions = new GridPane();
+    	tradeOptions.setPrefWidth(650);
+    	tradeOptions.setAlignment(Pos.CENTER);
+    	tradeOptions.setVgap(25.0);
+    	tradeOptions.setHgap(25.0);
+    	tradeOptions.setPadding(new Insets(10));
+		Text tradeLabel = new Text("Who would you like to trade with?");
+		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
+		
+		//Build Buttons
+		option1Button.setPrefWidth(150);
+		tradeOptions.add(option1Button, 2, 0);
+		
+		option2Button.setPrefWidth(150);
+		tradeOptions.add(option2Button, 3, 0);
+		
+		option3Button.setPrefWidth(150);
+		tradeOptions.add(option3Button, 2, 1);
+
+		cancelButton.setPrefWidth(150);
+		tradeOptions.add(cancelButton, 3, 1);
+		    		
+		commandPanel.getChildren().add(0, tradeOptions);
+	}
+	
+	public void requestTradePhaseThree(int currentPlayer, Button brickButton , Button grainButton, Button oreButton, Button sheepButton, Button woodButton) 
+	{
+		
+	}
+	
+	public void requestTradePhaseFour(int currentPlayer, Button brickButton , Button grainButton, Button oreButton, Button sheepButton, Button woodButton) 
+	{
+		
+	}
 }
