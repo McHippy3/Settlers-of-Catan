@@ -224,7 +224,6 @@ public class SettlersOfCatan extends Application
 				{
 					//Setting properties
 					vertexes[r][c] = new VertexLink(r, c);
-					vertexes[r][c].setHasBuilding(false);
 					vertexes[r][c].setMaxSize(30, 30);
 					vertexes[r][c].setPrefSize(30, 30);
 					vertexes[r][c].setDisable(true);
@@ -234,7 +233,7 @@ public class SettlersOfCatan extends Application
 					vertexes[r][c].setOnMouseClicked(
 							(MouseEvent e) -> {
 								VertexLink v = (VertexLink) e.getSource();
-								v.setHasBuilding(true);
+								v.setHasBuilding(currentPlayer);
 								//Disable buttons after build
 								offlineGameScene.disableBuild();
 								System.out.println("Vertex Clicked " + v.getGridRow() + " " + v.getGridCol());
@@ -360,6 +359,8 @@ public class SettlersOfCatan extends Application
 	private Scanner sc = new Scanner(System.in);
 	private String input;
 	private Boolean gameInProgress = true, playAgain = false;
+	private Bank bank;
+	private 
 	
 	//Starting Game/Initialization
 	public void gameStart(String[] names) 
@@ -372,8 +373,9 @@ public class SettlersOfCatan extends Application
 			resList.add(new ResourceCard("grain"));
 			resList.add(new ResourceCard("wool"));
 			resList.add(new ResourceCard("wood"));
-			players.add(new Player(null, 0, names[i], resList));
+			players.add(new Player(0, names[i], resList));
 		}
+		bank = new Bank();
 	}
 	
 	//Main game loop
@@ -416,270 +418,54 @@ public class SettlersOfCatan extends Application
 		}
 		while(gameInProgress);
 	}
-	
-	//Individual Player Turns
-	private void turn(Player p, ArrayList<Player> l)
-	{
-		Scanner sc = new Scanner(System.in);
-		String p2trade;
-		System.out.println("Player: " + p.playerName + "'s turn");
 		
-		//Roll Dice
-		rollDice();
-		
-		//Trade
-		System.out.println("Do you want to trade? (Y/N)");
-		String input = sc.nextLine();
-		if(input.equalsIgnoreCase("y"))
-		{
-			System.out.println("Who do you want to trade with: ");
-			p2trade = sc.nextLine();
-			for(int x = 0; x < l.size(); x++)
-			{
-				if(p2trade.equalsIgnoreCase(l.get(x).playerName))
-				{
-					trade(p, players.get(x));
-				}
-			}
-		}
-		
-		
-		System.out.println("Do you want to build? (Y/N)");
-		input = sc.nextLine();
-		if(input.equalsIgnoreCase("y"))
-		{
-			System.out.println("Wool: " + p.resList.get(p.playerNumber).getWool(p));
-			System.out.println("Brick: " + p.resList.get(p.playerNumber).getBrick(p));
-			System.out.println("Grain: " + p.resList.get(p.playerNumber).getGrain(p));
-			System.out.println("Ore: " + p.resList.get(p.playerNumber).getOre(p));
-			System.out.println("Wood: " + p.resList.get(p.playerNumber).getWood(p));
-			
-			//Build
-			System.out.println("What do you want to build?");
-			System.out.println("1. Road");
-			System.out.println("2. Settlement");
-			System.out.println("3. Upgrade Settlement");
-			input = sc.nextLine();
-			switch(input)
-			{
-				case "1": 
-				{
-					p.buildRoad();
-					System.out.println("Wool: " + p.resList.get(p.playerNumber).getWool(p));
-					System.out.println("Brick: " + p.resList.get(p.playerNumber).getBrick(p));
-					System.out.println("Grain: " + p.resList.get(p.playerNumber).getGrain(p));
-					System.out.println("Ore: " + p.resList.get(p.playerNumber).getOre(p));
-					System.out.println("Wood: " + p.resList.get(p.playerNumber).getWood(p));
-					break;
-				}
-				case "2": 
-				{
-					p.buildSettlement();
-					System.out.println("Wool: " + p.resList.get(p.playerNumber).getWool(p));
-					System.out.println("Brick: " + p.resList.get(p.playerNumber).getBrick(p));
-					System.out.println("Grain: " + p.resList.get(p.playerNumber).getGrain(p));
-					System.out.println("Ore: " + p.resList.get(p.playerNumber).getOre(p));
-					System.out.println("Wood: " + p.resList.get(p.playerNumber).getWood(p));
-					break;
-				}
-			}
-		}
-	}
-	
-	private void trade(Player p1, Player p2)
+	public void trade(int firstPlayer, int secondPlayer)
 	{
 		Scanner sc = new Scanner(System.in);
 		
-		int[]p1Inventory = p1.countInventory();
-		int[]p2Inventory = p2.countInventory();
+		Player p1 = players.get(firstPlayer);
+		Player p2 = players.get(secondPlayer);
 		
-		boolean tradeWorks = false;
-		
-		p1.listInventory();
-		
-		p2.listInventory();
-		
-		System.out.println(p1.playerName+", what item do you want from "+p2.playerName+"?: ");
+		System.out.println(p1.playerName+" which resource do you want from "+p2.playerName+"?");
 		String ans1 = sc.nextLine();
+		System.out.println("How many?: ");
+		int quantity1 = sc.nextInt();
+		sc.nextLine();
 		
-		int qS1 = 0;
-		int qB1 = 0;
-		int qWh1 = 0;
-		int qWo1 = 0;
-		int qSt1 = 0;
+		System.out.println(p2.playerName+" which resource do you want from "+p1.playerName+"?");
+		String ans2 = sc.nextLine();
+		System.out.println("How many?: ");
+		int quantity2 = sc.nextInt();
+		sc.nextLine();
 		
-		int qS2 = 0;
-		int qB2 = 0;
-		int qWh2 = 0;
-		int qWo2 = 0;
-		int qSt2 = 0;
+
 		
-		switch(ans1)
+		if(ResourceCard.tradeWorks(p1, ans1, quantity1) == true && ResourceCard.tradeWorks(p2, ans2, quantity2) == true)
 		{
-		case "wool":
-			System.out.println("How many?: ");
-			qS1 = sc.nextInt();
-			// Trade
-			if(qS1 <= p2Inventory[0])
+			int cap1 = 0;
+			int cap2 = 0;
+			for(int x = 0;x<p2.resList.size();x++)
 			{
-				tradeWorks = true;
+				if(p2.resList.get(x).cardType.equalsIgnoreCase(ans1) && cap1 <= quantity1)
+				{
+					p2.resList.remove(x);
+					p1.resList.add(new ResourceCard(ans1.toLowerCase()));
+					cap1 += 1;
+				}
 			}
-			// Don't trade
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-			break;
-		case "brick":
-			System.out.println("How many?: ");
-			qB1 = sc.nextInt();
-			if(qB1 <= p2Inventory[1])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "grain":
-			System.out.println("How many?: ");
-			qWh1 = sc.nextInt();
-			if(qWh1 <= p2Inventory[2])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "wood":
-			System.out.println("How many?: ");
-			qWo1 = sc.nextInt();
-			if(qWo1 <= p2Inventory[3])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "ore":
-			System.out.println("How many?: ");
-			qSt1 = sc.nextInt();
-			if(qSt1 <= p2Inventory[4])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		}
-		
-		
-		
-		System.out.println(p2.playerName+", what item do you want from "+p1.playerName+"?: ");
-		String ans2 = sc.next();
-		
-		switch(ans2)
-		{
-		case "wool":
-			System.out.println("How many?: ");
-			qS2 = sc.nextInt();
-			// Trade
-			if(qS2 <= p2Inventory[0])
-			{
-				tradeWorks = true;
-				break;
-			}
-			// Don't trade
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "brick":
-			System.out.println("How many?: ");
-			qB2 = sc.nextInt();
-			if(qB2 <= p2Inventory[1])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "grain":
-			System.out.println("How many?: ");
-			qWh2 = sc.nextInt();
-			if(qWh2 <= p2Inventory[2])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "wood":
-			System.out.println("How many?: ");
-			qWo2 = sc.nextInt();
-			if(qWo2 <= p2Inventory[3])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		case "ore":
-			System.out.println("How many?: ");
-			qSt2 = sc.nextInt();
-			if(qSt2 <= p2Inventory[4])
-			{
-				tradeWorks = true;
-				break;
-			}
-			else
-			{
-				tradeWorks = false;
-				break;
-			}
-		}
-		
-		if(tradeWorks == true)
-		{
-			p2Inventory[0] += qS1;
-			p2Inventory[1] += qB1;
-			p2Inventory[2] += qWh1;
-			p2Inventory[3] += qWo1;
-			p2Inventory[4] += qS1;
 			
-			p1Inventory[0] += qS2;
-			p1Inventory[1] += qB2;
-			p1Inventory[2] += qWh2;
-			p1Inventory[3] += qWo2;
-			p1Inventory[4] += qS2;
+			for(int x = 0;x<p1.resList.size();x++)
+			{
+				if(p1.resList.get(x).cardType.equalsIgnoreCase(ans2) && cap2 <= quantity2)
+				{
+					p1.resList.remove(x);
+					p2.resList.add(new ResourceCard(ans2.toLowerCase()));
+					cap2 += 1;
+				}
+			}
 		}
-		else
-		{
-			sc.close();
-			return;
-		}
+		
+		
 	}
 	
 	//Game ends if player reaches 10 victory points

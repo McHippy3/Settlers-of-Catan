@@ -18,8 +18,6 @@ public class ResourceCard
 		cardType = s;
 	}
 	
-	// The add methods are used to add Resource Cards to a player's deck
-
 	public static void addBrick(int i, Player p)
 	{
 		for(int a = 0;a<i;a++)
@@ -60,7 +58,98 @@ public class ResourceCard
 		}
 	}
 	
-	// The get methods are used to get an amount of Resource Cards in a player's deck
+	
+	
+	
+	
+	
+	
+	
+	public static void subtractBrick(int i, Player p, Bank b)
+	{
+		int start = 0;
+		while(start < i)
+		{
+			for(int k = 0;k<p.resList.size();k++)
+			{
+				if(p.resList.get(k).cardType.equalsIgnoreCase("brick"))
+				{
+					b.brickList.add(p.resList.get(k));
+					p.resList.remove(k);
+					start += 1;
+				}
+			}
+		}
+	}
+	
+	public static void subtractWood(int i, Player p, Bank b)
+	{
+		int start = 0;
+		while(start < i)
+		{
+			for(int k = 0;k<p.resList.size();k++)
+			{
+				if(p.resList.get(k).cardType.equalsIgnoreCase("wood"))
+				{
+					b.woodList.add(p.resList.get(k));
+					p.resList.remove(k);
+					start += 1;
+				}
+			}
+		}
+	}
+	
+	public static void subtractWool(int i, Player p, Bank b)
+	{
+		int start = 0;
+		while(start < i)
+		{
+			for(int k = 0;k<p.resList.size();k++)
+			{
+				if(p.resList.get(k).cardType.equalsIgnoreCase("wool"))
+				{
+					b.woolList.add(p.resList.get(k));
+					p.resList.remove(k);
+					start += 1;
+				}
+			}
+		}
+	}
+	
+	public static void subtractGrain(int i, Player p, Bank b)
+	{
+		int start = 0;
+		while(start < i)
+		{
+			for(int k = 0;k<p.resList.size();k++)
+			{
+				if(p.resList.get(k).cardType.equalsIgnoreCase("grain"))
+				{
+					b.grainList.add(p.resList.get(k));
+					p.resList.remove(k);
+					start += 1;
+				}
+			}
+		}
+	}
+	
+	public static void subtractOre(int i, Player p, Bank b)
+	{
+		int start = 0;
+		while(start < i)
+		{
+			for(int k = 0;k<p.resList.size();k++)
+			{
+				if(p.resList.get(k).cardType.equalsIgnoreCase("ore"))
+				{
+					b.oreList.add(p.resList.get(k));
+					p.resList.remove(k);
+					start += 1;
+				}
+			}
+		}
+	}
+	
 	
 	
 	public static int getBrick(Player p)
@@ -128,66 +217,58 @@ public class ResourceCard
 		return r;
 	}
 	
-	// The subtract methods are used when building roads, settlements and cities
 	
-	public static void subtractBrick(int i, Player p, Bank b)
+	// What player 1 wants from player 2 ( Quantity and Rsc )
+	public static boolean tradeWorks(Player target, String rsc, int quantity)
 	{
-		for(int a = 0;a<i;a++)
+		switch(rsc.toUpperCase()) 
 		{
-			if(p.resList.get(i).cardType.equalsIgnoreCase("brick"))
+		case "BRICK":
+			if(target.getBrick() >= quantity)
 			{
-				p.resList.remove(i);
-				b.brickList.add(p.resList.get(i));
+				return true;
 			}
+			break;
+		case "WOOD":
+			if(target.getWood() >= quantity)
+			{
+				return true;
+			}
+			break;
+		case "WOOL":
+			if(target.getWool() >= quantity)
+			{
+				return true;
+			}
+			break;
+		case "GRAIN":
+			if(target.getGrain() >= quantity)
+			{
+				return true;
+			}
+			break;
+		case "ORE":
+			if(target.getOre() >= quantity)
+			{
+				return true;
+			}
+			break;
 		}
+		return false;
 	}
 	
-	public static void subtractWood(int i, Player p, Bank b)
-	{
-		for(int a = 0;a<i;a++)
-		{
-			if(p.resList.get(i).cardType.equalsIgnoreCase("wood"))
-			{
-				p.resList.remove(i);
-				b.woodList.add(p.resList.get(i));
-			}
-		}
-	}
 	
-	public static void subtractWool(int i, Player p, Bank b)
-	{
-		for(int a = 0;a<i;a++)
-		{
-			if(p.resList.get(i).cardType.equalsIgnoreCase("wool"))
-			{
-				p.resList.remove(i);
-				b.woolList.add(p.resList.get(i));
-			}
-		}
-	}
 	
-	public static void subtractGrain(int i, Player p, Bank b)
+	public static int getMaxRsc(Player p, String s)
 	{
-		for(int a = 0;a<i;a++)
+		int x = 0;
+		for(int i = 0;i<p.resList.size();i++)
 		{
-			if(p.resList.get(i).cardType.equalsIgnoreCase("grain"))
+			if(p.resList.get(i).cardType.equalsIgnoreCase(s))
 			{
-				p.resList.remove(i);
-				b.grainList.add(p.resList.get(i));
+				x += 1;
 			}
 		}
-	}
-	
-	public static void subtractOre(int i, Player p, Bank b)
-	{
-		for(int a = 0;a<i;a++)
-		{
-			if(p.resList.get(i).cardType.equalsIgnoreCase("ore"))
-			{
-				p.resList.remove(i);
-				b.oreList.add(p.resList.get(i));
-
-			}
-		}
+		return x;
 	}
 }

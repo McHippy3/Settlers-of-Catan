@@ -14,7 +14,9 @@ public class VertexLink extends Button
 {
 	Vertex[] v;
 	int gridRow, gridCol;
-	boolean hasBuilding;
+	Settlement s;
+	City c;
+	boolean hadBuilding = false;
 	
 	public VertexLink()
 	{
@@ -44,12 +46,19 @@ public class VertexLink extends Button
 	
 	public boolean getHasBuilding() 
 	{
-		return hasBuilding;
+		if(s != null || c != null)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
-	public void setHasBuilding(boolean hasBuilding) 
+	public void setHasBuilding(int playerNum) 
 	{
-		this.hasBuilding = hasBuilding;
+		s = new Settlement(null, this);
 	}
 
 	public String toString(Vertex v)

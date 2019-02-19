@@ -410,7 +410,7 @@ public class OfflineGameScene extends StackPane
         //Placing Numbers Beside Resource Cards
         for(int i = 0; i < 5; i++) 
         {
-        	Text t = new Text(730 + i * 130, 170, "" + players.get(currentPlayer).countInventory()[i]);
+        	Text t = new Text(730 + i * 130, 170, "" + players.get(currentPlayer).listInventory()[i]);
         	t.setFont(Font.font("Arial", 20));
         	t.setFill(Color.WHITE);
         	t.setStroke(Color.WHITE);
