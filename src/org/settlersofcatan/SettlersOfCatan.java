@@ -50,7 +50,7 @@ public class SettlersOfCatan extends Application
 	private OfflineGameScene offlineGameScene;
 	private Stage stage;
 	private VertexLink vertexes[][];
-	private Edge edges[][];
+	private EdgeLink edges[][];
 	
 	public void start(Stage stage) 
 	{
@@ -254,10 +254,7 @@ public class SettlersOfCatan extends Application
 									{
 										System.out.println("Updating");
 										offlineGameScene.updateGUI(vertexes, edges, players);
-										
-										//Grant Points to player that owns the Settlement/Upgraded
-										players.get(currentPlayer).victoryPoints++;
-										
+																				
 										//Call build again after being clicked
 										buildMode();
 									}
@@ -290,7 +287,7 @@ public class SettlersOfCatan extends Application
 	
 	private void initializeEdges() 
 	{
-		edges = new Edge[11][11];
+		edges = new EdgeLink[11][11];
 		//Lists of edges that exist
 		int[] rowExists = {0,0,0,0,0,0,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,9,9,9,9,10,10,10,10,10,10};
 		int[] colExists = {3,4,5,6,7,8,2,4,6,8,2,3,4,5,6,7,8,9,1,3,5,7,9,1,2,3,4,5,6,7,8,9,10,0,2,4,6,8,10,1,2,3,4,5,6,7,8,9,10,1,3,5,7,9,2,3,4,5,6,7,8,9,2,4,6,8,3,4,5,6,7,8};
@@ -303,8 +300,7 @@ public class SettlersOfCatan extends Application
 				//Only initialize edge if it exists on the grid
 				if(count != rowExists.length && r == rowExists[count] && c == colExists[count]) 
 				{
-					edges[r][c] = new Edge(r, c);
-					edges[r][c].setHasRoad(false);
+					edges[r][c] = new EdgeLink(r, c);
 					edges[r][c].setMaxSize(30, 30);
 					edges[r][c].setPrefSize(30, 30);
 					edges[r][c].setDisable(true);
@@ -314,8 +310,8 @@ public class SettlersOfCatan extends Application
 					edges[r][c].setOnMouseClicked(
 							(MouseEvent me) -> 
 							{
-								Edge e = (Edge) me.getSource();
-								e.setHasRoad(true);
+								EdgeLink e = (EdgeLink) me.getSource();
+								e.setRoad(new Road(players.get(currentPlayer)));
 								System.out.println("Edge Clicked " + e.getGridRow() + " " + e.getGridCol());
 								//Disable after build
 								offlineGameScene.disableBuild();
@@ -335,14 +331,14 @@ public class SettlersOfCatan extends Application
 					edges[r][c].setOnMouseEntered(
 							(me) -> 
 							{
-								Edge e = (Edge) me.getSource();
+								EdgeLink e = (EdgeLink) me.getSource();
 								e.setStyle("-fx-background-color: #aafffa");
 							}
 						);
 					edges[r][c].setOnMouseExited(
 							(me) -> 
 							{
-								Edge e = (Edge) me.getSource();
+								EdgeLink e = (EdgeLink) me.getSource();
 								e.setStyle("-fx-background-color: transparent");
 							}
 						);

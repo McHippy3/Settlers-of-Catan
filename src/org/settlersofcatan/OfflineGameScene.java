@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class OfflineGameScene extends StackPane
 {
 	private VertexLink vertexes[][];
-	private Edge edges[][];
+	private EdgeLink edges[][];
 	private double xOffSet, yOffSet, sf;
 	private int currentPlayer;
 	private Group gameTiles, resourceImages;
@@ -46,7 +46,7 @@ public class OfflineGameScene extends StackPane
 	 ************************************************************************************
 	 ************************************************************************************/
 	
-	public OfflineGameScene(VertexLink[][] vertexes, Edge[][] edges, ArrayList<Player> players) 
+	public OfflineGameScene(VertexLink[][] vertexes, EdgeLink[][] edges, ArrayList<Player> players) 
 	{		
 		//Initializing StackPane
 		super();
@@ -223,13 +223,12 @@ public class OfflineGameScene extends StackPane
 			        vertexes[r][c].setLayoutY(yOffSet + y[r] * sf - 25);
 			        gameTiles.getChildren().add(vertexes[r][c]);
 				}
-				
         	}
         }
         
         //Edge Buttons
         y = new double[] { 15, 120, 200, 300, 380, 480, 560, 660, 740, 840, 910, 1040, 100, 1210};
-        for(int r = 0; r < 11; r++) 
+        for(int r = 0; r < 11; r++)
         {
         	for(int c = 0; c < 11; c++) 
         	{
@@ -269,7 +268,7 @@ public class OfflineGameScene extends StackPane
 	 ************************************************************************************
 	 ************************************************************************************/
 	
-	public void updateGUI(VertexLink[][] vertexes, Edge[][] edges, ArrayList<Player> players) 
+	public void updateGUI(VertexLink[][] vertexes, EdgeLink[][] edges, ArrayList<Player> players) 
 	{
 		//Get most recent version of the game state
 		this.vertexes = vertexes;
@@ -279,11 +278,11 @@ public class OfflineGameScene extends StackPane
 		//Player Tiles
 		updatePlayerTiles();
 		
-		//Roads
-        updateRoads();
-        
         //Settlements + Vertexes
         updateBuildings();
+        
+		//Roads
+        updateRoads();
         
         //Command Panel Elements/Nodes
         updateCommandPanel();
@@ -324,11 +323,8 @@ public class OfflineGameScene extends StackPane
 	//UpdateGUI helper
 	private void updateRoads() 
 	{
-		//Clearing gameTiles until only the actual resource tiles are left
-		/*while(gameTiles.getChildren().size() != 19) 
-		{
-			gameTiles.getChildren().remove(20);
-		}*/
+		//URLs for the road images
+		String[] roadURL = {"res/roads/blue_road.png", "res/roads/blue_road.png", "res/roads/blue_road.png", "res/roads/blue_road.png"};
 		
         double[] y = new double[] { 15, 120, 200, 300, 380, 480, 560, 660, 740, 840, 910, 1040, 100, 1210};
         for(int r = 0; r < 11; r++) 
@@ -337,7 +333,7 @@ public class OfflineGameScene extends StackPane
 			{
         		if(edges[r][c] != null && edges[r][c].getHasRoad()) 
         		{
-					ImageView roadImg = new ImageView(new Image("res/roads/blue_road.png"));
+					ImageView roadImg = new ImageView(new Image(roadURL[0]));
 			        roadImg.setFitHeight(48);
 			        roadImg.setFitWidth(12);
 			        roadImg.setX((((edges[r][c].getGridRow()%2)*30)+ (xOffSet/2) + edges[r][c].getGridCol() * 104 * sf)-10);
@@ -365,7 +361,7 @@ public class OfflineGameScene extends StackPane
 			        {
 			              roadImg.setRotate(0);
 			        }
-			        gameTiles.getChildren().add(roadImg);
+			        gameTiles.getChildren().add(20, roadImg);
         		}
         	}
         }
@@ -373,7 +369,13 @@ public class OfflineGameScene extends StackPane
 	
 	//Update GUI helper
 	private void updateBuildings() 
-	{		
+	{
+		//Removing old settlement and city images
+		while(gameTiles.getChildren().size() != 155) 
+		{
+			gameTiles.getChildren().remove(20);
+		}
+		
 		double[] y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
         String[][] buildingURL = 
         	{
@@ -439,7 +441,7 @@ public class OfflineGameScene extends StackPane
         //Placing Numbers Beside Resource Cards
         for(int i = 0; i < 5; i++) 
         {
-        	Text t = new Text(730 + i * 130, 170, "" + players.get(currentPlayer).listInventory()[i]);
+        	Text t = new Text(725 + i * 130, 170, "" + players.get(currentPlayer).listInventory()[i]);
         	t.setFont(Font.font("Arial", 20));
         	t.setFill(Color.WHITE);
         	t.setStroke(Color.WHITE);
@@ -462,9 +464,9 @@ public class OfflineGameScene extends StackPane
 		 * 2. New Settlement
 		 * 3. Upgrade Settlement to City
 		 */
-		for(Edge[] r: edges) 
+		for(EdgeLink[] r: edges) 
 		{
-			for(Edge e: r) 
+			for(EdgeLink e: r) 
 			{
 				if(e != null && !e.getHasRoad() && buildCode == 1) 
 				{
@@ -491,9 +493,9 @@ public class OfflineGameScene extends StackPane
 	public void disableBuild() 
 	{
 		//Disables all build spots
-		for(Edge[] r: edges) 
+		for(EdgeLink[] r: edges) 
 		{
-			for(Edge e: r) 
+			for(EdgeLink e: r) 
 			{
 				if(e != null) 
 				{

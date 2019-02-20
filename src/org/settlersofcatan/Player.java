@@ -169,15 +169,20 @@ public class Player
 	
 	
 	// Add the Bank x, and EdgeLink[][] e as arguments soon
-	public boolean buildRoad()
+	public boolean buildRoad(Bank bank, EdgeLink[][] grid, int row, int col)
 	{
 		int w = this.getWood();
 		int b = this.getBrick();
 		
 		if(w >= 1 && b >= 1)
 		{
+			ResourceCard.subtractWood(1, this, bank);
+			ResourceCard.subtractBrick(1, this, bank);
+			
+			//TODO
 			Road r = new Road(this);
 			this.roadList.add(r);
+			grid[row][col]);
 			return true;
 		}
 		else
@@ -226,7 +231,7 @@ public class Player
 				City temp = new City(this, grid[row][col]);
 				this.cityList.add(temp);
 				grid[row][col].city = temp;
-				victoryPoints += 2;
+				victoryPoints += 1;
 				return true;
 		}
 		else
