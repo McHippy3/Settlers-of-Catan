@@ -179,14 +179,14 @@ public class Player
 			ResourceCard.subtractWood(1, this, bank);
 			ResourceCard.subtractBrick(1, this, bank);
 			
-			//TODO
 			Road r = new Road(this);
 			this.roadList.add(r);
-			grid[row][col]);
+			grid[row][col].road = new Road(this);
 			return true;
 		}
 		else
 		{
+			System.out.println("Cannot build due to lack of resources");
 			return false;
 		}
 	}

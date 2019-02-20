@@ -324,7 +324,7 @@ public class OfflineGameScene extends StackPane
 	private void updateRoads() 
 	{
 		//URLs for the road images
-		String[] roadURL = {"res/roads/blue_road.png", "res/roads/blue_road.png", "res/roads/blue_road.png", "res/roads/blue_road.png"};
+		String[] roadURL = {"res/roads/blue_road.png", "res/roads/red_road.png", "res/roads/white_road.png", "res/roads/orange_road.png"};
 		
         double[] y = new double[] { 15, 120, 200, 300, 380, 480, 560, 660, 740, 840, 910, 1040, 100, 1210};
         for(int r = 0; r < 11; r++) 
@@ -333,7 +333,7 @@ public class OfflineGameScene extends StackPane
 			{
         		if(edges[r][c] != null && edges[r][c].getHasRoad()) 
         		{
-					ImageView roadImg = new ImageView(new Image(roadURL[0]));
+					ImageView roadImg = new ImageView(new Image(roadURL[edges[r][c].road.p.playerNumber]));
 			        roadImg.setFitHeight(48);
 			        roadImg.setFitWidth(12);
 			        roadImg.setX((((edges[r][c].getGridRow()%2)*30)+ (xOffSet/2) + edges[r][c].getGridCol() * 104 * sf)-10);

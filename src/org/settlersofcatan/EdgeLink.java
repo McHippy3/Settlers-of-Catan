@@ -15,7 +15,7 @@ public class EdgeLink extends Button
 	private int startGridCollum;
 	private int endGridCollum;
 	private int tileID, edgeID;
-	private Road road;
+	Road road;
 	Edge[] e;
 	
 	public EdgeLink()
@@ -112,11 +112,6 @@ public class EdgeLink extends Button
 		if(this.road != null)
 			return true;
 		else return false;
-	}
-	
-	public void setRoad(Road road) 
-	{
-		this.road = road;
 	}
 
 	public int getMainGridRowStart() {

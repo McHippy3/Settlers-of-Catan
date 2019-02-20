@@ -311,7 +311,7 @@ public class SettlersOfCatan extends Application
 							(MouseEvent me) -> 
 							{
 								EdgeLink e = (EdgeLink) me.getSource();
-								e.setRoad(new Road(players.get(currentPlayer)));
+								players.get(currentPlayer).buildRoad(bank, edges, e.getGridRow(), e.getGridCol());
 								System.out.println("Edge Clicked " + e.getGridRow() + " " + e.getGridCol());
 								//Disable after build
 								offlineGameScene.disableBuild();
