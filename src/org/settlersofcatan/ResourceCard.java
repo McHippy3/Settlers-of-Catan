@@ -65,87 +65,82 @@ public class ResourceCard
 	
 	
 	
-	public static void subtractBrick(int i, Player p, Bank b)
+	public static void subtractBrick(int numToRemove, Player p, Bank b)
 	{
-		int start = 0;
-		while(start < i)
+		int numRemoved = 0;
+		for(int k = 0;k<p.resList.size();k++)
 		{
-			for(int k = 0;k<p.resList.size();k++)
+			if(p.resList.get(k).cardType.equalsIgnoreCase("brick"))
 			{
-				if(p.resList.get(k).cardType.equalsIgnoreCase("brick"))
-				{
-					b.brickList.add(p.resList.get(k));
-					p.resList.remove(k);
-					start += 1;
-				}
+				b.brickList.add(p.resList.get(k));
+				p.resList.remove(k);
+				numRemoved++;
+				if(numRemoved >= numToRemove)
+					break;
 			}
 		}
 	}
 	
-	public static void subtractWood(int i, Player p, Bank b)
+	public static void subtractWood(int numToRemove, Player p, Bank b)
 	{
-		int start = 0;
-		while(start < i)
+		int numRemoved = 0;
+		for(int k = 0;k<p.resList.size();k++)
 		{
-			for(int k = 0;k<p.resList.size();k++)
+			if(p.resList.get(k).cardType.equalsIgnoreCase("wood"))
 			{
-				if(p.resList.get(k).cardType.equalsIgnoreCase("wood"))
-				{
-					b.woodList.add(p.resList.get(k));
-					p.resList.remove(k);
-					start += 1;
-				}
+				b.woodList.add(p.resList.get(k));
+				p.resList.remove(k);
+				numRemoved++;
+				if(numRemoved >= numToRemove)
+					break;
 			}
 		}
 	}
 	
-	public static void subtractWool(int i, Player p, Bank b)
+	public static void subtractWool(int numToRemove, Player p, Bank b)
 	{
-		int start = 0;
-		while(start < i)
+		int numRemoved = 0;
+		for(int k = 0;k<p.resList.size();k++)
 		{
-			for(int k = 0;k<p.resList.size();k++)
+			if(p.resList.get(k).cardType.equalsIgnoreCase("wool"))
 			{
-				if(p.resList.get(k).cardType.equalsIgnoreCase("wool"))
-				{
-					b.woolList.add(p.resList.get(k));
-					p.resList.remove(k);
-					start += 1;
-				}
+				b.woolList.add(p.resList.get(k));
+				p.resList.remove(k);
+				numRemoved++;
+				if(numRemoved >= numToRemove)
+					break;
 			}
 		}
 	}
 	
-	public static void subtractGrain(int i, Player p, Bank b)
+	public static void subtractGrain(int numToRemove, Player p, Bank b)
 	{
-		int start = 0;
-		while(start < i)
+		int numRemoved = 0;
+		for(int k = 0;k<p.resList.size();k++)
 		{
-			for(int k = 0;k<p.resList.size();k++)
+			if(p.resList.get(k).cardType.equalsIgnoreCase("grain"))
 			{
-				if(p.resList.get(k).cardType.equalsIgnoreCase("grain"))
-				{
-					b.grainList.add(p.resList.get(k));
-					p.resList.remove(k);
-					start += 1;
-				}
+				b.grainList.add(p.resList.get(k));
+				p.resList.remove(k);
+				numRemoved++;
+				if(numRemoved >= numToRemove)
+					break;
 			}
 		}
 	}
 	
-	public static void subtractOre(int i, Player p, Bank b)
+	public static void subtractOre(int numToRemove, Player p, Bank b)
 	{
-		int start = 0;
-		while(start < i)
+		int numRemoved = 0;
+		for(int k = 0;k<p.resList.size();k++)
 		{
-			for(int k = 0;k<p.resList.size();k++)
+			if(p.resList.get(k).cardType.equalsIgnoreCase("ore"))
 			{
-				if(p.resList.get(k).cardType.equalsIgnoreCase("ore"))
-				{
-					b.oreList.add(p.resList.get(k));
-					p.resList.remove(k);
-					start += 1;
-				}
+				b.oreList.add(p.resList.get(k));
+				p.resList.remove(k);
+				numRemoved++;
+				if(numRemoved >= numToRemove)
+					break;
 			}
 		}
 	}

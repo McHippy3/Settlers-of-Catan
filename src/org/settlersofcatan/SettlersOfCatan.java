@@ -233,7 +233,17 @@ public class SettlersOfCatan extends Application
 					vertexes[r][c].setOnMouseClicked(
 							(MouseEvent e) -> {
 								VertexLink v = (VertexLink) e.getSource();
-								v.setHasBuilding(currentPlayer);
+								
+								//Build new settlement if there isn't one yet, else upgrade to city
+								if(v.getHasBuilding() == 0) 
+								{
+									players.get(currentPlayer).buildSettlement(bank, vertexes, v.getGridRow(), v.getGridCol());
+								}
+								else 
+								{
+									players.get(currentPlayer).upgradeSettlement(bank, vertexes, v.getGridRow(), v.getGridCol());
+								}
+								
 								//Disable buttons after build
 								offlineGameScene.disableBuild();
 								System.out.println("Vertex Clicked " + v.getGridRow() + " " + v.getGridCol());
@@ -360,7 +370,6 @@ public class SettlersOfCatan extends Application
 	private String input;
 	private Boolean gameInProgress = true, playAgain = false;
 	private Bank bank;
-	private 
 	
 	//Starting Game/Initialization
 	public void gameStart(String[] names) 
@@ -368,12 +377,14 @@ public class SettlersOfCatan extends Application
 		for(int i = 0; i < names.length; i++)
 		{
 			ArrayList<ResourceCard> resList = new ArrayList<>();
+			for(int a = 0; a < 10; a++) {
 			resList.add(new ResourceCard("brick"));
 			resList.add(new ResourceCard("ore"));
 			resList.add(new ResourceCard("grain"));
 			resList.add(new ResourceCard("wool"));
 			resList.add(new ResourceCard("wood"));
-			players.add(new Player(0, names[i], resList));
+			}
+			players.add(new Player(i, names[i], resList));
 		}
 		bank = new Bank();
 	}

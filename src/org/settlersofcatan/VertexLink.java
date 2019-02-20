@@ -14,9 +14,8 @@ public class VertexLink extends Button
 {
 	Vertex[] v;
 	int gridRow, gridCol;
-	Settlement s;
-	City c;
-	boolean hadBuilding = false;
+	Settlement settlement;
+	City city;
 	
 	public VertexLink()
 	{
@@ -44,38 +43,24 @@ public class VertexLink extends Button
 		return gridCol;
 	}
 	
-	public boolean getHasBuilding() 
+	//Returns 0 for no building, 1 for a settlement and 2 for a city
+	public int getHasBuilding() 
 	{
-		if(s != null || c != null)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		int count = 0;
+		if(settlement != null)
+			count++;
+		if(city != null)
+			count++;
+		return count;
 	}
-
-	public void setHasBuilding(int playerNum) 
+	
+	public Settlement getSettlement() 
 	{
-		s = new Settlement(null, this);
+		return settlement;
 	}
 
 	public String toString(Vertex v)
 	{
 		return v.tileID+", "+v.vertexID;
 	}
-	
-	/*public boolean hasCluster()
-	{
-		if(v[0].vertexID == 2 && v[1].vertexID == 4 && v[2].vertexID == 0)
-		{
-			return true;
-		}
-		
-		if()
-		{
-			
-		}
-	}*/
 }

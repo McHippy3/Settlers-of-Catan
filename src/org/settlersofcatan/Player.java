@@ -186,9 +186,8 @@ public class Player
 		}
 	}
 	
-	public boolean buildSettlement(Bank x, VertexLink[][] grid)
+	public boolean buildSettlement(Bank bank, VertexLink[][] grid, int row, int col)
 	{
-		Scanner sc = new Scanner(System.in);
 		int w = this.getWood();
 		int b = this.getBrick();
 		int s = this.getWool();
@@ -196,70 +195,43 @@ public class Player
 		
 		if(w >= 1 && b >= 1 && s >= 1 && g >= 1)
 		{
-			System.out.println("Which row do you want to build on?: ");
-			int row = sc.nextInt();
-			System.out.println("Which collumn do you want to build on?: ");
-			int collumn = sc.nextInt();
-			if(grid[row][collumn] != null && !grid[row + 1][collumn - 1].getHasBuilding()&& !grid[row + 1][collumn + 1].getHasBuilding())
-			{
-				ResourceCard.subtractWood(1, this, x);
-				ResourceCard.subtractBrick(1, this, x);
-				ResourceCard.subtractWool(1, this, x);
-				ResourceCard.subtractGrain(1, this, x);
-				
-				Settlement temp = new Settlement(this);
-				this.settleList.add(temp);
-				grid[row][collumn].s = temp;
-				grid[row][collumn].s.v = grid[row][collumn];
-				victoryPoints += 1;
-				return true;
-			}
-			else
-			{
-				System.out.println("You cannot build here.");
-				return false;
-			}
+			ResourceCard.subtractWood(1, this, bank);
+			ResourceCard.subtractBrick(1, this, bank);
+			ResourceCard.subtractWool(1, this, bank);
+			ResourceCard.subtractGrain(1, this, bank);
+			
+			Settlement temp = new Settlement(this, grid[row][col]);
+			this.settleList.add(temp);
+			grid[row][col].settlement = temp;
+			victoryPoints += 1;
+			return true;
 		}
 		else
 		{
-			System.out.println("You lack the resources to build.");
+			System.out.println("Cannot build due to lack of resources");
 			return false;
 		}
 	}
 	
-	public boolean upgradeSettlement(Bank x, VertexLink[][] grid)
+	public boolean upgradeSettlement(Bank bank, VertexLink[][] grid, int row, int col)
 	{
-		Scanner sc = new Scanner(System.in);
 		int o = this.getOre();
 		int g = this.getGrain();
 		
 		if(o >= 3 && g >= 2)
 		{
-			System.out.println("Which row do you want to upgrade?: ");
-			int row = sc.nextInt();
-			System.out.println("Which collumn do you want to upgrade?: ");
-			int collumn = sc.nextInt();
-			if(grid[row][collumn].s != null)
-			{
-				ResourceCard.subtractOre(3, this, x);
-				ResourceCard.subtractGrain(2, this, x);
+				ResourceCard.subtractOre(3, this, bank);
+				ResourceCard.subtractGrain(2, this, bank);
 				
-				City temp = new City(this);
+				City temp = new City(this, grid[row][col]);
 				this.cityList.add(temp);
-				grid[row][collumn].c = temp;
-				grid[row][collumn].c.v = grid[row][collumn];
+				grid[row][col].city = temp;
 				victoryPoints += 2;
 				return true;
-			}
-			else
-			{
-				System.out.println("You cannot build here.");
-				return false;
-			}
 		}
 		else
 		{
-			System.out.println("You lack the resources to upgrade.");
+			System.out.println("Cannot build due to lack of resources");
 			return false;
 		}
 	}

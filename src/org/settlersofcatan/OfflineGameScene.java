@@ -324,6 +324,12 @@ public class OfflineGameScene extends StackPane
 	//UpdateGUI helper
 	private void updateRoads() 
 	{
+		//Clearing gameTiles until only the actual resource tiles are left
+		/*while(gameTiles.getChildren().size() != 19) 
+		{
+			gameTiles.getChildren().remove(20);
+		}*/
+		
         double[] y = new double[] { 15, 120, 200, 300, 380, 480, 560, 660, 740, 840, 910, 1040, 100, 1210};
         for(int r = 0; r < 11; r++) 
         {
@@ -367,21 +373,44 @@ public class OfflineGameScene extends StackPane
 	
 	//Update GUI helper
 	private void updateBuildings() 
-	{
+	{		
 		double[] y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
-        for(int r = 0; r < 12; r++) 
+        String[][] buildingURL = 
+        	{
+        		{"res/settlements/blue_settlement.png", "res/cities/blue_city.png"},
+        		{"res/settlements/red_settlement.png", "res/cities/red_city.png"},
+        		{"res/settlements/white_settlement.png", "res/cities/white_city.png"},
+        		{"res/settlements/orange_settlement.png", "res/cities/orange_city.png"}
+    		};
+        
+		for(int r = 0; r < 12; r++) 
         {
         	for(int c = 0; c < 11; c++) 
 			{
-				if(vertexes[r][c] != null && vertexes[r][c].getHasBuilding()) 
+        		//Settlements
+				if(vertexes[r][c] != null && vertexes[r][c].getHasBuilding() == 1) 
 				{
-			        ImageView settlementImg = new ImageView(new Image("res/settlements/blue_settlement.png"));
+			        ImageView settlementImg = new ImageView(
+			        		new Image(buildingURL[vertexes[r][c].getSettlement().p.playerNumber][0]));
 			        settlementImg.setX(xOffSet + c * 105 * sf - 15);
 			        settlementImg.setY(yOffSet + y[r] * sf - 25);
 			        settlementImg.setFitHeight(30);
 			        settlementImg.setFitWidth(30);
 			        //Place images at index 20 to be on top of tiles but below buttons
 			        gameTiles.getChildren().add(20, settlementImg);
+				}
+				//Cities
+				else if(vertexes[r][c] != null && vertexes[r][c].getHasBuilding() == 2) 
+				{
+					//getSettlement() can be used as buildingURL simply needs the player number 
+			        ImageView cityImg = new ImageView(
+			        		new Image(buildingURL[vertexes[r][c].getSettlement().p.playerNumber][1]));
+			        cityImg.setX(xOffSet + c * 105 * sf - 15);
+			        cityImg.setY(yOffSet + y[r] * sf - 25);
+			        cityImg.setFitHeight(30);
+			        cityImg.setFitWidth(30);
+			        //Place images at index 20 to be on top of tiles but below buttons
+			        gameTiles.getChildren().add(20, cityImg);
 				}
         	}
         }
@@ -447,11 +476,11 @@ public class OfflineGameScene extends StackPane
 		{
 			for(VertexLink v: r) 
 			{
-				if(v != null && !v.getHasBuilding() && buildCode == 2) 
+				if(v != null && v.getHasBuilding() == 0 && buildCode == 2) 
 				{
 					v.setDisable(false);
 				}
-				else if(v != null && v.getHasBuilding() && buildCode == 3) 
+				else if(v != null && v.getHasBuilding() > 0 && buildCode == 3) 
 				{
 					v.setDisable(false);
 				}
