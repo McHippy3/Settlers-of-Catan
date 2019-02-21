@@ -453,6 +453,87 @@ public class OfflineGameScene extends StackPane
 	
 	/************************************************************************************
 	 ************************************************************************************
+	 * ROLL METHODS *
+	 ************************************************************************************
+	 ************************************************************************************/
+	
+	public void requestRollDice(int currentPlayer, Button rollButton) 
+	{
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane rollOptions = new GridPane();
+    	rollOptions.setPrefWidth(650);
+    	rollOptions.setAlignment(Pos.CENTER);
+    	rollOptions.setVgap(25.0);
+    	rollOptions.setHgap(25.0);
+    	rollOptions.setPadding(new Insets(10));
+		
+		//Build Buttons
+		rollButton.setPrefWidth(150);
+		rollOptions.add(rollButton, 0, 0);
+		
+		commandPanel.getChildren().add(0, rollOptions);
+	}
+	
+	public void showRollResults(int roll1, int roll2, Button continueButton) 
+	{
+		//Clearing past items
+		updateGUI(vertexes, edges, players);
+		
+		//Container
+		VBox rollResults = new VBox();
+		rollResults.setAlignment(Pos.CENTER);
+		rollResults.setSpacing(25.0);
+		rollResults.setPrefWidth(650);
+		
+		//Dice images
+		HBox diceImages = new HBox();
+		diceImages.setAlignment(Pos.CENTER);
+		diceImages.setSpacing(25.0);
+		ImageView roll1Result;
+		ImageView roll2Result;
+		
+		switch(roll1) 
+		{
+			case 1: roll1Result = new ImageView(new Image("res/dice/one.png")); break;
+			case 2: roll1Result = new ImageView(new Image("res/dice/two.png")); break;
+			case 3: roll1Result = new ImageView(new Image("res/dice/three.png")); break;
+			case 4: roll1Result = new ImageView(new Image("res/dice/four.png")); break;
+			case 5: roll1Result = new ImageView(new Image("res/dice/five.png")); break;
+			default: roll1Result = new ImageView(new Image("res/dice/six.png")); break;
+		}
+		
+		switch(roll2) 
+		{
+			case 1: roll2Result = new ImageView(new Image("res/dice/one.png")); break;
+			case 2: roll2Result = new ImageView(new Image("res/dice/two.png")); break;
+			case 3: roll2Result = new ImageView(new Image("res/dice/three.png")); break;
+			case 4: roll2Result = new ImageView(new Image("res/dice/four.png")); break;
+			case 5: roll2Result = new ImageView(new Image("res/dice/five.png")); break;
+			default: roll2Result = new ImageView(new Image("res/dice/six.png")); break;
+		}
+		roll1Result.setFitWidth(50);
+		roll1Result.setFitHeight(50);
+		
+		roll2Result.setFitWidth(50);
+		roll2Result.setFitHeight(50);
+		
+		diceImages.getChildren().addAll(roll1Result, roll2Result);
+		
+		Text rollTotal = new Text("Total: " + (roll1 + roll2));
+		continueButton.setPrefWidth(150);
+		
+		rollResults.getChildren().addAll(diceImages, rollTotal, continueButton);
+		
+		commandPanel.getChildren().add(0, rollResults);
+	}
+
+	
+	/************************************************************************************
+	 ************************************************************************************
 	 * BUILD METHODS *
 	 ************************************************************************************
 	 ************************************************************************************/
@@ -484,7 +565,8 @@ public class OfflineGameScene extends StackPane
 				}
 				else if(v != null && v.getHasBuilding() > 0 && buildCode == 3) 
 				{
-					v.setDisable(false);
+					if(v.settlement.p.playerNumber == currentPlayer)
+						v.setDisable(false);
 				}
 			}
 		}
@@ -560,9 +642,8 @@ public class OfflineGameScene extends StackPane
 	 * Phase 3: player 1 chooses what to request
 	 * Phase 4: player 2 chooses what to take in exchange
 	 */
-	public void requestTradePhaseOne(int currentPlayer, Button yesButton, Button noButton) 
+	public void requestTradePhaseOne(Button yesButton, Button noButton) 
 	{
-		this.currentPlayer = currentPlayer;
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
 		

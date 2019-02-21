@@ -44,7 +44,6 @@ public class SettlersOfCatan extends Application
 	 ************************************************************************************
 	 ************************************************************************************/
 	
-	//TODO wool or sheep, order in listInventory()
 	private int currentPlayer;
 	private Scene mainScene;
 	private OfflineGameScene offlineGameScene;
@@ -102,7 +101,23 @@ public class SettlersOfCatan extends Application
 		initializeEdges();
 		offlineGameScene = new OfflineGameScene(vertexes, edges, players);
 		mainScene.setRoot(offlineGameScene);
-		tradeModePhase1();
+		rollMode();
+	}
+	
+	private void rollMode() 
+	{
+		//Roll Button
+		Button rollButton = new Button("Roll Dice");
+		
+		rollButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					Button continueButton = new Button("Continue");
+					continueButton.setOnMouseClicked((MouseEvent e) -> tradeModePhase1());
+					
+					offlineGameScene.showRollResults(rollDice(), rollDice(), continueButton);
+				}
+				);
+		offlineGameScene.requestRollDice(currentPlayer, rollButton);
 	}
 	
 	private void buildMode() 
@@ -143,7 +158,7 @@ public class SettlersOfCatan extends Application
 					{
 						currentPlayer = 0;
 					}
-					tradeModePhase1();
+					rollMode();
 				});
 		offlineGameScene.requestBuild(currentPlayer, build1Button, build2Button, build3Button, noButton);
 	}
@@ -152,7 +167,7 @@ public class SettlersOfCatan extends Application
 	{
 		Button yesButton = new Button("Yes");
 		Button noButton = new Button("No");
-		offlineGameScene.requestTradePhaseOne(currentPlayer, yesButton, noButton);
+		offlineGameScene.requestTradePhaseOne(yesButton, noButton);
 		yesButton.setOnMouseClicked(
 				(MouseEvent me) -> {
 					tradeModePhase2();
@@ -197,17 +212,7 @@ public class SettlersOfCatan extends Application
 					tradeModePhase1();
 				});
 	}
-	
-	private void tradeModePhase3() 
-	{
-		
-	}
-	
-	private void tradeModePhase4() 
-	{
-		
-	}
-	
+
 	private void initializeVertexes() 
 	{
 		vertexes = new VertexLink[12][11];
@@ -384,47 +389,6 @@ public class SettlersOfCatan extends Application
 		}
 		bank = new Bank();
 	}
-	
-	//Main game loop
-	//Play method after you initialize the players
-	private void play()
-	{
-		//Infinite loop until a player reaches 10 victory points
-		do
-		{
-			//Loop through the list of players 
-			for(int x = 0; x < players.size(); x++)
-			{
-				//At the start of each turn, check if that player has won
-				if(checkWin(players))
-				{
-					gameInProgress = false;
-					System.out.println("Game Won!!!");
-					System.out.print("Do you want to play again?");
-					input = sc.nextLine();
-					if(input.equalsIgnoreCase("Y"))
-						playAgain = true;
-					else
-						playAgain = false;
-				}
-				
-				//Breaks the infinite turn loop
-				if(gameInProgress == false)
-					break;
-								
-				//turn(players.get(x), players);
-				System.out.println("Are you finished with your turn? (Y/N)");
-				sc.nextLine();
-				
-				//Makes the loop go on forever 
-				if(x == 3)
-				{
-					x = -1;
-				}
-			}
-		}
-		while(gameInProgress);
-	}
 		
 	public void trade(int firstPlayer, int secondPlayer)
 	{
@@ -490,8 +454,8 @@ public class SettlersOfCatan extends Application
 	
 	private int rollDice()
 	{
-		Random r = new Random();
-		return r.nextInt(11) + 2;
+		int dice1 = (int)(Math.random() * 6) + 1;
+			
+		return dice1;
 	}
-
 }
