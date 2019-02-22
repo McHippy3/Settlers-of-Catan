@@ -31,6 +31,7 @@ public class OfflineGameScene extends StackPane
 {
 	private VertexLink vertexes[][];
 	private EdgeLink edges[][];
+	private Tile tileArray[];
 	private double xOffSet, yOffSet, sf;
 	private int currentPlayer;
 	private Group gameTiles, resourceImages;
@@ -46,7 +47,7 @@ public class OfflineGameScene extends StackPane
 	 ************************************************************************************
 	 ************************************************************************************/
 	
-	public OfflineGameScene(VertexLink[][] vertexes, EdgeLink[][] edges, ArrayList<Player> players) 
+	public OfflineGameScene(VertexLink[][] vertexes, EdgeLink[][] edges, ArrayList<Player> players, Tile[] tileArray) 
 	{		
 		//Initializing StackPane
 		super();
@@ -63,6 +64,9 @@ public class OfflineGameScene extends StackPane
         
         //Getting Players
         this.players = players;
+        
+        //ETC
+        this.tileArray = tileArray;
                 
 		//Creating GUI and initializing
 		initializeGUI();
@@ -149,11 +153,23 @@ public class OfflineGameScene extends StackPane
         rect.setFill(Color.TRANSPARENT);
         gameTiles.getChildren().add(rect);
         
+        int count = 0;
         for(int r = 0; r < 5; r++) 
         {
         	for(int c = 0; c < numOfColumns; c++) 
         	{
-        		ImageView img = new ImageView(new Image("res/tile_photos/mountains.png"));
+        		String picURL = "";
+        		switch(tileArray[count].type) 
+        		{
+        		case "desert": picURL = "res/tile_photos/desert.png"; break;
+        		case "fields": picURL = "res/tile_photos/fields.png"; break;
+        		case "forest": picURL = "res/tile_photos/forest.png"; break;
+        		case "hills": picURL = "res/tile_photos/hills.png"; break;
+        		case "mountains": picURL = "res/tile_photos/mountains.png"; break;
+        		default: picURL = "res/tile_photos/pasture.png"; break;
+        		}
+        		
+        		ImageView img = new ImageView(new Image(picURL));
         		img.setFitHeight(210 * sf);
         		img.setFitWidth(240 * sf);
         		img.setRotate(90);
@@ -173,6 +189,7 @@ public class OfflineGameScene extends StackPane
         		img.setX((int) (x * sf) + xOffSet);
         		img.setY(180 * r * sf + yOffSet);
         		gameTiles.getChildren().add(img);
+        		count++;
         	}
         	
         	if(r < 2) 

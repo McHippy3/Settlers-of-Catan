@@ -16,7 +16,7 @@ public class Tile
 	/*
 	 * 
 	 * Tile Vertex Convention:
-	 * The highest vertice in the Y direction is the "0th" index
+	 * The highest vertex in the Y direction is the "0th" index
 	 * Going Clockwise from there, increases the index number
 	 * 
 	 */
@@ -32,7 +32,7 @@ public class Tile
 	boolean hasRobber;
 	Vertex[] vertexArray = new Vertex[6];
 	
-	public Tile()
+	public Tile(String type, int number)
 	{
 		img = null;
 		posX = 0;
@@ -41,40 +41,9 @@ public class Tile
 		locY = 0;
 		hasRobber = false;
 		
-		// Number
-		Random r = new Random();
-		number = r.nextInt(11) + 2;
+		this.type = type;
+		this.number = number;
 		
-		// 3 Bricks, 3 Stone, 4 Wood, 4 Wheat, 4 Sheep, 1 Desert
-		
-		// Type
-		Random r1 = new Random();
-		number = r1.nextInt(4);
-		Math.round(number);
-		switch(number)
-		{
-		case 0:
-			type = "sheep";
-			break;
-		case 1:
-			type = "brick";
-			break;
-		case 2:
-			type = "wheat";
-			break;
-		case 3:
-			type = "wood";
-			break;
-		case 4:
-			type = "stone";
-			break;
-		}
-	}
-	
-	public Tile(String t, int n)
-	{
-		type = t;
-		number = n;
 	}
 	
 	public Tile(int n)
@@ -82,6 +51,11 @@ public class Tile
 		tileID = n;
 	}
 	
+	public void setNumber(int n) 
+	{
+		this.number = n;
+	}
+		
 	public boolean isDesert()
 	{
 		if(type == "desert")
@@ -94,7 +68,7 @@ public class Tile
 		}
 	}
 	
-	public boolean hasLeft(Line l)
+	public boolean hasLeft(TileRow l)
 	{
 		if(tileID-1 < l.tiles[0].tileID)
 		{	
@@ -106,7 +80,7 @@ public class Tile
 		}
 	}
 	
-	public boolean hasRight(Line l)
+	public boolean hasRight(TileRow l)
 	{
 		if(tileID+1 <= l.tiles[l.tiles.length-1].tileID)
 		{	
@@ -118,7 +92,7 @@ public class Tile
 		}
 	}
 	
-	public boolean hasAbove(Line a, Line b, int i)
+	public boolean hasAbove(TileRow a, TileRow b, int i)
 	{
 		if(b.tiles[i].hasAboveLeft(a, b, i) == true || b.tiles[i].hasAboveRight(a, b, i))
 		{
@@ -127,7 +101,7 @@ public class Tile
 		return false;
 	}
 	
-	public boolean hasAboveRight(Line a, Line b, int i)
+	public boolean hasAboveRight(TileRow a, TileRow b, int i)
 	{
 		if(b.tiles.length > a.tiles.length)
 		{
@@ -147,7 +121,7 @@ public class Tile
 		return false;
 	}
 	
-	public boolean hasAboveLeft(Line a, Line b, int i)
+	public boolean hasAboveLeft(TileRow a, TileRow b, int i)
 	{
 		if(b.tiles.length > a.tiles.length)
 		{
@@ -167,7 +141,7 @@ public class Tile
 		return false;
 	}
 	
-	public boolean hasBelowLeft(Line a, Line b, int i)
+	public boolean hasBelowLeft(TileRow a, TileRow b, int i)
 	{
 		if(a.tiles.length > b.tiles.length)
 		{
@@ -183,7 +157,7 @@ public class Tile
 		return true;
 	}
 	
-	public boolean hasBelowRight(Line a, Line b, int i)
+	public boolean hasBelowRight(TileRow a, TileRow b, int i)
 	{
 		if(a.tiles.length > b.tiles.length)
 		{
@@ -199,7 +173,7 @@ public class Tile
 		return true;
 	}
 	
-	public boolean hasBelow(Line a, Line b)
+	public boolean hasBelow(TileRow a, TileRow b)
 	{
 		if(a.tiles.length < b.tiles.length)
 		{
@@ -226,7 +200,7 @@ public class Tile
 		return false;
 	}
 	
-	public Tile getBelowLeft(Line a, Line b, int i)
+	public Tile getBelowLeft(TileRow a, TileRow b, int i)
 	{
 		if(b.tiles.length > a.tiles.length)
 		{
@@ -238,7 +212,7 @@ public class Tile
 		}
 	}
 	
-	public Tile getBelowRight(Line a, Line b, int i)
+	public Tile getBelowRight(TileRow a, TileRow b, int i)
 	{
 		if(b.tiles.length > a.tiles.length)
 		{
@@ -250,17 +224,17 @@ public class Tile
 		}
 	}
 	
-	public Tile getAbove(Line a, Line b)
+	public Tile getAbove(TileRow a, TileRow b)
 	{
 		return a.tiles[tileID-a.tiles.length];
 	} 
 	
-	public Tile getAboveRight(Line a, Line b, int i)
+	public Tile getAboveRight(TileRow a, TileRow b, int i)
 	{
 		return a.tiles[i];
 	}
 	
-	public Tile getAboveLeft(Line a, Line b, int i)
+	public Tile getAboveLeft(TileRow a, TileRow b, int i)
 	{
 		if(a.tiles.length > b.tiles.length)
 		{
@@ -272,12 +246,12 @@ public class Tile
 		}
 	}
 	
-	public Tile getRight(Line c, int i)
+	public Tile getRight(TileRow c, int i)
 	{
 		return c.tiles[i+1];
 	}
 	
-	public Tile getLeft(Line c, int i)
+	public Tile getLeft(TileRow c, int i)
 	{
 		return c.tiles[i-1];
 	}

@@ -47,14 +47,13 @@ public class SettlersOfCatan extends Application
 	private int currentPlayer;
 	private Scene mainScene;
 	private OfflineGameScene offlineGameScene;
-	private Stage stage;
 	private VertexLink vertexes[][];
 	private EdgeLink edges[][];
+	private Tile[] tileArray;
+	private TileRow rowOne, rowTwo, rowThree, rowFour, rowFive;
 	
 	public void start(Stage stage) 
 	{
-		this.stage = stage;
-		
 		Button startButton = new Button("Start Game");
 		
 		mainScene = new Scene((Parent) Scenes.titleScene(startButton));
@@ -97,9 +96,10 @@ public class SettlersOfCatan extends Application
 	
 	private void setOfflineGameScene()
 	{
+		initializeTiles();
 		initializeVertexes();
 		initializeEdges();
-		offlineGameScene = new OfflineGameScene(vertexes, edges, players);
+		offlineGameScene = new OfflineGameScene(vertexes, edges, players, tileArray);
 		mainScene.setRoot(offlineGameScene);
 		rollMode();
 	}
@@ -358,12 +358,58 @@ public class SettlersOfCatan extends Application
 		}
 	}
 	
+	private void initializeTiles()
+	{
+		// 19 Total Tiles
+		//Create array with 1 desert, 4 fields, 4 forests, 3 hills, 3 mountains, 4 pastures	
+		
+		tileArray = new Tile[19];
+		
+		for(int i = 0;i<19;i++)
+		{
+			if(i == 0)
+				tileArray[i] = new Tile("desert", 0);
+			else if(i > 0 && i < 5)
+				tileArray[i] = new Tile("fields", 0);
+			else if(i >= 5 && i < 9)
+				tileArray[i] = new Tile("forests", 0);
+			else if(i >= 9 && i < 13)
+				tileArray[i] = new Tile("hills", 0);
+			else if(i >= 13 && i < 15)
+				tileArray[i] = new Tile("mountains", 0);
+			else
+				tileArray[i] = new Tile("pastures", 0);
+		}
+		//Shuffling and then setting the numbers
+		shuffle(tileArray);
+		for(int i = 0; i < 19; i++) 
+		{
+			tileArray[i].setNumber(i);
+			System.out.println(tileArray[i].type);
+		}
+		
+		//Creating rows of tiles
+		Tile[] ar1 = {tileArray[0], tileArray[1], tileArray[2]};
+	    rowOne = new TileRow(ar1);
+				
+	    Tile[] ar2 = {tileArray[3], tileArray[4], tileArray[5], tileArray[6]};
+		rowTwo = new TileRow(ar2);
+				
+		Tile[] ar3 = {tileArray[7], tileArray[8], tileArray[9], tileArray[10], tileArray[11]};
+		rowThree = new TileRow(ar3);
+				
+		Tile[] ar4 = {tileArray[12], tileArray[13], tileArray[14], tileArray[15]};
+		rowFour = new TileRow(ar4);
+				
+		Tile[] ar5 = {tileArray[16], tileArray[17], tileArray[18]};
+		rowFive = new TileRow(ar5);
+	}
+	
 	/************************************************************************************
 	 ************************************************************************************
 	 * GAME STUFF *
 	 ************************************************************************************
-	 ************************************************************************************/
-	
+	 ************************************************************************************/	
 	private ArrayList<Player> players = new ArrayList<>();
 	private Boolean gameloop = true;
 	private int playernumber = 0;
@@ -438,7 +484,7 @@ public class SettlersOfCatan extends Application
 		
 		
 	}
-	
+
 	//Game ends if player reaches 10 victory points
 	private boolean checkWin(ArrayList<Player> p)
 	{
@@ -457,5 +503,19 @@ public class SettlersOfCatan extends Application
 		int dice1 = (int)(Math.random() * 6) + 1;
 			
 		return dice1;
+	}
+	
+	private Tile[] shuffle(Tile[] array)
+	{
+		Random rgen = new Random();  // Random number generator			
+ 
+		for (int i=0; i<array.length; i++) {
+		    int randomPosition = rgen.nextInt(array.length);
+		    Tile temp = array[i];
+		    array[i] = array[randomPosition];
+		    array[randomPosition] = temp;
+		}
+ 
+		return array;
 	}
 }
