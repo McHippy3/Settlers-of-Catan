@@ -1,5 +1,7 @@
 package org.settlersofcatan;
 
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
@@ -20,6 +22,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -66,5 +70,40 @@ public class Scenes
 		root.getChildren().addAll(name1, name2, name3, name4, submitButton);
 		
 		return root;
+	}
+	
+	public static Node gameOverScene(Button continueButton, String playerName) 
+	{
+		VBox components = new VBox();
+		components.setAlignment(Pos.CENTER);
+		components.setSpacing(35.0);
+		
+		Text winnerText = new Text(playerName + " WON!!!");
+		winnerText.setFont(Font.font("Verdana", 75));
+		//Animation for the text
+		ScaleTransition st = new ScaleTransition();
+		st.setDuration(Duration.millis(1000));
+		st.setNode(winnerText);
+		st.setFromX(1.0);
+		st.setFromY(1.0);
+		st.setToX(1.5);
+		st.setToY(1.5);
+		st.setAutoReverse(true);
+		st.setCycleCount(10);
+		st.play();
+		
+		RotateTransition rt = new RotateTransition();
+		rt.setDuration(Duration.millis(1000));
+		rt.setNode(winnerText);
+		rt.setByAngle(360);
+		rt.setAutoReverse(true);
+		rt.setCycleCount(10);
+		rt.play();
+		
+		continueButton.setPrefWidth(150);
+		
+		components.getChildren().addAll(winnerText, continueButton);
+		
+		return components;
 	}
 }

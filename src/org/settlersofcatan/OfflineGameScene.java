@@ -763,47 +763,4 @@ public class OfflineGameScene extends StackPane
 		    		
 		commandPanel.getChildren().add(0, tradeOptions);
 	}
-	
-	/************************************************************************************
-	 ************************************************************************************
-	 * GAME OVER METHODS *
-	 ************************************************************************************
-	 ************************************************************************************/
-	
-	public void requestVictory(Button continueButton) 
-	{
-		commandPanel.getChildren().clear();
-		
-		Text winnerText = new Text(players.get(currentPlayer).getName() + " WON!!!");
-		winnerText.setFont(Font.font("Verdana", 75));
-		winnerText.setWrappingWidth(800);
-		winnerText.setX(100);
-		winnerText.setY(400);
-		//Text color corresponds to player
-		switch(currentPlayer) 
-		{
-		case 0: winnerText.setFill(Color.BLUE); break;
-		case 1: winnerText.setFill(Color.RED); break;
-		case 2: winnerText.setFill(Color.WHITE); break;
-		default: winnerText.setFill(Color.ORANGE);
-		}
-		
-		//Animation
-		ScaleTransition st = new ScaleTransition();
-		st.setDuration(Duration.millis(1000));
-		st.setNode(winnerText);
-		st.setFromX(1.0);
-		st.setFromY(1.0);
-		st.setToX(1.2);
-		st.setToY(1.2);
-		st.setAutoReverse(true);
-		st.setCycleCount(10);
-		st.play();
-		
-		gameTiles.getChildren().add(winnerText);
-		
-		continueButton.setPrefWidth(150);
-		
-		commandPanel.getChildren().add(continueButton);
-	}
 }

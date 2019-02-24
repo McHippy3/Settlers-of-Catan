@@ -60,6 +60,8 @@ public class SettlersOfCatan extends Application
 		//Setting stage
 		stage.setTitle("Settlers of Catan");
 		stage.getIcons().add(new Image("res/window_icon.png"));
+		mainScene = new Scene(new VBox());
+		stage.setScene(mainScene);
 		setTitleScene();
 		stage.show();
 	}
@@ -68,7 +70,7 @@ public class SettlersOfCatan extends Application
 	{
 		Button startButton = new Button("Start Game");
 		
-		mainScene = new Scene((Parent) Scenes.titleScene(startButton));
+		mainScene.setRoot((Parent) Scenes.titleScene(startButton));
 		stage.setScene(mainScene);
 		stage.setMaximized(true);
 		stage.setResizable(true);
@@ -195,13 +197,6 @@ public class SettlersOfCatan extends Application
 		noButton.setOnMouseClicked(
 				(MouseEvent e) -> 
 				{
-					offlineGameScene.disableBuild(); 
-					System.out.println("Next Player Turn");
-					currentPlayer++;
-					if(currentPlayer == 4) 
-					{
-						currentPlayer = 0;
-					}
 					//End game if someone won
 					if(checkWin(players)) 
 					{
@@ -209,6 +204,12 @@ public class SettlersOfCatan extends Application
 						return;
 					}
 					
+					offlineGameScene.disableBuild(); 
+					currentPlayer++;
+					if(currentPlayer == 4) 
+					{
+						currentPlayer = 0;
+					}
 					rollMode();
 				});
 		offlineGameScene.requestBuild(currentPlayer, build1Button, build2Button, build3Button, noButton);
@@ -268,7 +269,7 @@ public class SettlersOfCatan extends Application
 	{
 		Button continueButton = new Button("Continue");
 		continueButton.setOnMouseClicked((MouseEvent me) -> setTitleScene());
-		offlineGameScene.requestVictory(continueButton);
+		mainScene.setRoot((Parent) Scenes.gameOverScene(continueButton, players.get(currentPlayer).playerName));
 	}
 	
 	private void initializeVertexes() 
@@ -309,13 +310,11 @@ public class SettlersOfCatan extends Application
 								
 								//Disable buttons after build
 								offlineGameScene.disableBuild();
-								System.out.println("Vertex Clicked " + v.getGridRow() + " " + v.getGridCol());
 								Platform.runLater(new Runnable() 
 								{
 									@Override
 									public void run() 
 									{
-										System.out.println("Updating");
 										offlineGameScene.updateGUI(vertexes, edges, players);
 																				
 										//Call initial build if still setting up, else return to buildMode
@@ -515,6 +514,7 @@ public class SettlersOfCatan extends Application
 			resList.add(new ResourceCard("wood"));
 			}
 			players.add(new Player(i, names[i], resList));
+			players.get(i).victoryPoints = 8;
 		}
 		bank = new Bank();
 	}
