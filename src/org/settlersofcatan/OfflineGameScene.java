@@ -1,4 +1,6 @@
 package org.settlersofcatan;
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -21,6 +23,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -163,7 +167,7 @@ public class OfflineGameScene extends StackPane
         		{
         		case "desert": picURL = "res/tile_photos/desert.png"; break;
         		case "fields": picURL = "res/tile_photos/fields.png"; break;
-        		case "forest": picURL = "res/tile_photos/forest.png"; break;
+        		case "forests": picURL = "res/tile_photos/forest.png"; break;
         		case "hills": picURL = "res/tile_photos/hills.png"; break;
         		case "mountains": picURL = "res/tile_photos/mountains.png"; break;
         		default: picURL = "res/tile_photos/pasture.png"; break;
@@ -232,8 +236,7 @@ public class OfflineGameScene extends StackPane
         {
         	for(int c = 0; c < 11; c++) 
 			{
-				/*Circle cir = new Circle( xOffSet + c * 105 * sf, yOffSet + y[r] * sf - 10, 3);
-				gameTiles.getChildren().add(cir);*/
+				Circle cir = new Circle( xOffSet + c * 105 * sf, yOffSet + y[r] * sf - 10, 3);
 				if(vertexes[r][c] != null) 
 				{
 					vertexes[r][c].setLayoutX(xOffSet + c * 105 * sf - 15);
@@ -248,7 +251,7 @@ public class OfflineGameScene extends StackPane
         for(int r = 0; r < 11; r++)
         {
         	for(int c = 0; c < 11; c++) 
-        	{
+        	{        		
         		if(edges[r][c] != null && !edges[r][c].getHasRoad()) 
         		{
 	        		edges[r][c].setLayoutX((r%2)*30+ (xOffSet/2) + c * 104 * sf - 20);
@@ -470,6 +473,44 @@ public class OfflineGameScene extends StackPane
 	
 	/************************************************************************************
 	 ************************************************************************************
+	 * STARTING BUILD METHODS *
+	 ************************************************************************************
+	 ************************************************************************************/
+	public void requestFirstBuild(int currentPlayer, String toBuild) 
+	{
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+
+		Text suggestionText = new Text(players.get(currentPlayer).playerName + " select one spot to build a " + toBuild);
+		suggestionText.setFont(Font.font("Verdana", 15));
+		//HBox to center text
+		HBox container = new HBox(suggestionText);
+		container.setPrefWidth(650);
+		container.setAlignment(Pos.CENTER);
+		
+		commandPanel.getChildren().add(0, container);
+	}
+	
+	//Similar to enable build but does not prevent building settlement 
+	//without a road and does not allow upgrading
+	public void enableStartingBuildSettlement() 
+	{
+		System.out.println("working");
+		for(VertexLink[] r: vertexes) 
+		{
+			for(VertexLink v: r) 
+			{
+				if(v != null && v.getHasBuilding() == 0) 
+				{
+					v.setDisable(false);
+				}
+			}
+		}
+	}
+	
+	/************************************************************************************
+	 ************************************************************************************
 	 * ROLL METHODS *
 	 ************************************************************************************
 	 ************************************************************************************/
@@ -568,7 +609,14 @@ public class OfflineGameScene extends StackPane
 			{
 				if(e != null && !e.getHasRoad() && buildCode == 1) 
 				{
-					e.setDisable(false);
+					//Making sure that the road will be connected to one of the player's buildings
+					if((vertexes[e.getMainGridRowStart()][e.getMainGridColStart()].getHasBuilding() > 0 
+							&& vertexes[e.getMainGridRowStart()][e.getMainGridColStart()].settlement.p.playerNumber == currentPlayer)
+							|| (vertexes[e.getMainGridRowEnd()][e.getMainGridColEnd()].getHasBuilding() > 0
+									&& vertexes[e.getMainGridRowEnd()][e.getMainGridColEnd()].settlement.p.playerNumber == currentPlayer)) 
+					{
+						e.setDisable(false);
+					}
 				}
 			}
 		}
@@ -646,7 +694,7 @@ public class OfflineGameScene extends StackPane
 		    		
 		commandPanel.getChildren().add(0, buildOptions);
     }
-
+	
 	/************************************************************************************
 	 ************************************************************************************
 	 * TRADE METHODS *
@@ -716,13 +764,46 @@ public class OfflineGameScene extends StackPane
 		commandPanel.getChildren().add(0, tradeOptions);
 	}
 	
-	public void requestTradePhaseThree(int currentPlayer, Button brickButton , Button grainButton, Button oreButton, Button sheepButton, Button woodButton) 
-	{
-		
-	}
+	/************************************************************************************
+	 ************************************************************************************
+	 * GAME OVER METHODS *
+	 ************************************************************************************
+	 ************************************************************************************/
 	
-	public void requestTradePhaseFour(int currentPlayer, Button brickButton , Button grainButton, Button oreButton, Button sheepButton, Button woodButton) 
+	public void requestVictory(Button continueButton) 
 	{
+		commandPanel.getChildren().clear();
 		
+		Text winnerText = new Text(players.get(currentPlayer).getName() + " WON!!!");
+		winnerText.setFont(Font.font("Verdana", 75));
+		winnerText.setWrappingWidth(800);
+		winnerText.setX(100);
+		winnerText.setY(400);
+		//Text color corresponds to player
+		switch(currentPlayer) 
+		{
+		case 0: winnerText.setFill(Color.BLUE); break;
+		case 1: winnerText.setFill(Color.RED); break;
+		case 2: winnerText.setFill(Color.WHITE); break;
+		default: winnerText.setFill(Color.ORANGE);
+		}
+		
+		//Animation
+		ScaleTransition st = new ScaleTransition();
+		st.setDuration(Duration.millis(1000));
+		st.setNode(winnerText);
+		st.setFromX(1.0);
+		st.setFromY(1.0);
+		st.setToX(1.2);
+		st.setToY(1.2);
+		st.setAutoReverse(true);
+		st.setCycleCount(10);
+		st.play();
+		
+		gameTiles.getChildren().add(winnerText);
+		
+		continueButton.setPrefWidth(150);
+		
+		commandPanel.getChildren().add(continueButton);
 	}
 }

@@ -43,8 +43,9 @@ public class SettlersOfCatan extends Application
 	 * GUI STUFF *
 	 ************************************************************************************
 	 ************************************************************************************/
-	
-	private int currentPlayer;
+	private Stage stage;
+	private int currentPlayer, setUpPhase;
+	private boolean inSetUp;
 	private Scene mainScene;
 	private OfflineGameScene offlineGameScene;
 	private VertexLink vertexes[][];
@@ -54,20 +55,29 @@ public class SettlersOfCatan extends Application
 	
 	public void start(Stage stage) 
 	{
+		this.stage = stage;
+		
+		//Setting stage
+		stage.setTitle("Settlers of Catan");
+		stage.getIcons().add(new Image("res/window_icon.png"));
+		setTitleScene();
+		stage.show();
+	}
+	
+	private void setTitleScene() 
+	{
 		Button startButton = new Button("Start Game");
 		
 		mainScene = new Scene((Parent) Scenes.titleScene(startButton));
-		
-		//Integer properties
-		currentPlayer = 0;
-
-		//Setting stage
 		stage.setScene(mainScene);
-		stage.setTitle("Settlers of Catan");
-		stage.getIcons().add(new Image("res/window_icon.png"));
 		stage.setMaximized(true);
 		stage.setResizable(true);
-		stage.show();
+
+		//Properties
+		currentPlayer = 0;
+		inSetUp = true;
+		setUpPhase = 0;
+		
 		startButton.setOnMouseClicked(
 				(MouseEvent e) -> setNameScene()
 				);
@@ -101,7 +111,41 @@ public class SettlersOfCatan extends Application
 		initializeEdges();
 		offlineGameScene = new OfflineGameScene(vertexes, edges, players, tileArray);
 		mainScene.setRoot(offlineGameScene);
-		rollMode();
+		initialBuild();
+	}
+	
+	private void initialBuild() 
+	{
+		//Incrementing player by snake order
+		if(setUpPhase < 7 && setUpPhase % 2 == 0 && setUpPhase != 0) 
+		{
+			currentPlayer++;
+		}
+		else if (setUpPhase > 9 && setUpPhase % 2 == 0 && setUpPhase != 16)
+		{
+			currentPlayer --;
+		}
+		
+		//Loops through the players in snake order to allow initial builds
+		//Increment phase after every build, increment currentPlayer after every road built
+		//Break once everyone has built two settlements and two roads
+		if(setUpPhase > 15) 
+		{
+			inSetUp = false;
+			rollMode();
+		}
+		else if(setUpPhase % 2 == 0) 
+		{
+			offlineGameScene.requestFirstBuild(currentPlayer, "settlement."); 
+			offlineGameScene.enableStartingBuildSettlement();
+			setUpPhase++;
+		}
+		else if (setUpPhase % 2 == 1) 
+		{
+			offlineGameScene.requestFirstBuild(currentPlayer, "road");
+			offlineGameScene.enableBuild(1);
+			setUpPhase++; 
+		}
 	}
 	
 	private void rollMode() 
@@ -158,6 +202,13 @@ public class SettlersOfCatan extends Application
 					{
 						currentPlayer = 0;
 					}
+					//End game if someone won
+					if(checkWin(players)) 
+					{
+						gameWonMode();
+						return;
+					}
+					
 					rollMode();
 				});
 		offlineGameScene.requestBuild(currentPlayer, build1Button, build2Button, build3Button, noButton);
@@ -213,6 +264,13 @@ public class SettlersOfCatan extends Application
 				});
 	}
 
+	private void gameWonMode() 
+	{
+		Button continueButton = new Button("Continue");
+		continueButton.setOnMouseClicked((MouseEvent me) -> setTitleScene());
+		offlineGameScene.requestVictory(continueButton);
+	}
+	
 	private void initializeVertexes() 
 	{
 		vertexes = new VertexLink[12][11];
@@ -260,8 +318,15 @@ public class SettlersOfCatan extends Application
 										System.out.println("Updating");
 										offlineGameScene.updateGUI(vertexes, edges, players);
 																				
-										//Call build again after being clicked
-										buildMode();
+										//Call initial build if still setting up, else return to buildMode
+										if(inSetUp) 
+										{
+											initialBuild();
+										}
+										else 
+										{
+											buildMode();
+										}
 									}
 								});
 							}
@@ -327,8 +392,15 @@ public class SettlersOfCatan extends Application
 									{
 										System.out.println("Updating");
 										offlineGameScene.updateGUI(vertexes, edges, players);
-										//Call build again
-										buildMode();
+										//Call initial build if still setting up, else return to buildMode
+										if(inSetUp) 
+										{
+											initialBuild();
+										}
+										else 
+										{
+											buildMode();
+										}
 									}
 								});
 							}
@@ -375,18 +447,28 @@ public class SettlersOfCatan extends Application
 				tileArray[i] = new Tile("forests", 0);
 			else if(i >= 9 && i < 13)
 				tileArray[i] = new Tile("hills", 0);
-			else if(i >= 13 && i < 15)
+			else if(i >= 13 && i < 16)
 				tileArray[i] = new Tile("mountains", 0);
 			else
 				tileArray[i] = new Tile("pastures", 0);
 		}
 		//Shuffling and then setting the numbers
-		shuffle(tileArray);
+		int[] tileNums = {2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12};
+		int count = 0;
+		shuffleTiles(tileArray); //Shuffling tiles
 		for(int i = 0; i < 19; i++) 
 		{
-			tileArray[i].setNumber(i);
-			System.out.println(tileArray[i].type);
+			if(tileArray[i].type.equals("desert")) 
+			{
+				tileArray[i].setNumber(0);
+			}
+			else
+			{
+				tileArray[i].setNumber(tileNums[count]);
+				count++;
+			}
 		}
+		shuffleTiles(tileArray); //Shuffling again for numbers
 		
 		//Creating rows of tiles
 		Tile[] ar1 = {tileArray[0], tileArray[1], tileArray[2]};
@@ -409,7 +491,8 @@ public class SettlersOfCatan extends Application
 	 ************************************************************************************
 	 * GAME STUFF *
 	 ************************************************************************************
-	 ************************************************************************************/	
+	 ************************************************************************************/
+	
 	private ArrayList<Player> players = new ArrayList<>();
 	private Boolean gameloop = true;
 	private int playernumber = 0;
@@ -424,7 +507,7 @@ public class SettlersOfCatan extends Application
 		for(int i = 0; i < names.length; i++)
 		{
 			ArrayList<ResourceCard> resList = new ArrayList<>();
-			for(int a = 0; a < 10; a++) {
+			for(int a = 0; a < 20; a++) {
 			resList.add(new ResourceCard("brick"));
 			resList.add(new ResourceCard("ore"));
 			resList.add(new ResourceCard("grain"));
@@ -435,55 +518,7 @@ public class SettlersOfCatan extends Application
 		}
 		bank = new Bank();
 	}
-		
-	public void trade(int firstPlayer, int secondPlayer)
-	{
-		Scanner sc = new Scanner(System.in);
-		
-		Player p1 = players.get(firstPlayer);
-		Player p2 = players.get(secondPlayer);
-		
-		System.out.println(p1.playerName+" which resource do you want from "+p2.playerName+"?");
-		String ans1 = sc.nextLine();
-		System.out.println("How many?: ");
-		int quantity1 = sc.nextInt();
-		sc.nextLine();
-		
-		System.out.println(p2.playerName+" which resource do you want from "+p1.playerName+"?");
-		String ans2 = sc.nextLine();
-		System.out.println("How many?: ");
-		int quantity2 = sc.nextInt();
-		sc.nextLine();
-		
 
-		
-		if(ResourceCard.tradeWorks(p1, ans1, quantity1) == true && ResourceCard.tradeWorks(p2, ans2, quantity2) == true)
-		{
-			int cap1 = 0;
-			int cap2 = 0;
-			for(int x = 0;x<p2.resList.size();x++)
-			{
-				if(p2.resList.get(x).cardType.equalsIgnoreCase(ans1) && cap1 <= quantity1)
-				{
-					p2.resList.remove(x);
-					p1.resList.add(new ResourceCard(ans1.toLowerCase()));
-					cap1 += 1;
-				}
-			}
-			
-			for(int x = 0;x<p1.resList.size();x++)
-			{
-				if(p1.resList.get(x).cardType.equalsIgnoreCase(ans2) && cap2 <= quantity2)
-				{
-					p1.resList.remove(x);
-					p2.resList.add(new ResourceCard(ans2.toLowerCase()));
-					cap2 += 1;
-				}
-			}
-		}
-		
-		
-	}
 
 	//Game ends if player reaches 10 victory points
 	private boolean checkWin(ArrayList<Player> p)
@@ -505,7 +540,7 @@ public class SettlersOfCatan extends Application
 		return dice1;
 	}
 	
-	private Tile[] shuffle(Tile[] array)
+	private void shuffleTiles(Tile[] array)
 	{
 		Random rgen = new Random();  // Random number generator			
  
@@ -515,7 +550,5 @@ public class SettlersOfCatan extends Application
 		    array[i] = array[randomPosition];
 		    array[randomPosition] = temp;
 		}
- 
-		return array;
 	}
 }

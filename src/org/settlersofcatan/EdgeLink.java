@@ -7,14 +7,7 @@ public class EdgeLink extends Button
 	private int gridRow, gridCol;
 	private int mainGridRowStart, mainGridColStart;
 	private int mainGridRowEnd, mainGridColEnd;
-	private boolean hasRoad;
-	private int gridX;
-	private int gridY;
-	private int startGridRow;
-	private int endGridRow;
-	private int startGridCollum;
-	private int endGridCollum;
-	private int tileID, edgeID;
+	
 	Road road;
 	Edge[] e;
 	

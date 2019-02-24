@@ -1,15 +1,7 @@
 package org.settlersofcatan;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
 
 import javafx.scene.image.ImageView;
-
-import static java.lang.System.*;
-import java.awt.Color;
-import java.io.*;
-import java.lang.Math;
 
 public class Tile 
 {
@@ -30,7 +22,6 @@ public class Tile
 	int number;
 	int tileID;
 	boolean hasRobber;
-	Vertex[] vertexArray = new Vertex[6];
 	
 	public Tile(String type, int number)
 	{
