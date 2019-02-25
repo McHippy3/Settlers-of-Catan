@@ -241,7 +241,7 @@ public class Player
 		}
 	}
 	
-	public boolean buildDevelopmentCard(Bank x)
+	public boolean buildDevelopmentCard(Bank bank)
 	{
 		int ore = this.getOre();
 		int wool = this.getWool();

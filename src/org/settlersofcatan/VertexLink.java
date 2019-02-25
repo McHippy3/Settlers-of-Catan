@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 public class VertexLink extends Button
 {
 	Vertex[] v;
+	EdgeLink[] adjacentEdges;
 	int gridRow, gridCol;
 	Settlement settlement;
 	City city;

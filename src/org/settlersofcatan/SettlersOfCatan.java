@@ -14,19 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import javafx.stage.Screen.*;
-import java.io.File;
-import javafx.geometry.Rectangle2D;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -77,7 +65,7 @@ public class SettlersOfCatan extends Application
 
 		//Properties
 		currentPlayer = 0;
-		inSetUp = true;
+		inSetUp = false;
 		setUpPhase = 0;
 		
 		startButton.setOnMouseClicked(
@@ -113,7 +101,8 @@ public class SettlersOfCatan extends Application
 		initializeEdges();
 		offlineGameScene = new OfflineGameScene(vertexes, edges, players, tileArray);
 		mainScene.setRoot(offlineGameScene);
-		initialBuild();
+		//initialBuild();
+		rollMode();
 	}
 	
 	private void initialBuild() 
@@ -172,6 +161,7 @@ public class SettlersOfCatan extends Application
 		Button build1Button = new Button("Road");
 		Button build2Button = new Button("Settlement");
 		Button build3Button = new Button("Upgrade Settlement");
+		Button build4Button = new Button("Development Card");
 		Button noButton = new Button("No");
 
 		build1Button.setOnMouseClicked(
@@ -190,6 +180,11 @@ public class SettlersOfCatan extends Application
 				(MouseEvent e) -> {
 					offlineGameScene.disableBuild();
 					offlineGameScene.enableBuild(3);
+					}
+				);
+		build4Button.setOnMouseClicked(
+				(MouseEvent e) -> {
+					players.get(currentPlayer).buildDevelopmentCard(bank);
 					}
 				);
 		
@@ -212,7 +207,7 @@ public class SettlersOfCatan extends Application
 					}
 					rollMode();
 				});
-		offlineGameScene.requestBuild(currentPlayer, build1Button, build2Button, build3Button, noButton);
+		offlineGameScene.requestBuild(currentPlayer, build1Button, build2Button, build3Button, build4Button, noButton);
 	}
 	
 	private void tradeModePhase1() 
@@ -444,9 +439,9 @@ public class SettlersOfCatan extends Application
 				tileArray[i] = new Tile("fields", 0);
 			else if(i >= 5 && i < 9)
 				tileArray[i] = new Tile("forests", 0);
-			else if(i >= 9 && i < 13)
+			else if(i >= 9 && i < 12)
 				tileArray[i] = new Tile("hills", 0);
-			else if(i >= 13 && i < 16)
+			else if(i >= 12 && i < 15)
 				tileArray[i] = new Tile("mountains", 0);
 			else
 				tileArray[i] = new Tile("pastures", 0);
@@ -459,7 +454,7 @@ public class SettlersOfCatan extends Application
 		{
 			if(tileArray[i].type.equals("desert")) 
 			{
-				tileArray[i].setNumber(0);
+				tileArray[i].setNumber(7);
 			}
 			else
 			{
@@ -514,7 +509,6 @@ public class SettlersOfCatan extends Application
 			resList.add(new ResourceCard("wood"));
 			}
 			players.add(new Player(i, names[i], resList));
-			players.get(i).victoryPoints = 8;
 		}
 		bank = new Bank();
 	}

@@ -663,7 +663,7 @@ public class OfflineGameScene extends StackPane
 		}
 	}
 	
-	public void requestBuild(int currentPlayer, Button build1Button, Button build2Button, Button build3Button, Button noButton)
+	public void requestBuild(int currentPlayer, Button build1Button, Button build2Button, Button build3Button, Button build4Button, Button noButton)
 	{
 		this.currentPlayer = currentPlayer;
 		//Prevent stacking
@@ -688,9 +688,12 @@ public class OfflineGameScene extends StackPane
 		
 		build3Button.setPrefWidth(150);
 		buildOptions.add(build3Button, 2, 1);
+		
+		build4Button.setPrefWidth(150);
+		buildOptions.add(build4Button, 3, 1);
 
 		noButton.setPrefWidth(150);
-		buildOptions.add(noButton, 3, 1);
+		buildOptions.add(noButton, 2, 2, 2, 2);
 		    		
 		commandPanel.getChildren().add(0, buildOptions);
     }

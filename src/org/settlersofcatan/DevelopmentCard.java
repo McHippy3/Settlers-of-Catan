@@ -27,7 +27,7 @@ public class DevelopmentCard
 	}
 	
 	
-	// Probaby won't ever need this constructor, just in case
+	// Probably won't ever need this constructor, just in case
 	public DevelopmentCard(String s, boolean flag)
 	{
 		type = s;
@@ -37,16 +37,12 @@ public class DevelopmentCard
 	// Forced to move Robber
 	public static void knight(Tile x)
 	{
-		Robber.moveRobber(x);
+		//Robber.moveRobber(x);
 	}
 	
 	// Take 2 of any Resource from the Bank, can build with these in the same turn
-	public static void yearOfPlenty(Player p)
-	{
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Which resource do you want?: ");
-		String res = sc.nextLine();
-		
+	public static void yearOfPlenty(Player p, String res)
+	{	
 		switch(res)
 		{
 		case "wool":
@@ -87,6 +83,4 @@ public class DevelopmentCard
 			}
 		}
 	}
-	
-	
 }
