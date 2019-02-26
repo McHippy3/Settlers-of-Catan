@@ -2,22 +2,16 @@ package org.settlersofcatan;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
 
 public class SettlersOfCatan extends Application
 {
@@ -709,11 +703,6 @@ public class SettlersOfCatan extends Application
 	 ************************************************************************************/
 	
 	private ArrayList<Player> players = new ArrayList<>();
-	private Boolean gameloop = true;
-	private int playernumber = 0;
-	private Scanner sc = new Scanner(System.in);
-	private String input;
-	private Boolean gameInProgress = true, playAgain = false;
 	private Bank bank;
 	
 	//Starting Game/Initialization
@@ -789,7 +778,7 @@ public class SettlersOfCatan extends Application
 			
 			for(int x = 0;x<p1.resList.size();x++)
 			{
-				for(int i=0;i<ans1.size();i++)
+				for(int i=0;i<ans2.size();i++)
 				{
 					if(p1.resList.get(x).cardType.equalsIgnoreCase(ans2.get(i)) && cap2 <= quantity2.get(i))
 					{
@@ -800,8 +789,6 @@ public class SettlersOfCatan extends Application
 				}
 			}
 		}
-		
-		
 	}
 
 	//Game ends if player reaches 10 victory points
