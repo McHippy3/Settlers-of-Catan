@@ -716,16 +716,16 @@ public class OfflineGameScene extends StackPane
 	 ************************************************************************************
 	 ************************************************************************************/
 	
-	/* TODO
+	/*
 	 * Phase 1: yes or no to trade
 	 * Phase 2: if yes, request player to trade with
 	 * Phase 3: player 1 chooses what to request
-	 * Phase 4: player 2 chooses what to take in exchange
-	 * Phase 5: 
-	 * Phase 6: 
-	 * Phase 7: 
-	 * Phase 8: 
-	 * Phase 9: 
+	 * Phase 4: player 1 chooses how much to request
+	 * Phase 5: player 1 decides if they want to trade multiple resources
+	 * Phase 6: player 2 decides if they want to trade and if so, what they want to trade
+	 * Phase 7: player 2 decides how much they want to trade
+	 * Phase 8: player 2 decides if they want to trade multiple resources
+	 * Phase 9: player 1 decides if they want to accept player 2's offer
 	 */
 	public void requestTradePhaseOne(int currentPlayer, Button yesButton, Button noButton) 
 	{
