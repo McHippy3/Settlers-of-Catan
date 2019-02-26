@@ -28,9 +28,10 @@ public class SettlersOfCatan extends Application
 	
 	/************************************************************************************
 	 ************************************************************************************
-	 * GUI STUFF *
+	 * GUI SETUP *
 	 ************************************************************************************
 	 ************************************************************************************/
+	
 	private Stage stage;
 	private int currentPlayer, setUpPhase;
 	private boolean inSetUp;
@@ -139,133 +140,11 @@ public class SettlersOfCatan extends Application
 		}
 	}
 	
-	private void rollMode() 
-	{
-		//Roll Button
-		Button rollButton = new Button("Roll Dice");
-		
-		rollButton.setOnMouseClicked(
-				(MouseEvent me) -> {
-					Button continueButton = new Button("Continue");
-					continueButton.setOnMouseClicked((MouseEvent e) -> tradeModePhase1());
-					
-					offlineGameScene.showRollResults(rollDice(), rollDice(), continueButton);
-				}
-				);
-		offlineGameScene.requestRollDice(currentPlayer, rollButton);
-	}
-	
-	private void buildMode() 
-	{
-		//Build Button mouse events
-		Button build1Button = new Button("Road");
-		Button build2Button = new Button("Settlement");
-		Button build3Button = new Button("Upgrade Settlement");
-		Button build4Button = new Button("Development Card");
-		Button noButton = new Button("No");
-
-		build1Button.setOnMouseClicked(
-				(MouseEvent e) -> {
-					offlineGameScene.disableBuild();
-					offlineGameScene.enableBuild(1);
-					}
-				);
-		build2Button.setOnMouseClicked(
-				(MouseEvent e) -> {
-					offlineGameScene.disableBuild();
-					offlineGameScene.enableBuild(2);
-					}
-				);
-		build3Button.setOnMouseClicked(
-				(MouseEvent e) -> {
-					offlineGameScene.disableBuild();
-					offlineGameScene.enableBuild(3);
-					}
-				);
-		build4Button.setOnMouseClicked(
-				(MouseEvent e) -> {
-					players.get(currentPlayer).buildDevelopmentCard(bank);
-					}
-				);
-		
-		//Disable all build buttons and move onto trading
-		noButton.setOnMouseClicked(
-				(MouseEvent e) -> 
-				{
-					//End game if someone won
-					if(checkWin(players)) 
-					{
-						gameWonMode();
-						return;
-					}
-					
-					offlineGameScene.disableBuild(); 
-					currentPlayer++;
-					if(currentPlayer == 4) 
-					{
-						currentPlayer = 0;
-					}
-					rollMode();
-				});
-		offlineGameScene.requestBuild(currentPlayer, build1Button, build2Button, build3Button, build4Button, noButton);
-	}
-	
-	private void tradeModePhase1() 
-	{
-		Button yesButton = new Button("Yes");
-		Button noButton = new Button("No");
-		offlineGameScene.requestTradePhaseOne(yesButton, noButton);
-		yesButton.setOnMouseClicked(
-				(MouseEvent me) -> {
-					tradeModePhase2();
-				});
-		noButton.setOnMouseClicked((MouseEvent me) -> buildMode());
-	}
-	
-	private void tradeModePhase2() 
-	{
-		//Only non current turn players
-		int[] otherPlayers = new int[3];
-		int count = 0;
-		for(int i = 0; i < 4; i++) 
-		{
-			if(i != currentPlayer)
-			{
-				otherPlayers[count] = i;
-				count++;
-			}
-		}
-				
-		Button option1Button = new Button(players.get(otherPlayers[0]).getName());
-		Button option2Button = new Button(players.get(otherPlayers[1]).getName());
-		Button option3Button = new Button(players.get(otherPlayers[2]).getName());
-		Button cancelButton = new Button("Cancel");
-
-		offlineGameScene.requestTradePhaseTwo(currentPlayer, option1Button, option2Button, option3Button, cancelButton);
-		option1Button.setOnMouseClicked(
-				(MouseEvent me) -> {
-					buildMode();
-				});
-		option2Button.setOnMouseClicked(
-				(MouseEvent me) -> {
-					buildMode();
-				});
-		option3Button.setOnMouseClicked(
-				(MouseEvent me) -> {
-					buildMode();
-				});
-		cancelButton.setOnMouseClicked(
-				(MouseEvent me) -> {
-					tradeModePhase1();
-				});
-	}
-
-	private void gameWonMode() 
-	{
-		Button continueButton = new Button("Continue");
-		continueButton.setOnMouseClicked((MouseEvent me) -> setTitleScene());
-		mainScene.setRoot((Parent) Scenes.gameOverScene(continueButton, players.get(currentPlayer).playerName));
-	}
+	/************************************************************************************
+	 ************************************************************************************
+	 * INITIALIZATION OF GAME COMPONENTS *
+	 ************************************************************************************
+	 ************************************************************************************/
 	
 	private void initializeVertexes() 
 	{
@@ -483,6 +362,348 @@ public class SettlersOfCatan extends Application
 	
 	/************************************************************************************
 	 ************************************************************************************
+	 * ROLL AND BUILD *
+	 ************************************************************************************
+	 ************************************************************************************/
+	
+	private void rollMode() 
+	{
+		//Roll Button
+		Button rollButton = new Button("Roll Dice");
+		
+		rollButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					Button continueButton = new Button("Continue");
+					continueButton.setOnMouseClicked((MouseEvent e) -> tradeModePhase1());
+					
+					offlineGameScene.showRollResults(rollDice(), rollDice(), continueButton);
+				}
+				);
+		offlineGameScene.requestRollDice(currentPlayer, rollButton);
+	}
+	
+	private void buildMode() 
+	{
+		//Build Button mouse events
+		Button build1Button = new Button("Road");
+		Button build2Button = new Button("Settlement");
+		Button build3Button = new Button("Upgrade Settlement");
+		Button build4Button = new Button("Development Card");
+		Button noButton = new Button("No");
+
+		build1Button.setOnMouseClicked(
+				(MouseEvent e) -> {
+					offlineGameScene.disableBuild();
+					offlineGameScene.enableBuild(1);
+					}
+				);
+		build2Button.setOnMouseClicked(
+				(MouseEvent e) -> {
+					offlineGameScene.disableBuild();
+					offlineGameScene.enableBuild(2);
+					}
+				);
+		build3Button.setOnMouseClicked(
+				(MouseEvent e) -> {
+					offlineGameScene.disableBuild();
+					offlineGameScene.enableBuild(3);
+					}
+				);
+		build4Button.setOnMouseClicked(
+				(MouseEvent e) -> {
+					players.get(currentPlayer).buildDevelopmentCard(bank);
+					buildMode();
+					}
+				);
+		
+		//Disable all build buttons and move onto trading
+		noButton.setOnMouseClicked(
+				(MouseEvent e) -> 
+				{
+					//End game if someone won
+					if(checkWin(players)) 
+					{
+						gameWonMode();
+						return;
+					}
+					
+					offlineGameScene.disableBuild(); 
+					currentPlayer++;
+					if(currentPlayer == 4) 
+					{
+						currentPlayer = 0;
+					}
+					rollMode();
+				});
+		offlineGameScene.requestBuild(currentPlayer, build1Button, build2Button, build3Button, build4Button, noButton);
+	}
+	
+	/************************************************************************************
+	 ************************************************************************************
+	 * TRADING *
+	 ************************************************************************************
+	 ************************************************************************************/
+	
+	private void tradeModePhase1() 
+	{
+		Button yesButton = new Button("Yes");
+		Button noButton = new Button("No");
+		offlineGameScene.requestTradePhaseOne(currentPlayer, yesButton, noButton);
+		yesButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeModePhase2();
+				});
+		noButton.setOnMouseClicked((MouseEvent me) -> buildMode());
+	}
+	
+	private void tradeModePhase2() 
+	{
+		ArrayList<String> resources = new ArrayList<>();
+		ArrayList<String> rNums = new ArrayList<>();
+		ArrayList<String> oppResources = new ArrayList<>();
+		ArrayList<String> oppRNums = new ArrayList<>();
+		//Only non current turn players
+		int[] otherPlayers = new int[3];
+		int count = 0;
+		for(int i = 0; i < 4; i++) 
+		{
+			if(i != currentPlayer)
+			{
+				otherPlayers[count] = i;
+				count++;
+			}
+		}
+				
+		Button option1Button = new Button(players.get(otherPlayers[0]).getName());
+		Button option2Button = new Button(players.get(otherPlayers[1]).getName());
+		Button option3Button = new Button(players.get(otherPlayers[2]).getName());
+		Button cancelButton = new Button("Cancel");
+
+		offlineGameScene.requestTradePhaseTwo(currentPlayer, option1Button, option2Button, option3Button, cancelButton);
+		option1Button.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeModePhase3(otherPlayers[0],resources,rNums,oppResources,oppRNums);
+				});
+		option2Button.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeModePhase3(otherPlayers[1],resources,rNums,oppResources,oppRNums);
+				});
+		option3Button.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeModePhase3(otherPlayers[2],resources,rNums,oppResources,oppRNums);
+				});
+		cancelButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeModePhase1();
+				});
+	}
+	private void tradeModePhase3(int otherPlayer, ArrayList<String> resources,ArrayList<String> rNums,ArrayList<String> oppResources,ArrayList<String> oppRNums ) 
+	{
+
+		//Phase 3: player 1 chooses what to request
+		Button brickButton = new Button("Brick");
+		Button grainButton = new Button("Grain");
+		Button oreButton = new Button("Ore");
+		Button woodButton = new Button("Wood");
+		Button woolButton = new Button("Wool");
+		Button cancelButton = new Button("Cancel");
+
+		offlineGameScene.requestTradePhaseThree(currentPlayer, brickButton, grainButton, oreButton, woodButton, woolButton, cancelButton);
+		brickButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String resource=new String("Brick");
+					resources.add(resource);
+					tradeModePhase4(otherPlayer, resources,rNums,oppResources,oppRNums);
+				});
+		grainButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String resource=new String("Grain");
+					resources.add(resource);
+					tradeModePhase4(otherPlayer, resources,rNums,oppResources,oppRNums);
+				});
+		oreButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String resource=new String("Ore");
+					resources.add(resource);
+					tradeModePhase4(otherPlayer, resources,rNums,oppResources,oppRNums);
+				});
+		woodButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String resource=new String("Wood");
+					resources.add(resource);
+					tradeModePhase4(otherPlayer, resources,rNums,oppResources,oppRNums);
+				});
+		woolButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String resource=new String("Wool");
+					resources.add(resource);
+					tradeModePhase4(otherPlayer, resources,rNums,oppResources,oppRNums);
+				});
+		cancelButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeModePhase2();
+				});
+	}
+	
+
+
+	private void tradeModePhase4(int otherPlayer,ArrayList<String> resources,ArrayList<String> rNums,ArrayList<String> oppResources,ArrayList<String> oppRNums ) 
+	{
+		//Phase 4: Player 1 chooses how many of said resource they want to trade
+		TextField resourceNum = new TextField();
+		
+		Button enter = new Button("Enter");
+		Button cancelButton = new Button("Cancel");
+		
+		offlineGameScene.requestTradePhaseFour(currentPlayer, cancelButton, resourceNum, enter, resources,resources.get(resources.size()-1));
+		enter.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String rNum=resourceNum.getText();
+					rNums.add(rNum);
+					tradeModePhase5(otherPlayer,resources,rNums,oppResources,oppRNums);
+				});
+		cancelButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					resources.remove(resources.size()-1);
+					tradeModePhase3(otherPlayer,resources,rNums,oppResources,oppRNums);
+				});
+	}
+	
+	private void tradeModePhase5(int otherPlayer,ArrayList<String> resources,ArrayList<String> rNums,ArrayList<String> oppResources,ArrayList<String> oppRNums) 
+	{
+		//Phase 5: Player 1 chooses if they want to trade another resource
+		Button yes = new Button("Yes");
+		Button no = new Button("No");
+		
+		offlineGameScene.requestTradePhaseFive(currentPlayer, yes, no);
+		yes.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeModePhase3(otherPlayer,resources,rNums,oppResources,oppRNums);
+				});
+		no.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeModePhase6(otherPlayer, resources,rNums,oppResources,oppRNums);
+				});
+	}
+	private void tradeModePhase6(int otherPlayer,ArrayList<String> resources,ArrayList<String> rNums,ArrayList<String> oppResources,ArrayList<String> oppRNums) 
+	{
+		String Player2=new String(players.get(otherPlayer).getName());
+		
+		//Phase 6: player 2 chooses what to request
+				Button brickButton = new Button("Brick");
+				Button grainButton = new Button("Grain");
+				Button oreButton = new Button("Ore");
+				Button woodButton = new Button("Wood");
+				Button woolButton = new Button("Wool");
+				Button cancelButton = new Button("No");
+
+				offlineGameScene.requestTradePhaseSix(currentPlayer, brickButton, grainButton, oreButton, woodButton, woolButton, cancelButton, Player2, resources,rNums);
+				brickButton.setOnMouseClicked(
+						(MouseEvent me) -> {
+							String resource2=new String("Brick");
+							oppResources.add(resource2);
+							tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
+						});
+				grainButton.setOnMouseClicked(
+						(MouseEvent me) -> {
+							String resource2=new String("Grain");
+							oppResources.add(resource2);
+							tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
+						});
+				oreButton.setOnMouseClicked(
+						(MouseEvent me) -> {
+							String resource2=new String("Ore");
+							oppResources.add(resource2);
+							tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
+						});
+				woodButton.setOnMouseClicked(
+						(MouseEvent me) -> {
+							String resource2=new String("Wood");
+							oppResources.add(resource2);
+							tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
+						});
+				woolButton.setOnMouseClicked(
+						(MouseEvent me) -> {
+							String resource2=new String("Wool");
+							oppResources.add(resource2);
+							tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
+						});
+				cancelButton.setOnMouseClicked(
+						(MouseEvent me) -> {
+							tradeModePhase1();
+						});
+	}
+	private void tradeModePhase7(int otherPlayer,ArrayList<String> resources,ArrayList<String> rNums, ArrayList<String> oppResources,ArrayList<String> oppRNums)
+	{
+		//Phase7: player 2 chooses how many of said resource to request
+		TextField resourceNum = new TextField();
+		
+		Button enter = new Button("Enter");
+		Button cancelButton = new Button("Cancel");
+		
+		offlineGameScene.requestTradePhaseSeven(currentPlayer, cancelButton, oppResources, enter, oppRNums,resourceNum,oppResources.get(oppResources.size()-1));
+		enter.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String rNum=resourceNum.getText();
+					oppRNums.add(rNum);
+					tradeModePhase8(otherPlayer,resources,rNums,oppResources,oppRNums);
+				});
+		cancelButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					oppResources.remove(oppResources.size()-1);
+					tradeModePhase6(otherPlayer,resources,rNums,oppResources,oppRNums);
+				});
+	}
+	private void tradeModePhase8(int otherPlayer,ArrayList<String> resources,ArrayList<String> rNums, ArrayList<String> oppResources,ArrayList<String> oppRNums)
+	{
+		//Phase 8: Player 2 chooses if they want to trade another resource
+				Button yes = new Button("Yes");
+				Button no = new Button("No");
+				
+				offlineGameScene.requestTradePhaseEight(currentPlayer, yes, no);
+				yes.setOnMouseClicked(
+						(MouseEvent me) -> {
+							tradeModePhase6(otherPlayer,resources,rNums,oppResources,oppRNums);
+						});
+				no.setOnMouseClicked(
+						(MouseEvent me) -> {
+							tradeModePhase9(otherPlayer, resources,rNums,oppResources,oppRNums);
+						});
+	}
+	private void tradeModePhase9(int otherPlayer,ArrayList<String> resources,ArrayList<String> rNums, ArrayList<String> oppResources,ArrayList<String> oppRNums)
+	{
+		//Phase 9: Player 1 chooses if they want to accept player 2's demands
+				Button yes = new Button("Yes");
+				Button no = new Button("No");
+
+				offlineGameScene.requestTradePhaseNine(currentPlayer, yes,no,resources, rNums, oppResources, oppRNums);
+				yes.setOnMouseClicked(
+						(MouseEvent me) -> {
+							//trade work
+							trade(currentPlayer,otherPlayer,resources,rNums,oppResources,oppRNums);
+							tradeModePhase1();
+						});
+				no.setOnMouseClicked(
+						(MouseEvent me) -> {
+							tradeModePhase1();
+						});
+	}
+	
+	/************************************************************************************
+	 ************************************************************************************
+	 * OTHER GUI STUFF *
+	 ************************************************************************************
+	 ************************************************************************************/
+
+	private void gameWonMode() 
+	{
+		Button continueButton = new Button("Continue");
+		continueButton.setOnMouseClicked((MouseEvent me) -> setTitleScene());
+		mainScene.setRoot((Parent) Scenes.gameOverScene(continueButton, players.get(currentPlayer).playerName));
+	}
+	
+	/************************************************************************************
+	 ************************************************************************************
 	 * GAME STUFF *
 	 ************************************************************************************
 	 ************************************************************************************/
@@ -501,18 +722,87 @@ public class SettlersOfCatan extends Application
 		for(int i = 0; i < names.length; i++)
 		{
 			ArrayList<ResourceCard> resList = new ArrayList<>();
-			for(int a = 0; a < 20; a++) {
-			resList.add(new ResourceCard("brick"));
-			resList.add(new ResourceCard("ore"));
-			resList.add(new ResourceCard("grain"));
-			resList.add(new ResourceCard("wool"));
-			resList.add(new ResourceCard("wood"));
+			for(int a = 0; a < 20; a++) 
+			{
+				resList.add(new ResourceCard("brick"));
+				resList.add(new ResourceCard("ore"));
+				resList.add(new ResourceCard("grain"));
+				resList.add(new ResourceCard("wool"));
+				resList.add(new ResourceCard("wood"));
 			}
 			players.add(new Player(i, names[i], resList));
 		}
 		bank = new Bank();
 	}
+	
+	private void trade(int firstPlayer, int secondPlayer, ArrayList<String> resources, ArrayList<String> rNums, ArrayList<String> oppResources, ArrayList<String> oppRNums)
+	{
+		
+		Player p1 = players.get(firstPlayer);
+		Player p2 = players.get(secondPlayer);
+		ArrayList<String> ans1 = new ArrayList<>();
+		
+		for(int i=0;i<resources.size();i++)
+		{
+			ans1.add(resources.get(i));
+		}
+		
+		ArrayList<Integer> quantity1 = new ArrayList<>();
+		
+		for(int i=0;i<rNums.size();i++)
+		{
+			quantity1.add(Integer.parseInt(rNums.get(i)));
+		}
+		
+		ArrayList<String> ans2 = new ArrayList<>();
+		
+		for(int i=0;i<oppResources.size();i++)
+		{
+			ans2.add(oppResources.get(i));
+		}
+		
+		ArrayList<Integer> quantity2 = new ArrayList<>();
+		
+		for(int i=0;i<oppRNums.size();i++)
+		{
+			quantity2.add(Integer.parseInt(oppRNums.get(i)));
+		}
+		
 
+		
+		if(ResourceCard.tradeWorks(p1, ans1, quantity1) == true && ResourceCard.tradeWorks(p2, ans2, quantity2) == true)
+		{
+			int cap1 = 0;
+			int cap2 = 0;
+			for(int x = 0;x<p2.resList.size();x++)
+			{
+				for(int i=0;i < ans1.size();i++)
+				{
+					if(p2.resList.get(x).cardType.equalsIgnoreCase(ans1.get(i)) && cap1 <= quantity1.get(i))
+					{
+						p2.resList.remove(x);
+						p1.resList.add(new ResourceCard(ans1.get(i).toLowerCase()));
+						cap1 += 1;
+					}
+				}
+			}
+			
+			for(int x = 0;x<p1.resList.size();x++)
+			{
+				for(int i=0;i<ans1.size();i++)
+				{
+					if(p1.resList.get(x).cardType.equalsIgnoreCase(ans2.get(i)) && cap2 <= quantity2.get(i))
+					{
+						p1.resList.remove(x);
+						p2.resList.add(new ResourceCard(ans2.get(i).toLowerCase()));
+						cap2 += 1;
+					}
+				}
+			}
+		}
+		
+		
+	}
 
 	//Game ends if player reaches 10 victory points
 	private boolean checkWin(ArrayList<Player> p)

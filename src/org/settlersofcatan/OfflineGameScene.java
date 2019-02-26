@@ -165,12 +165,24 @@ public class OfflineGameScene extends StackPane
         		String picURL = "";
         		switch(tileArray[count].type) 
         		{
-        		case "desert": picURL = "res/tile_photos/desert.png"; break;
-        		case "fields": picURL = "res/tile_photos/fields.png"; break;
-        		case "forests": picURL = "res/tile_photos/forest.png"; break;
-        		case "hills": picURL = "res/tile_photos/hills.png"; break;
-        		case "mountains": picURL = "res/tile_photos/mountains.png"; break;
-        		default: picURL = "res/tile_photos/pasture.png"; break;
+        		case "desert": 
+        			picURL = "res/tile_photos/desert.png"; 
+        			break;
+        		case "fields":
+        			picURL = "res/tile_photos/fields.png"; 
+        			break;
+        		case "forests": 
+        			picURL = "res/tile_photos/forest.png";
+        			break;
+        		case "hills": 
+        			picURL = "res/tile_photos/hills.png"; 
+        			break;
+        		case "mountains": 
+        			picURL = "res/tile_photos/mountains.png"; 
+        			break;
+        		default: 
+        			picURL = "res/tile_photos/pasture.png"; 
+        			break;
         		}
         		
         		ImageView img = new ImageView(new Image(picURL));
@@ -704,14 +716,20 @@ public class OfflineGameScene extends StackPane
 	 ************************************************************************************
 	 ************************************************************************************/
 	
-	/*
+	/* TODO
 	 * Phase 1: yes or no to trade
 	 * Phase 2: if yes, request player to trade with
 	 * Phase 3: player 1 chooses what to request
 	 * Phase 4: player 2 chooses what to take in exchange
+	 * Phase 5: 
+	 * Phase 6: 
+	 * Phase 7: 
+	 * Phase 8: 
+	 * Phase 9: 
 	 */
-	public void requestTradePhaseOne(Button yesButton, Button noButton) 
+	public void requestTradePhaseOne(int currentPlayer, Button yesButton, Button noButton) 
 	{
+		this.currentPlayer = currentPlayer;
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
 		
@@ -725,7 +743,7 @@ public class OfflineGameScene extends StackPane
 		Text tradeLabel = new Text("Would you like to trade?");
 		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
 		
-		//Build Buttons
+		//trade Buttons
 		yesButton.setPrefWidth(150);
 		tradeOptions.add(yesButton, 2, 0);
 
@@ -751,7 +769,7 @@ public class OfflineGameScene extends StackPane
 		Text tradeLabel = new Text("Who would you like to trade with?");
 		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
 		
-		//Build Buttons
+		//player Buttons
 		option1Button.setPrefWidth(150);
 		tradeOptions.add(option1Button, 2, 0);
 		
@@ -764,6 +782,246 @@ public class OfflineGameScene extends StackPane
 		cancelButton.setPrefWidth(150);
 		tradeOptions.add(cancelButton, 3, 1);
 		    		
+		commandPanel.getChildren().add(0, tradeOptions);
+	}
+	
+	public void requestTradePhaseThree(int currentPlayer, Button brickButton , Button grainButton, Button oreButton, Button woodButton, Button woolButton,Button cancelButton) 
+	{
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane tradeOptions = new GridPane();
+    	tradeOptions.setPrefWidth(650);
+    	tradeOptions.setAlignment(Pos.CENTER);
+    	tradeOptions.setVgap(25.0);
+    	tradeOptions.setHgap(25.0);
+    	tradeOptions.setPadding(new Insets(10));
+		Text tradeLabel = new Text("What would you like to trade?");
+		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
+		
+		//resource Buttons
+		brickButton.setPrefWidth(150);
+		tradeOptions.add(brickButton, 2, 0);
+		
+		grainButton.setPrefWidth(150);
+		tradeOptions.add(grainButton, 3, 0);
+		
+		oreButton.setPrefWidth(150);
+		tradeOptions.add(oreButton, 2, 1);
+
+		woodButton.setPrefWidth(150);
+		tradeOptions.add(woodButton, 3, 1);
+		
+		woolButton.setPrefWidth(150);
+		tradeOptions.add(woolButton, 2, 2);
+		
+		cancelButton.setPrefWidth(150);
+		tradeOptions.add(cancelButton, 3, 2);
+		    		
+		commandPanel.getChildren().add(0, tradeOptions);
+	}
+	
+	public void requestTradePhaseFour(int currentPlayer,Button cancelButton,TextField resourceNum,Button enter,ArrayList <String> resources,String resource) 
+	{
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane tradeOptions = new GridPane();
+    	tradeOptions.setPrefWidth(650);
+    	tradeOptions.setAlignment(Pos.CENTER);
+    	tradeOptions.setVgap(25.0);
+    	tradeOptions.setHgap(25.0);
+    	tradeOptions.setPadding(new Insets(10));
+		Text tradeLabel = new Text("How many "+resource+ " would you like to trade?");
+		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
+		
+		//number of said resource
+		resourceNum.setPrefWidth(150);
+		tradeOptions.add(resourceNum, 2, 0);
+		
+		enter.setPrefWidth(150);
+		tradeOptions.add(enter, 3, 0);
+		
+		cancelButton.setPrefWidth(150);
+		tradeOptions.add(cancelButton, 2, 1);
+		
+		commandPanel.getChildren().add(0, tradeOptions);
+	}
+	
+	public void requestTradePhaseFive(int currentPlayer,Button Yes, Button No) 
+	{
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane tradeOptions = new GridPane();
+    	tradeOptions.setPrefWidth(650);
+    	tradeOptions.setAlignment(Pos.CENTER);
+    	tradeOptions.setVgap(25.0);
+    	tradeOptions.setHgap(25.0);
+    	tradeOptions.setPadding(new Insets(10));
+		Text tradeLabel = new Text("Would you like to trade for another item?");
+		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
+		
+		//trade again buttons
+		No.setPrefWidth(150);
+		tradeOptions.add(No, 2, 1);
+		
+		Yes.setPrefWidth(150);
+		tradeOptions.add(Yes, 2, 0);
+		
+		
+		commandPanel.getChildren().add(0, tradeOptions);
+	}
+	
+	public void requestTradePhaseSix(int currentPlayer, Button brickButton , Button grainButton, Button oreButton, Button woodButton, Button woolButton, Button No, String player2,ArrayList<String> resources,ArrayList<String> rNums) 
+	{
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane tradeOptions = new GridPane();
+    	tradeOptions.setPrefWidth(650);
+    	tradeOptions.setAlignment(Pos.CENTER);
+    	tradeOptions.setVgap(25.0);
+    	tradeOptions.setHgap(25.0);
+    	tradeOptions.setPadding(new Insets(10));
+		Text tradeLabel = new Text(player2+", what would you like to receive in exchange for");
+		tradeLabel.setWrappingWidth(250);
+		for(int i = 0; i < resources.size(); i++)
+		{
+			tradeLabel.setText(tradeLabel.getText() + " " + rNums.get(i) + " " + resources.get(i)+"(s)");
+		}
+		tradeLabel.setText(tradeLabel.getText() + "?");
+		
+		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
+
+		//resource Buttons
+		brickButton.setPrefWidth(150);
+		tradeOptions.add(brickButton, 2, 0);
+		
+		grainButton.setPrefWidth(150);
+		tradeOptions.add(grainButton, 3, 0);
+		
+		oreButton.setPrefWidth(150);
+		tradeOptions.add(oreButton, 2, 1);
+
+		woodButton.setPrefWidth(150);
+		tradeOptions.add(woodButton, 3, 1);
+		
+		woolButton.setPrefWidth(150);
+		tradeOptions.add(woolButton, 2, 2);
+		
+		No.setPrefWidth(150);
+		tradeOptions.add(No, 3, 2);
+				
+		commandPanel.getChildren().add(0, tradeOptions);
+	}
+	
+	public void requestTradePhaseSeven(int currentPlayer,Button cancelButton,ArrayList<String> oppResources, Button enter,ArrayList<String> oppRNums,TextField resourceNum,String oppResource) 
+	{
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane tradeOptions = new GridPane();
+    	tradeOptions.setPrefWidth(650);
+    	tradeOptions.setAlignment(Pos.CENTER);
+    	tradeOptions.setVgap(25.0);
+    	tradeOptions.setHgap(25.0);
+    	tradeOptions.setPadding(new Insets(10));
+		Text tradeLabel = new Text("How many "+oppResource+ " would you like to trade?");
+		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
+		
+		//number of said resource
+		resourceNum.setPrefWidth(150);
+		tradeOptions.add(resourceNum, 2, 0);
+		
+		enter.setPrefWidth(150);
+		tradeOptions.add(enter, 2, 1);
+		
+		cancelButton.setPrefWidth(150);
+		tradeOptions.add(cancelButton, 3, 1);
+		
+		commandPanel.getChildren().add(0, tradeOptions);
+	}
+	
+	public void requestTradePhaseEight(int currentPlayer,Button Yes, Button No) 
+	{
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane tradeOptions = new GridPane();
+    	tradeOptions.setPrefWidth(650);
+    	tradeOptions.setAlignment(Pos.CENTER);
+    	tradeOptions.setVgap(25.0);
+    	tradeOptions.setHgap(25.0);
+    	tradeOptions.setPadding(new Insets(10));
+		Text tradeLabel = new Text("Would you like to trade for another item?");
+		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
+		
+		//trade again buttons
+		No.setPrefWidth(150);
+		tradeOptions.add(No, 2, 1);
+		
+		Yes.setPrefWidth(150);
+		tradeOptions.add(Yes, 2, 0);
+		
+		
+		commandPanel.getChildren().add(0, tradeOptions);
+	}
+	
+	public void requestTradePhaseNine(int currentplayer,Button Yes,Button No, ArrayList<String> resources, ArrayList<String> rNums, ArrayList<String> oppResources, ArrayList<String> oppRNums)
+	{
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane tradeOptions = new GridPane();
+    	tradeOptions.setPrefWidth(650);
+    	tradeOptions.setAlignment(Pos.CENTER);
+    	tradeOptions.setVgap(25.0);
+    	tradeOptions.setHgap(25.0);
+    	tradeOptions.setPadding(new Insets(10));
+		Text tradeLabel = new Text("do you accept the terms of trade?");
+		for(int i=0;i<resources.size();i++)
+		{
+			tradeLabel.setText(tradeLabel.getText() + rNums.get(i) + " " + resources.get(i)+"(s)");
+			if(i+1<resources.size())
+			{
+				tradeLabel.setText(tradeLabel.getText() + ",\n");
+			}
+		}
+		tradeLabel.setText(tradeLabel.getText() + " for");
+		for(int i=0;i<oppResources.size();i++)
+		{
+			tradeLabel.setText(tradeLabel.getText() + oppRNums.get(i) + " " + oppResources.get(i)+"(s)");
+			if(i+1<oppResources.size())
+			{
+				tradeLabel.setText(tradeLabel.getText() + ",\n");
+			}
+		}
+		tradeLabel.setText(tradeLabel.getText()+ "?");
+		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
+		
+		//trade again buttons
+		No.setPrefWidth(150);
+		tradeOptions.add(No, 2, 1);
+		
+		Yes.setPrefWidth(150);
+		tradeOptions.add(Yes, 2, 0);
+		
+		
 		commandPanel.getChildren().add(0, tradeOptions);
 	}
 }

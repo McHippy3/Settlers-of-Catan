@@ -214,43 +214,47 @@ public class ResourceCard
 	
 	
 	// What player 1 wants from player 2 ( Quantity and Rsc )
-	public static boolean tradeWorks(Player target, String rsc, int quantity)
-	{
-		switch(rsc.toUpperCase()) 
+		public static boolean tradeWorks(Player target,ArrayList<String> rsc, ArrayList<Integer> quantity)
 		{
-		case "BRICK":
-			if(target.getBrick() >= quantity)
+			for(int i=0;i<rsc.size();i++){
+				
+			switch(rsc.get(i).toUpperCase()) 
 			{
-				return true;
+			case "BRICK":
+				if(target.getBrick() < quantity.get(i))
+				{
+					return false;
+				}
+				break;
+			case "WOOD":
+				if(target.getWood() < quantity.get(i))
+				{
+					return false;
+				}
+				break;
+			case "WOOL":
+				if(target.getWool() < quantity.get(i))
+				{
+					return false;
+				}
+				break;
+			case "GRAIN":
+				if(target.getGrain() < quantity.get(i))
+				{
+					return false;
+				}
+				break;
+			case "ORE":
+				if(target.getOre() < quantity.get(i))
+				{
+					return false;
+				}
+				break;
 			}
-			break;
-		case "WOOD":
-			if(target.getWood() >= quantity)
-			{
-				return true;
-			}
-			break;
-		case "WOOL":
-			if(target.getWool() >= quantity)
-			{
-				return true;
-			}
-			break;
-		case "GRAIN":
-			if(target.getGrain() >= quantity)
-			{
-				return true;
-			}
-			break;
-		case "ORE":
-			if(target.getOre() >= quantity)
-			{
-				return true;
-			}
-			break;
+			
 		}
-		return false;
-	}
+			return true;
+		}
 	
 	
 	

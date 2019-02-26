@@ -252,6 +252,10 @@ public class Player
 		
 		if(ore >= 1 && wool >= 1 && grain >= 1)
 		{
+			ResourceCard.subtractOre(1, this, bank);
+			ResourceCard.subtractWool(1, this, bank);
+			ResourceCard.subtractGrain(1, this, bank);
+			
 			switch(choice)
 			{
 			case 0:
