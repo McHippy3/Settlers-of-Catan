@@ -163,55 +163,55 @@ public class SettlersOfCatan extends Application
 					
 					//MouseEvents
 					vertexes[r][c].setOnMouseClicked(
-							(MouseEvent e) -> {
-								VertexLink v = (VertexLink) e.getSource();
-								
-								//Build new settlement if there isn't one yet, else upgrade to city
-								if(v.getHasBuilding() == 0) 
+					(MouseEvent e) -> {
+						VertexLink v = (VertexLink) e.getSource();
+						
+						//Build new settlement if there isn't one yet, else upgrade to city
+						if(v.getHasBuilding() == 0) 
+						{
+							players.get(currentPlayer).buildSettlement(bank, vertexes, v.getGridRow(), v.getGridCol());
+						}
+						else 
+						{
+							players.get(currentPlayer).upgradeSettlement(bank, vertexes, v.getGridRow(), v.getGridCol());
+						}
+						
+						//Disable buttons after build
+						offlineGameScene.disableBuild();
+						Platform.runLater(new Runnable() 
+						{
+							@Override
+							public void run() 
+							{
+								offlineGameScene.updateGUI(vertexes, edges, players);
+																		
+								//Call initial build if still setting up, else return to buildMode
+								if(inSetUp) 
 								{
-									players.get(currentPlayer).buildSettlement(bank, vertexes, v.getGridRow(), v.getGridCol());
+									initialBuild();
 								}
 								else 
 								{
-									players.get(currentPlayer).upgradeSettlement(bank, vertexes, v.getGridRow(), v.getGridCol());
+									buildMode();
 								}
-								
-								//Disable buttons after build
-								offlineGameScene.disableBuild();
-								Platform.runLater(new Runnable() 
-								{
-									@Override
-									public void run() 
-									{
-										offlineGameScene.updateGUI(vertexes, edges, players);
-																				
-										//Call initial build if still setting up, else return to buildMode
-										if(inSetUp) 
-										{
-											initialBuild();
-										}
-										else 
-										{
-											buildMode();
-										}
-									}
-								});
 							}
-							);
+						});
+					}
+					);
 					vertexes[r][c].setOnMouseEntered(
-							(me) -> 
-							{
-								VertexLink v = (VertexLink) me.getSource();
-								v.setStyle("-fx-background-color: #fcffaa");
-							}
-						);
+						(me) -> 
+						{
+							VertexLink v = (VertexLink) me.getSource();
+							v.setStyle("-fx-background-color: #fcffaa");
+						}
+					);
 					vertexes[r][c].setOnMouseExited(
-							(me) -> 
-							{
-								VertexLink v = (VertexLink) me.getSource();
-								v.setStyle("-fx-background-color: transparent");
-							}
-						);
+						(me) -> 
+						{
+							VertexLink v = (VertexLink) me.getSource();
+							v.setStyle("-fx-background-color: transparent");
+						}
+					);
 					count++;
 				}
 				else 
@@ -245,47 +245,47 @@ public class SettlersOfCatan extends Application
 					
 					//MouseEvents 
 					edges[r][c].setOnMouseClicked(
-							(MouseEvent me) -> 
+						(MouseEvent me) -> 
+						{
+							EdgeLink e = (EdgeLink) me.getSource();
+							players.get(currentPlayer).buildRoad(bank, edges, e.getGridRow(), e.getGridCol());
+							System.out.println("Edge Clicked " + e.getGridRow() + " " + e.getGridCol());
+							//Disable after build
+							offlineGameScene.disableBuild();
+							Platform.runLater(new Runnable() 
 							{
-								EdgeLink e = (EdgeLink) me.getSource();
-								players.get(currentPlayer).buildRoad(bank, edges, e.getGridRow(), e.getGridCol());
-								System.out.println("Edge Clicked " + e.getGridRow() + " " + e.getGridCol());
-								//Disable after build
-								offlineGameScene.disableBuild();
-								Platform.runLater(new Runnable() 
+								@Override
+								public void run() 
 								{
-									@Override
-									public void run() 
+									System.out.println("Updating");
+									offlineGameScene.updateGUI(vertexes, edges, players);
+									//Call initial build if still setting up, else return to buildMode
+									if(inSetUp) 
 									{
-										System.out.println("Updating");
-										offlineGameScene.updateGUI(vertexes, edges, players);
-										//Call initial build if still setting up, else return to buildMode
-										if(inSetUp) 
-										{
-											initialBuild();
-										}
-										else 
-										{
-											buildMode();
-										}
+										initialBuild();
 									}
-								});
-							}
-							);
+									else 
+									{
+										buildMode();
+									}
+								}
+							});
+						}
+						);
 					edges[r][c].setOnMouseEntered(
-							(me) -> 
-							{
-								EdgeLink e = (EdgeLink) me.getSource();
-								e.setStyle("-fx-background-color: #aafffa");
-							}
-						);
+						(me) -> 
+						{
+							EdgeLink e = (EdgeLink) me.getSource();
+							e.setStyle("-fx-background-color: #aafffa");
+						}
+					);
 					edges[r][c].setOnMouseExited(
-							(me) -> 
-							{
-								EdgeLink e = (EdgeLink) me.getSource();
-								e.setStyle("-fx-background-color: transparent");
-							}
-						);
+						(me) -> 
+						{
+							EdgeLink e = (EdgeLink) me.getSource();
+							e.setStyle("-fx-background-color: transparent");
+						}
+					);
 					count++;
 				}
 				else 
@@ -434,6 +434,16 @@ public class SettlersOfCatan extends Application
 	
 	/************************************************************************************
 	 ************************************************************************************
+	 * DEVELOPMENT CARDS *
+	 ************************************************************************************
+	 ************************************************************************************/
+	private void devCardMode() 
+	{
+		
+	}
+	
+	/************************************************************************************
+	 ************************************************************************************
 	 * TRADING *
 	 ************************************************************************************
 	 ************************************************************************************/
@@ -491,6 +501,7 @@ public class SettlersOfCatan extends Application
 					tradeModePhase1();
 				});
 	}
+	
 	private void tradeModePhase3(int otherPlayer, ArrayList<String> resources,ArrayList<String> rNums,ArrayList<String> oppResources,ArrayList<String> oppRNums ) 
 	{
 
@@ -538,8 +549,6 @@ public class SettlersOfCatan extends Application
 					tradeModePhase2();
 				});
 	}
-	
-
 
 	private void tradeModePhase4(int otherPlayer,ArrayList<String> resources,ArrayList<String> rNums,ArrayList<String> oppResources,ArrayList<String> oppRNums ) 
 	{

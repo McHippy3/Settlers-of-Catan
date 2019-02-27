@@ -248,7 +248,7 @@ public class Player
 		int grain = this.getGrain();
 		
 		Random r = new Random();
-		int choice = r.nextInt(3);
+		int choice = r.nextInt(25);
 		
 		if(ore >= 1 && wool >= 1 && grain >= 1)
 		{
@@ -256,17 +256,41 @@ public class Player
 			ResourceCard.subtractWool(1, this, bank);
 			ResourceCard.subtractGrain(1, this, bank);
 			
-			switch(choice)
+			if(choice<14)
 			{
-			case 0:
-				this.devList.add(new DevelopmentCard("yearOfPlenty"));
-				break;
-			case 1:
-				this.devList.add(new DevelopmentCard("monopoly"));
-				break;
-			case 2:
-				this.devList.add(new DevelopmentCard("knight"));
-				break;
+				this.devList.add(new DevelopmentCard("knight", "res/dev_cards/knight.png"));
+			}
+			else if(choice>=14&&choice<16)
+			{
+				this.devList.add(new DevelopmentCard("road building", "res/dev_cards/roadbuild.png"));
+			}
+			else if(choice>=16&&choice<18)
+			{
+				this.devList.add(new DevelopmentCard("year of plenty", "res/dev_cards/yop.png"));
+			}
+			else if(choice>=18&&choice<20)
+			{
+				this.devList.add(new DevelopmentCard("monopoly", "res/dev_cards/monopoly.png"));
+			}
+			else if(choice==20)
+			{
+				this.devList.add(new DevelopmentCard("chapel", "res/dev_cards/chapel.png"));
+			}
+			else if(choice==21)
+			{
+				this.devList.add(new DevelopmentCard("library", "res/dev_cards/library.png"));
+			}
+			else if(choice==22)
+			{
+				this.devList.add(new DevelopmentCard("market", "res/dev_cards/market.png"));
+			}
+			else if(choice==23)
+			{
+				this.devList.add(new DevelopmentCard("palace", "res/dev_cards/palace.png"));
+			}
+			else
+			{
+				this.devList.add(new DevelopmentCard("university", "res/dev_cards/university.png"));
 			}
 			return true;
 		}

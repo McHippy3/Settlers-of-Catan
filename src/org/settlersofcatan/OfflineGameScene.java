@@ -615,6 +615,7 @@ public class OfflineGameScene extends StackPane
 		 * 2. New Settlement
 		 * 3. Upgrade Settlement to City
 		 */
+		
 		for(EdgeLink[] r: edges) 
 		{
 			for(EdgeLink e: r) 

@@ -9,7 +9,7 @@ import java.lang.Math;
 
 public class DevelopmentCard
 {
-	private String type;
+	private String type, imageURL;
 	boolean playable;
 	
 	// The boolean playable is used as a flag to check whether or not one can play a Dev. Card. (See rules)
@@ -20,9 +20,10 @@ public class DevelopmentCard
 		playable = false;
 	}
 	
-	public DevelopmentCard(String s)
+	public DevelopmentCard(String type, String imageURL)
 	{
-		type = s;
+		this.type = type;
+		this.imageURL = imageURL;
 		playable = false;
 	}
 	
