@@ -10,8 +10,12 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 public class SettlersOfCatan extends Application
 {
@@ -60,7 +64,7 @@ public class SettlersOfCatan extends Application
 
 		//Properties
 		currentPlayer = 0;
-		inSetUp = false;
+		inSetUp = true;
 		setUpPhase = 0;
 		
 		startButton.setOnMouseClicked(
@@ -94,9 +98,10 @@ public class SettlersOfCatan extends Application
 		initializeTiles();
 		initializeVertexes();
 		initializeEdges();
+		initializeAdjacentEdges();
 		offlineGameScene = new OfflineGameScene(vertexes, edges, players, tileArray);
 		mainScene.setRoot(offlineGameScene);
-		//initialBuild();
+		initialBuild();
 		rollMode();
 	}
 	
@@ -295,6 +300,36 @@ public class SettlersOfCatan extends Application
 					
 			}
 		}
+	}
+	
+	private void initializeAdjacentEdges()
+	{
+		File file = new File("src/res/data/adjacent_edges.txt");
+	    try
+	    {
+	        Scanner sc = new Scanner(file);
+	        while (sc.hasNextLine())
+	        {
+	            String s = sc.nextLine();
+	            String[] parsed = s.split("\\s+");
+	            
+	            //First two numbers are the coordinates of the vertex
+	            VertexLink temp = vertexes[Integer.parseInt(parsed[0])][Integer.parseInt(parsed[1])];
+	            
+	            //Rest of the numbers are the coordinates of the adjacent edges
+	            for(int i = 2; i < parsed.length; i += 2)
+	            {
+	            		int num1 = Integer.parseInt(parsed[i]);
+		            	int num2 = Integer.parseInt(parsed[i+1]);
+		            	temp.adjacentEdges[i/2 -1] = edges[num1][num2];
+	            }
+	        }
+	        sc.close();
+	    } 
+	    catch (FileNotFoundException e)
+	    {
+	        e.printStackTrace();
+	    }
 	}
 	
 	private void initializeTiles()

@@ -1,11 +1,5 @@
 package org.settlersofcatan;
 
-import java.io.*;
-import java.lang.*;
-import static java.lang.System.*;
-import java.util.*;
-import org.settlersofcatan.*;
-
 import javafx.scene.control.Button;
 
 // VertexLink is used whenever a Vertex is shared between two tiles, also used as a Vertex for whenever a Vertex ISN'T shared between 2 tiles
@@ -13,7 +7,7 @@ import javafx.scene.control.Button;
 public class VertexLink extends Button
 {
 	Vertex[] v;
-	EdgeLink[] adjacentEdges;
+	EdgeLink[] adjacentEdges = new EdgeLink[3];
 	int gridRow, gridCol;
 	Settlement settlement;
 	City city;

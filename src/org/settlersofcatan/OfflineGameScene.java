@@ -365,7 +365,7 @@ public class OfflineGameScene extends StackPane
 			{
         		if(edges[r][c] != null && edges[r][c].getHasRoad()) 
         		{
-					ImageView roadImg = new ImageView(new Image(roadURL[edges[r][c].road.p.playerNumber]));
+					ImageView roadImg = new ImageView(new Image(roadURL[edges[r][c].road.player.playerNumber]));
 			        roadImg.setFitHeight(48);
 			        roadImg.setFitWidth(12);
 			        roadImg.setX((((edges[r][c].getGridRow()%2)*30)+ (xOffSet/2) + edges[r][c].getGridCol() * 104 * sf)-10);
@@ -667,24 +667,30 @@ public class OfflineGameScene extends StackPane
 			{
 				if(e != null && !e.getHasRoad() && buildCode == 1) 
 				{
-					//Making sure that the road will be connected to one of the player's buildings
-					if((vertexes[e.getMainGridRowStart()][e.getMainGridColStart()].getHasBuilding() > 0 
-							&& vertexes[e.getMainGridRowStart()][e.getMainGridColStart()].settlement.p.playerNumber == currentPlayer)
-							|| (vertexes[e.getMainGridRowEnd()][e.getMainGridColEnd()].getHasBuilding() > 0
-									&& vertexes[e.getMainGridRowEnd()][e.getMainGridColEnd()].settlement.p.playerNumber == currentPlayer)) 
+					if(edgeValidCheck(e)) 
 					{
 						e.setDisable(false);
 					}
 				}
 			}
 		}
+		
 		for(VertexLink[] r: vertexes) 
 		{
 			for(VertexLink v: r) 
 			{
 				if(v != null && v.getHasBuilding() == 0 && buildCode == 2) 
 				{
-					v.setDisable(false);
+					//Making sure it is connected to a road
+					for(int i = 0; i < 3; i++) 
+					{
+						if(v.adjacentEdges[i] != null 
+								&& v.adjacentEdges[i].getHasRoad() 
+								&& v.adjacentEdges[i].road.player.playerNumber == currentPlayer) 
+						{
+							v.setDisable(false);
+						}
+					}
 				}
 				else if(v != null && v.getHasBuilding() > 0 && buildCode == 3) 
 				{
@@ -693,6 +699,46 @@ public class OfflineGameScene extends StackPane
 				}
 			}
 		}
+	}
+	
+	private boolean edgeValidCheck(EdgeLink e) 
+	{
+		VertexLink start = vertexes[e.getMainGridRowStart()][e.getMainGridColStart()];
+		VertexLink end = vertexes[e.getMainGridRowEnd()][e.getMainGridColEnd()];
+		
+		//Checking if connected to a building
+		if((start.getHasBuilding() > 0 
+				&& start.settlement.p.playerNumber == currentPlayer)
+				|| (end.getHasBuilding() > 0
+				&& end.settlement.p.playerNumber == currentPlayer)) 
+		{
+			return true;
+		}
+		
+		//Checking if connected to a road that belongs to the currentPlayer
+		for(int i = 0; i < 3; i++) 
+		{
+			if(start.adjacentEdges[i] != null 
+					&& start.adjacentEdges[i].getHasRoad()
+					&& start.adjacentEdges[i].road.player.playerNumber == currentPlayer) 
+			{
+				return true;
+			}
+			
+			if(end.adjacentEdges[i] != null 
+					&& end.adjacentEdges[i].getHasRoad()
+					&& end.adjacentEdges[i].road.player.playerNumber == currentPlayer) 
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean vertexValidCheck(Vertex v) 
+	{
+		return false;
 	}
 	
 	public void disableBuild() 
@@ -773,6 +819,7 @@ public class OfflineGameScene extends StackPane
 	 * Phase 8: player 2 decides if they want to trade multiple resources
 	 * Phase 9: player 1 decides if they want to accept player 2's offer
 	 */
+	
 	public void requestTradePhaseOne(int currentPlayer, Button yesButton, Button noButton) 
 	{
 		this.currentPlayer = currentPlayer;

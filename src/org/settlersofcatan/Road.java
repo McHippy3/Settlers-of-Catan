@@ -2,10 +2,10 @@ package org.settlersofcatan;
 
 public class Road 
 {
-	Player p;
+	Player player;
 	
-	public Road(Player p)
+	public Road(Player player)
 	{
-		this.p = p;
+		this.player = player;
 	}
 }
