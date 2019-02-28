@@ -23,8 +23,13 @@ public class DevelopmentCard
 	public DevelopmentCard(String type, String imageURL)
 	{
 		this.type = type;
-		this.imageURL = imageURL;
+		this.imageURL=imageURL;
 		playable = false;
+	}
+	
+	public String getType()
+	{
+		return type;
 	}
 	
 	

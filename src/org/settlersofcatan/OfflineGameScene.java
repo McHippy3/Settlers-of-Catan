@@ -488,6 +488,7 @@ public class OfflineGameScene extends StackPane
 	 * STARTING BUILD METHODS *
 	 ************************************************************************************
 	 ************************************************************************************/
+	
 	public void requestFirstBuild(int currentPlayer, String toBuild) 
 	{
 		this.currentPlayer = currentPlayer;
@@ -601,6 +602,50 @@ public class OfflineGameScene extends StackPane
 		commandPanel.getChildren().add(0, rollResults);
 	}
 
+	/************************************************************************************
+	 ************************************************************************************
+	 * DEVELOPMENT CARD METHODS *
+	 ************************************************************************************
+	 ************************************************************************************/
+	
+	public void requestDevCards(int currentPlayer, ArrayList<Button> devButtons)
+	{
+		this.currentPlayer = currentPlayer;
+		
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		GridPane devCardOptions = new GridPane();
+    	devCardOptions.setPrefWidth(650);
+    	devCardOptions.setAlignment(Pos.CENTER);
+    	devCardOptions.setVgap(25.0);
+    	devCardOptions.setHgap(25.0);
+    	devCardOptions.setPadding(new Insets(10));
+    	
+		Text devCardLabel = new Text("Would you like to play a dev card?");
+		devCardOptions.add(devCardLabel, 0, 0, 2, 2);
+		
+		//Integers to manage rows and columns of the buttons
+		int row = 0;
+		int col = 2;
+		for(Button button: devButtons) 
+		{
+			button.setPrefWidth(150);
+			devCardOptions.add(button, col, row);
+			
+			if(row < 2) 
+			{
+				row++;
+			}
+			else 
+			{
+				row = 0;
+				col++;
+			}
+		}
+		
+		commandPanel.getChildren().add(0, devCardOptions);
+	}
 	
 	/************************************************************************************
 	 ************************************************************************************

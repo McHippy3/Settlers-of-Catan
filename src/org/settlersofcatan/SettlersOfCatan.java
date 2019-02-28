@@ -368,7 +368,7 @@ public class SettlersOfCatan extends Application
 		rollButton.setOnMouseClicked(
 				(MouseEvent me) -> {
 					Button continueButton = new Button("Continue");
-					continueButton.setOnMouseClicked((MouseEvent e) -> tradeModePhase1());
+					continueButton.setOnMouseClicked((MouseEvent e) -> devCardMode());
 					
 					offlineGameScene.showRollResults(rollDice(), rollDice(), continueButton);
 				}
@@ -437,9 +437,44 @@ public class SettlersOfCatan extends Application
 	 * DEVELOPMENT CARDS *
 	 ************************************************************************************
 	 ************************************************************************************/
+	
 	private void devCardMode() 
 	{
+		Button knightButton = new Button("Knight");
+		Button yopButton = new Button("Year of Plenty");
+		Button monopolyButton = new Button("Monopoly");
+		Button roadBuildButton = new Button("Road Building");
+		Button dontPlayButton = new Button("No");
 		
+		ArrayList <Button> availableDevCards = new ArrayList<>();
+		
+		for(int i = 0; i < players.get(currentPlayer).devList.size(); i++)
+		{
+			if(players.get(currentPlayer).devList.get(i).getType().equalsIgnoreCase("Knight")) 
+			{
+				if(!availableDevCards.contains(knightButton))
+					availableDevCards.add(knightButton);
+			}
+			else if(players.get(currentPlayer).devList.get(i).getType().equalsIgnoreCase("Year of Plenty")) 
+			{
+				if(!availableDevCards.contains(yopButton))
+					availableDevCards.add(yopButton);
+			}
+			else if(players.get(currentPlayer).devList.get(i).getType().equalsIgnoreCase("Monopoly")) 
+			{
+				if(!availableDevCards.contains(monopolyButton))
+					availableDevCards.add(monopolyButton);
+			}
+			else if(players.get(currentPlayer).devList.get(i).getType().equalsIgnoreCase("Road Building")) 
+			{
+				if(!availableDevCards.contains(roadBuildButton))
+					availableDevCards.add(roadBuildButton);
+			}
+		}
+		availableDevCards.add(dontPlayButton);
+		dontPlayButton.setOnMouseClicked((MouseEvent me) -> tradeModePhase1());
+		
+		offlineGameScene.requestDevCards(currentPlayer, availableDevCards);
 	}
 	
 	/************************************************************************************
@@ -572,7 +607,7 @@ public class SettlersOfCatan extends Application
 				});
 	}
 	
-	private void tradeModePhase5(int otherPlayer,ArrayList<String> resources,ArrayList<String> rNums,ArrayList<String> oppResources,ArrayList<String> oppRNums) 
+	private void tradeModePhase5(int otherPlayer, ArrayList<String> resources,ArrayList<String> rNums,ArrayList<String> oppResources,ArrayList<String> oppRNums) 
 	{
 		//Phase 5: Player 1 chooses if they want to trade another resource
 		Button yes = new Button("Yes");
@@ -588,7 +623,8 @@ public class SettlersOfCatan extends Application
 					tradeModePhase6(otherPlayer, resources,rNums,oppResources,oppRNums);
 				});
 	}
-	private void tradeModePhase6(int otherPlayer,ArrayList<String> resources,ArrayList<String> rNums,ArrayList<String> oppResources,ArrayList<String> oppRNums) 
+	
+	private void tradeModePhase6(int otherPlayer, ArrayList<String> resources,ArrayList<String> rNums,ArrayList<String> oppResources,ArrayList<String> oppRNums) 
 	{
 		String Player2=new String(players.get(otherPlayer).getName());
 		
@@ -636,7 +672,8 @@ public class SettlersOfCatan extends Application
 							tradeModePhase1();
 						});
 	}
-	private void tradeModePhase7(int otherPlayer,ArrayList<String> resources,ArrayList<String> rNums, ArrayList<String> oppResources,ArrayList<String> oppRNums)
+	
+	private void tradeModePhase7(int otherPlayer, ArrayList<String> resources,ArrayList<String> rNums, ArrayList<String> oppResources,ArrayList<String> oppRNums)
 	{
 		//Phase7: player 2 chooses how many of said resource to request
 		TextField resourceNum = new TextField();
@@ -657,6 +694,7 @@ public class SettlersOfCatan extends Application
 					tradeModePhase6(otherPlayer,resources,rNums,oppResources,oppRNums);
 				});
 	}
+	
 	private void tradeModePhase8(int otherPlayer,ArrayList<String> resources,ArrayList<String> rNums, ArrayList<String> oppResources,ArrayList<String> oppRNums)
 	{
 		//Phase 8: Player 2 chooses if they want to trade another resource
@@ -673,6 +711,7 @@ public class SettlersOfCatan extends Application
 							tradeModePhase9(otherPlayer, resources,rNums,oppResources,oppRNums);
 						});
 	}
+	
 	private void tradeModePhase9(int otherPlayer,ArrayList<String> resources,ArrayList<String> rNums, ArrayList<String> oppResources,ArrayList<String> oppRNums)
 	{
 		//Phase 9: Player 1 chooses if they want to accept player 2's demands
