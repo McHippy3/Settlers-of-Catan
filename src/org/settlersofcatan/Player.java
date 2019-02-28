@@ -169,15 +169,18 @@ public class Player
 	
 	
 	// Add the Bank x, and EdgeLink[][] e as arguments soon
-	public boolean buildRoad(Bank bank, EdgeLink[][] grid, int row, int col)
+	public boolean buildRoad(Bank bank, EdgeLink[][] grid, int row, int col, boolean inSetup)
 	{
 		int w = this.getWood();
 		int b = this.getBrick();
 		
 		if(w >= 1 && b >= 1)
 		{
-			ResourceCard.subtractWood(1, this, bank);
-			ResourceCard.subtractBrick(1, this, bank);
+			if(!inSetup) 
+			{
+				ResourceCard.subtractWood(1, this, bank);
+				ResourceCard.subtractBrick(1, this, bank);
+			}
 			
 			Road r = new Road(this);
 			this.roadList.add(r);
@@ -191,7 +194,7 @@ public class Player
 		}
 	}
 	
-	public boolean buildSettlement(Bank bank, VertexLink[][] grid, int row, int col)
+	public boolean buildSettlement(Bank bank, VertexLink[][] grid, int row, int col, boolean inSetup)
 	{
 		int w = this.getWood();
 		int b = this.getBrick();
@@ -200,10 +203,13 @@ public class Player
 		
 		if(w >= 1 && b >= 1 && s >= 1 && g >= 1)
 		{
-			ResourceCard.subtractWood(1, this, bank);
-			ResourceCard.subtractBrick(1, this, bank);
-			ResourceCard.subtractWool(1, this, bank);
-			ResourceCard.subtractGrain(1, this, bank);
+			if(!inSetup) 
+			{
+				ResourceCard.subtractWood(1, this, bank);
+				ResourceCard.subtractBrick(1, this, bank);
+				ResourceCard.subtractWool(1, this, bank);
+				ResourceCard.subtractGrain(1, this, bank);
+			}
 			
 			Settlement temp = new Settlement(this, grid[row][col]);
 			this.settleList.add(temp);

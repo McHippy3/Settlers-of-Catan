@@ -509,7 +509,6 @@ public class OfflineGameScene extends StackPane
 	//without a road and does not allow upgrading
 	public void enableStartingBuildSettlement() 
 	{
-		System.out.println("working");
 		for(VertexLink[] r: vertexes) 
 		{
 			for(VertexLink v: r) 
@@ -517,6 +516,21 @@ public class OfflineGameScene extends StackPane
 				if(v != null && v.getHasBuilding() == 0) 
 				{
 					v.setDisable(false);
+					
+					//Prevent building directly beside another settlement while starting the game
+					for(int i = 0; i < 3; i++) 
+					{
+						if(v.adjacentEdges[i] != null && v.adjacentEdges[i].getHasRoad()) 
+						{
+							v.setDisable(true);
+							break;
+						}
+						else if (v.adjacentEdges[i] != null && !checkForNearBuildings(v, v.adjacentEdges[i])) 
+						{
+							v.setDisable(true);
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -684,9 +698,7 @@ public class OfflineGameScene extends StackPane
 					//Making sure it is connected to a road
 					for(int i = 0; i < 3; i++) 
 					{
-						if(v.adjacentEdges[i] != null 
-								&& v.adjacentEdges[i].getHasRoad() 
-								&& v.adjacentEdges[i].road.player.playerNumber == currentPlayer) 
+						if(vertexValidCheck(v)) 
 						{
 							v.setDisable(false);
 						}
@@ -736,8 +748,37 @@ public class OfflineGameScene extends StackPane
 		return false;
 	}
 	
-	private boolean vertexValidCheck(Vertex v) 
+	private boolean vertexValidCheck(VertexLink v) 
 	{
+		for(int i = 0; i < 3; i++) 
+		{
+			//Checking to make sure it is connected to a road
+			EdgeLink temp = v.adjacentEdges[i];
+			if(temp != null 
+					&& temp.getHasRoad() 
+					&& temp.road.player.playerNumber == currentPlayer) 
+			{
+				if(checkForNearBuildings(v, temp))
+					return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	//Separate method from the one above since it is needed for initial build as well
+	private boolean checkForNearBuildings(VertexLink v, EdgeLink edge) 
+	{
+		//Making sure it isn't beside another settlement
+		int row = v.getGridRow();
+		int col = v.getGridCol();
+		
+		if(edge.getMainGridRowStart() == row && edge.getMainGridColStart() == col)
+			if(vertexes[edge.getMainGridRowEnd()][edge.getMainGridColEnd()].getHasBuilding() == 0)
+				return true;
+		if(edge.getMainGridRowEnd() == row && edge.getMainGridColEnd() == col)
+			if(vertexes[edge.getMainGridRowStart()][edge.getMainGridColStart()].getHasBuilding() == 0)
+				return true;
 		return false;
 	}
 	

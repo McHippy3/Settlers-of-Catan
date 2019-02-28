@@ -32,7 +32,7 @@ public class SettlersOfCatan extends Application
 	
 	private Stage stage;
 	private int currentPlayer, setUpPhase;
-	private boolean inSetUp;
+	private boolean inSetup;
 	private Scene mainScene;
 	private OfflineGameScene offlineGameScene;
 	private VertexLink vertexes[][];
@@ -64,7 +64,7 @@ public class SettlersOfCatan extends Application
 
 		//Properties
 		currentPlayer = 0;
-		inSetUp = true;
+		inSetup = true;
 		setUpPhase = 0;
 		
 		startButton.setOnMouseClicked(
@@ -102,7 +102,6 @@ public class SettlersOfCatan extends Application
 		offlineGameScene = new OfflineGameScene(vertexes, edges, players, tileArray);
 		mainScene.setRoot(offlineGameScene);
 		initialBuild();
-		rollMode();
 	}
 	
 	private void initialBuild() 
@@ -122,7 +121,7 @@ public class SettlersOfCatan extends Application
 		//Break once everyone has built two settlements and two roads
 		if(setUpPhase > 15) 
 		{
-			inSetUp = false;
+			inSetup = false;
 			rollMode();
 		}
 		else if(setUpPhase % 2 == 0) 
@@ -174,7 +173,7 @@ public class SettlersOfCatan extends Application
 						//Build new settlement if there isn't one yet, else upgrade to city
 						if(v.getHasBuilding() == 0) 
 						{
-							players.get(currentPlayer).buildSettlement(bank, vertexes, v.getGridRow(), v.getGridCol());
+							players.get(currentPlayer).buildSettlement(bank, vertexes, v.getGridRow(), v.getGridCol(), inSetup);
 						}
 						else 
 						{
@@ -191,7 +190,7 @@ public class SettlersOfCatan extends Application
 								offlineGameScene.updateGUI(vertexes, edges, players);
 																		
 								//Call initial build if still setting up, else return to buildMode
-								if(inSetUp) 
+								if(inSetup) 
 								{
 									initialBuild();
 								}
@@ -253,8 +252,7 @@ public class SettlersOfCatan extends Application
 						(MouseEvent me) -> 
 						{
 							EdgeLink e = (EdgeLink) me.getSource();
-							players.get(currentPlayer).buildRoad(bank, edges, e.getGridRow(), e.getGridCol());
-							System.out.println("Edge Clicked " + e.getGridRow() + " " + e.getGridCol());
+							players.get(currentPlayer).buildRoad(bank, edges, e.getGridRow(), e.getGridCol(), inSetup);
 							//Disable after build
 							offlineGameScene.disableBuild();
 							Platform.runLater(new Runnable() 
@@ -262,10 +260,9 @@ public class SettlersOfCatan extends Application
 								@Override
 								public void run() 
 								{
-									System.out.println("Updating");
 									offlineGameScene.updateGUI(vertexes, edges, players);
 									//Call initial build if still setting up, else return to buildMode
-									if(inSetUp) 
+									if(inSetup) 
 									{
 										initialBuild();
 									}
