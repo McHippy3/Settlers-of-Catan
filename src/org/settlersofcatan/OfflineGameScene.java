@@ -629,6 +629,8 @@ public class OfflineGameScene extends StackPane
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
 		
+		commandPanel.getChildren().clear();
+		
 		GridPane devCardOptions = new GridPane();
     	devCardOptions.setPrefWidth(650);
     	devCardOptions.setAlignment(Pos.CENTER);
@@ -750,6 +752,7 @@ public class OfflineGameScene extends StackPane
 	
 	private boolean vertexValidCheck(VertexLink v) 
 	{
+		boolean valid = false;
 		for(int i = 0; i < 3; i++) 
 		{
 			//Checking to make sure it is connected to a road
@@ -758,12 +761,13 @@ public class OfflineGameScene extends StackPane
 					&& temp.getHasRoad() 
 					&& temp.road.player.playerNumber == currentPlayer) 
 			{
-				if(checkForNearBuildings(v, temp))
-					return true;
+				valid = true;
+				if(!checkForNearBuildings(v, temp))
+					valid = false;
 			}
 		}
 		
-		return false;
+		return valid;
 	}
 	
 	//Separate method from the one above since it is needed for initial build as well
@@ -1116,7 +1120,6 @@ public class OfflineGameScene extends StackPane
 	
 	public void requestTradePhaseNine(int currentplayer,Button Yes,Button No, ArrayList<String> resources, ArrayList<String> rNums, ArrayList<String> oppResources, ArrayList<String> oppRNums)
 	{
-		this.currentPlayer = currentPlayer;
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
 		

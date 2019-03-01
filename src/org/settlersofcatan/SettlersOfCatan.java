@@ -101,7 +101,7 @@ public class SettlersOfCatan extends Application
 		initializeAdjacentEdges();
 		offlineGameScene = new OfflineGameScene(vertexes, edges, players, tileArray);
 		mainScene.setRoot(offlineGameScene);
-		initialBuild();
+		//initialBuild();
 	}
 	
 	private void initialBuild() 
