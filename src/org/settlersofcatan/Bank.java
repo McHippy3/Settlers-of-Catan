@@ -19,39 +19,75 @@ public class Bank
 	{
 		for(int i = 0;i<30;i++)
 		{
-			ResourceCard r = new ResourceCard("sheep");
+			ResourceCard r = new ResourceCard("wool");
 			woolList.add(r);
 		}
 		
 		for(int i = 0;i<30;i++)
 		{
 			ResourceCard r = new ResourceCard("brick");
-			woolList.add(r);
+			brickList.add(r);
 		}
 		
 		for(int i = 0;i<30;i++)
 		{
-			ResourceCard r = new ResourceCard("wheat");
-			woolList.add(r);
+			ResourceCard r = new ResourceCard("grain");
+			grainList.add(r);
 		}
 		
 		for(int i = 0;i<30;i++)
 		{
 			ResourceCard r = new ResourceCard("wood");
-			woolList.add(r);
+			woodList.add(r);
 		}
 		
 		for(int i = 0;i<30;i++)
 		{
-			ResourceCard r = new ResourceCard("stone");
-			woolList.add(r);
+			ResourceCard r = new ResourceCard("ore");
+			oreList.add(r);
 		}
 	}
 	
 	// Remove 0 & first indexes from the Bank's list for each respective resource
-	public static void giveResource(String s, Player p, int q)
+	public void giveResource(String type, Player p, int quantity)
 	{
-		
+		for(int i = 0; i < quantity; i++) {
+			if(type.equals("brick")) 
+			{
+				if(!brickList.isEmpty()) 
+				{
+					p.resList.add(brickList.remove(0));
+				}
+			}
+			else if(type.equals("grain")) 
+			{
+				if(!grainList.isEmpty()) 
+				{
+					p.resList.add(grainList.remove(0));
+				}
+			}
+			else if(type.equals("ore")) 
+			{
+				if(!oreList.isEmpty()) 
+				{
+					p.resList.add(oreList.remove(0));
+				}
+			}
+			else if(type.equals("wood")) 
+			{
+				if(!woodList.isEmpty()) 
+				{
+					p.resList.add(woodList.remove(0));
+				}
+			}
+			else if(type.equals("wool")) 
+			{
+				if(!woolList.isEmpty()) 
+				{
+					p.resList.add(woolList.remove(0));
+				}
+			}
+		}
 	}
 	
 	public void takeResource()

@@ -19,6 +19,7 @@ import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -168,20 +169,20 @@ public class OfflineGameScene extends StackPane
         		case "desert": 
         			picURL = "res/tile_photos/desert.png"; 
         			break;
-        		case "fields":
-        			picURL = "res/tile_photos/fields.png"; 
+        		case "wool":
+        			picURL = "res/tile_photos/pasture.png"; 
         			break;
-        		case "forests": 
+        		case "wood": 
         			picURL = "res/tile_photos/forest.png";
         			break;
-        		case "hills": 
+        		case "brick": 
         			picURL = "res/tile_photos/hills.png"; 
         			break;
-        		case "mountains": 
+        		case "ore": 
         			picURL = "res/tile_photos/mountains.png"; 
         			break;
         		default: 
-        			picURL = "res/tile_photos/pasture.png"; 
+        			picURL = "res/tile_photos/fields.png"; 
         			break;
         		}
         		
@@ -248,7 +249,6 @@ public class OfflineGameScene extends StackPane
         {
         	for(int c = 0; c < 11; c++) 
 			{
-				Circle cir = new Circle( xOffSet + c * 105 * sf, yOffSet + y[r] * sf - 10, 3);
 				if(vertexes[r][c] != null) 
 				{
 					vertexes[r][c].setLayoutX(xOffSet + c * 105 * sf - 15);
@@ -548,6 +548,9 @@ public class OfflineGameScene extends StackPane
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
 		
+		//Display tile numbers
+		displayTileNumbers();
+		
 		//Build Options
     	GridPane rollOptions = new GridPane();
     	rollOptions.setPrefWidth(650);
@@ -567,6 +570,9 @@ public class OfflineGameScene extends StackPane
 	{
 		//Clearing past items
 		updateGUI(vertexes, edges, players);
+		
+		//Display tile numbers
+		displayTileNumbers();
 		
 		//Container
 		VBox rollResults = new VBox();
@@ -616,6 +622,45 @@ public class OfflineGameScene extends StackPane
 		commandPanel.getChildren().add(0, rollResults);
 	}
 
+	public void displayTileNumbers() 
+	{
+		int numOfColumns = 3;
+		int count = 0;
+        for(int r = 0; r < 5; r++) 
+        {
+        	for(int c = 0; c < numOfColumns; c++) 
+        	{
+        		Text tileNum = new Text(Integer.toString(tileArray[count].number));
+        		tileNum.setFont(Font.font(35));
+        		tileNum.setFill(Color.WHITE);
+        		int x = 205 * c - (105 * r % 2);
+        		
+        		//Shift right to center
+        		if(r != 2) 
+        		{
+        			x += 105;
+        		}
+        		
+        		if(r == 0 || r == 4) 
+        		{
+        			x += 105;
+        		}
+        		
+        		tileNum.setX((int) (x * sf) + xOffSet + 53);
+        		tileNum.setY(180 * r * sf + yOffSet + 72);
+        		//Adding at index 20 so that updateBuildings() will remove it
+        		gameTiles.getChildren().add(20, tileNum);
+        		count++;
+        	}
+        	
+        	if(r < 2) 
+        	{
+        		numOfColumns++;
+        	}
+        	else numOfColumns--;
+        }
+	}
+	
 	/************************************************************************************
 	 ************************************************************************************
 	 * DEVELOPMENT CARD METHODS *
@@ -1160,5 +1205,34 @@ public class OfflineGameScene extends StackPane
 		
 		
 		commandPanel.getChildren().add(0, tradeOptions);
+	}
+
+	/************************************************************************************
+	 ************************************************************************************
+	 * HELPER METHODS *
+	 ************************************************************************************
+	 ************************************************************************************/
+	
+	//Displays the passed in text in the command panel
+	public void displayText(ArrayList<String> text, int textSize, Button continueButton) 
+	{
+		//Prevent Stacking
+		updateGUI(vertexes, edges, players);
+		
+		VBox textBox = new VBox(10);
+		textBox.setPrefWidth(650);
+		textBox.setAlignment(Pos.CENTER);
+		
+		for(String str: text) 
+		{
+			Text t = new Text(str);
+			t.setFont(Font.font(textSize));
+			textBox.getChildren().add(t);
+		}
+		
+		continueButton.setPrefWidth(150);
+		textBox.getChildren().add(continueButton);
+		
+		commandPanel.getChildren().add(0, textBox);
 	}
 }

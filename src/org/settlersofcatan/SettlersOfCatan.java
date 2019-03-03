@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -31,7 +32,7 @@ public class SettlersOfCatan extends Application
 	 ************************************************************************************/
 	
 	private Stage stage;
-	private int currentPlayer, setUpPhase;
+	private int currentPlayer, setUpPhase, roll1, roll2;
 	private boolean inSetup;
 	private Scene mainScene;
 	private OfflineGameScene offlineGameScene;
@@ -95,13 +96,14 @@ public class SettlersOfCatan extends Application
 	
 	private void setOfflineGameScene()
 	{
-		initializeTiles();
 		initializeVertexes();
 		initializeEdges();
 		initializeAdjacentEdges();
+		initializeTiles();
 		offlineGameScene = new OfflineGameScene(vertexes, edges, players, tileArray);
 		mainScene.setRoot(offlineGameScene);
-		//initialBuild();
+		initialBuild();
+		//rollMode();
 	}
 	
 	private void initialBuild() 
@@ -341,22 +343,23 @@ public class SettlersOfCatan extends Application
 			if(i == 0)
 				tileArray[i] = new Tile("desert", 0);
 			else if(i > 0 && i < 5)
-				tileArray[i] = new Tile("fields", 0);
+				tileArray[i] = new Tile("grain", 0);
 			else if(i >= 5 && i < 9)
-				tileArray[i] = new Tile("forests", 0);
+				tileArray[i] = new Tile("wood", 0);
 			else if(i >= 9 && i < 12)
-				tileArray[i] = new Tile("hills", 0);
+				tileArray[i] = new Tile("brick", 0);
 			else if(i >= 12 && i < 15)
-				tileArray[i] = new Tile("mountains", 0);
+				tileArray[i] = new Tile("ore", 0);
 			else
-				tileArray[i] = new Tile("pastures", 0);
+				tileArray[i] = new Tile("wool", 0);
 		}
+		
 		//Shuffling and then setting the numbers
 		int[] tileNums = {2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12};
 		int count = 0;
 		shuffleTiles(tileArray); //Shuffling tiles
 		for(int i = 0; i < 19; i++) 
-		{
+		{			
 			if(tileArray[i].type.equals("desert")) 
 			{
 				tileArray[i].setNumber(7);
@@ -368,6 +371,7 @@ public class SettlersOfCatan extends Application
 			}
 		}
 		shuffleTiles(tileArray); //Shuffling again for numbers
+		setVertexesOnTiles(); //Determining vertexes
 		
 		//Creating rows of tiles
 		Tile[] ar1 = {tileArray[0], tileArray[1], tileArray[2]};
@@ -386,6 +390,33 @@ public class SettlersOfCatan extends Application
 		rowFive = new TileRow(ar5);
 	}
 	
+	private void setVertexesOnTiles() 
+	{
+		//Reads from file to determine which vertexes are located on each tile
+		Scanner fileIn = null;
+		try 
+		{
+			fileIn = new Scanner(new File("src/res/data/tile_vertexlinks.txt"));
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+		}
+		
+		//Setting vertexes from file
+		for(int i = 0; i < 19; i++) 
+		{
+			tileArray[i].vertexArray = new VertexLink[6];
+			String[] list = fileIn.nextLine().split("\\s+");
+			for(int l = 0; l < list.length; l += 2) 
+			{
+				int row = Integer.parseInt(list[l]);
+				int col = Integer.parseInt(list[l+1]);
+				tileArray[i].vertexArray[l/2] = vertexes[row][col];
+			}
+		}
+	}
+	
 	/************************************************************************************
 	 ************************************************************************************
 	 * ROLL AND BUILD *
@@ -399,13 +430,67 @@ public class SettlersOfCatan extends Application
 		
 		rollButton.setOnMouseClicked(
 				(MouseEvent me) -> {
-					Button continueButton = new Button("Continue");
-					continueButton.setOnMouseClicked((MouseEvent e) -> devCardMode());
+
+					roll1 = rollDice();
+					roll2 = rollDice();
 					
-					offlineGameScene.showRollResults(rollDice(), rollDice(), continueButton);
+					Button continueButton = new Button("Continue");
+					
+					if(roll1 + roll2 != 7) 
+					{
+						continueButton.setOnMouseClicked((MouseEvent e) -> displayResults());
+					}
+					else 
+					{
+						continueButton.setOnMouseClicked((MouseEvent e) -> devCardMode());
+					}
+					
+					offlineGameScene.showRollResults(roll1, roll2, continueButton);
 				}
 				);
 		offlineGameScene.requestRollDice(currentPlayer, rollButton);
+	}
+	
+	//Returns string including whoever received resources
+	private ArrayList<String> distributeResources() 
+	{
+		int total = roll1 + roll2;
+		ArrayList<String> receivedStrings = new ArrayList <String> ();
+		for(int i = 0; i < 4; i++) 
+		{
+			receivedStrings.add(players.get(i).playerName + " received: ");
+		}
+		
+		//Gives resources to players that own a settlement on the tile
+		for(Tile tile: tileArray) 
+		{
+			if(tile.number == total) 
+			{
+				for(VertexLink v: tile.vertexArray) 
+				{
+					int levelOfSettlement = v.getHasBuilding();
+					if(levelOfSettlement > 0) 
+					{
+						//Only needs to check getSettlement because the player would be the same for settlements and cities
+						Player owner = v.getSettlement().p;
+						bank.giveResource(tile.type, players.get(owner.playerNumber), levelOfSettlement);
+						
+						receivedStrings.set(owner.playerNumber, receivedStrings.get(owner.playerNumber) + levelOfSettlement + " " + tile.type + " ");
+					}
+				}
+			}
+		}
+		
+		return receivedStrings;
+	}
+	
+	//Displays what each player received from the roll
+	private void displayResults() 
+	{
+		Button continueButton = new Button("Continue");
+		continueButton.setOnMouseClicked((MouseEvent me) -> devCardMode());
+		offlineGameScene.displayText(distributeResources(), 12, continueButton);
+		offlineGameScene.displayTileNumbers();
 	}
 	
 	private void buildMode() 

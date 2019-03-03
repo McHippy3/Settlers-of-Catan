@@ -325,7 +325,7 @@ public class Player
 	 *
 	 */
 	
-	public static void hasLongestRoad()
+	public void hasLongestRoad()
 	{
 		
 	}

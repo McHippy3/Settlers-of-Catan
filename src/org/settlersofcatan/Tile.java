@@ -22,6 +22,7 @@ public class Tile
 	int number;
 	int tileID;
 	boolean hasRobber;
+	VertexLink[] vertexArray;
 	
 	public Tile(String type, int number)
 	{
