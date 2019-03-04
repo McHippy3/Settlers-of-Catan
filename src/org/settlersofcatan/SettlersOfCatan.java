@@ -636,6 +636,7 @@ public class SettlersOfCatan extends Application
 				devQuantities.set(3, devQuantities.get(3) + 1);
 			}
 		}
+		
 		availableDevCards.add(dontPlayButton);
 		dontPlayButton.setOnMouseClicked((MouseEvent me) -> tradeModePhase1());
 		
@@ -975,7 +976,7 @@ public class SettlersOfCatan extends Application
 		
 		shipOptions.add(backButton);
 		
-		offlineGameScene.requestShipTradePhaseOneAndTwo("Which harbor would you like to trade with?", shipOptions);
+		offlineGameScene.requestShipTradePhase("Which harbor would you like to trade with?", shipOptions);
 	}
 	
 	//Select what to receive in exchange
@@ -987,12 +988,48 @@ public class SettlersOfCatan extends Application
 		Button woodButton = new Button("Wood");
 		Button woolButton = new Button("Wool");
 		Button cancelButton = new Button("No");
+		final int quantity;
+		if(typeToGiveAway.equals("3 of any")) 
+		{
+			quantity = 3;
+		}
+		else if(typeToGiveAway.equals("4 of any")) 
+		{
+			quantity = 4;
+		}
+		else 
+		{
+			quantity = 2;
+		}
 
 		if(!typeToGiveAway.equals("3 of any") && !typeToGiveAway.equals("4 of any")) 
 		{
 			brickButton.setOnMouseClicked(
 					(MouseEvent me) -> {
-						tradeWithShip("brick", typeToGiveAway, 2);
+						tradeWithShip("brick", typeToGiveAway, quantity);
+					});
+			grainButton.setOnMouseClicked(
+					(MouseEvent me) -> {
+						tradeWithShip("grain", typeToGiveAway, quantity);
+					});
+			oreButton.setOnMouseClicked(
+					(MouseEvent me) -> {
+						tradeWithShip("ore", typeToGiveAway, quantity);
+					});
+			woodButton.setOnMouseClicked(
+					(MouseEvent me) -> {
+						tradeWithShip("wood", typeToGiveAway, quantity);
+					});
+			woolButton.setOnMouseClicked(
+					(MouseEvent me) -> {
+						tradeWithShip("wool", typeToGiveAway, quantity);
+					});
+		}
+		else 
+		{
+			brickButton.setOnMouseClicked(
+					(MouseEvent me) -> {
+						harborTradeModePhase3("brick", quantity);
 					});
 			grainButton.setOnMouseClicked(
 					(MouseEvent me) -> {
@@ -1019,11 +1056,11 @@ public class SettlersOfCatan extends Application
 		ArrayList <Button> buttons = new ArrayList<Button>();
 		buttons.addAll(Arrays.asList(brickButton, grainButton, oreButton, woodButton, woolButton, cancelButton));
 		
-		offlineGameScene.requestShipTradePhaseOneAndTwo("What would you like in exchange for " + typeToGiveAway, buttons);
+		offlineGameScene.requestShipTradePhase("What would you like in exchange for " + typeToGiveAway, buttons);
 	}
 	
-	//If 3:1 option chosen, select what give trade away
-	private void harborTradeModePhase3(String typeToReceive) 
+	//If 3:1 or 4:1 option chosen, select what give trade away
+	private void harborTradeModePhase3(final String typeToReceive, int quantity) 
 	{
 		
 	}

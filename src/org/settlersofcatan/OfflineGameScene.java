@@ -1245,7 +1245,7 @@ public class OfflineGameScene extends StackPane
 		commandPanel.getChildren().add(0, tradeOptions);
 	}
 
-	public void requestShipTradePhaseOneAndTwo(String message, ArrayList <Button> buttons) 
+	public void requestShipTradePhase(String message, ArrayList <Button> buttons) 
 	{
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
@@ -1280,11 +1280,6 @@ public class OfflineGameScene extends StackPane
 		}
 		
 		commandPanel.getChildren().add(0, tradeOptions);
-	}
-
-	public void requestShipTradePhaseThree(TextField resourceNum, Button backButton) 
-	{
-		
 	}
 	
 	/************************************************************************************
