@@ -12,12 +12,6 @@ public class Settlement
 	Player p;
 	VertexLink v;
 	
-	public Settlement()
-	{
-		p = null;
-		v = null;
-	}
-	
 	public Settlement(Player p)
 	{
 		this.p = p;

@@ -90,9 +90,50 @@ public class Bank
 		}
 	}
 	
-	public void takeResource()
+	//Returns resources from player to the bank
+	public void takeResource(String type, Player p, int quantity)
 	{
-		
+		int count = 0;
+		for(int i = 0; i < p.resList.size(); i++) 
+		{
+			if(p.resList.get(i).cardType.equals(type)) 
+			{
+				if(type.equals("brick")) 
+				{
+					brickList.add(p.resList.remove(i));
+					i--;
+					count++;
+				}
+				else if(type.equals("grain")) 
+				{
+					grainList.add(p.resList.remove(i));
+					i--;
+					count++;
+				}
+				else if(type.equals("ore")) 
+				{
+					oreList.add(p.resList.remove(i));
+					i--;
+					count++;
+				}
+				else if(type.equals("wood")) 
+				{
+					woodList.add(p.resList.remove(i));
+					i--;
+					count++;
+				}
+				else if(type.equals("wool")) 
+				{
+					woolList.add(p.resList.remove(i));
+					i--;
+					count++;
+				}
+			}
+			if(count == quantity) 
+			{
+				break;
+			}
+		}
 	}
 	
 }

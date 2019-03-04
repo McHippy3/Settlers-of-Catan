@@ -425,7 +425,7 @@ public class OfflineGameScene extends StackPane
 				if(vertexes[r][c] != null && vertexes[r][c].getHasBuilding() == 1) 
 				{
 			        ImageView settlementImg = new ImageView(
-			        		new Image(buildingURL[vertexes[r][c].getSettlement().p.playerNumber][0]));
+			        		new Image(buildingURL[vertexes[r][c].settlement.p.playerNumber][0]));
 			        settlementImg.setX(xOffSet + c * 105 * sf - 15);
 			        settlementImg.setY(yOffSet + y[r] * sf - 25);
 			        settlementImg.setFitHeight(30);
@@ -438,7 +438,7 @@ public class OfflineGameScene extends StackPane
 				{
 					//getSettlement() can be used as buildingURL simply needs the player number 
 			        ImageView cityImg = new ImageView(
-			        		new Image(buildingURL[vertexes[r][c].getSettlement().p.playerNumber][1]));
+			        		new Image(buildingURL[vertexes[r][c].settlement.p.playerNumber][1]));
 			        cityImg.setX(xOffSet + c * 105 * sf - 15);
 			        cityImg.setY(yOffSet + y[r] * sf - 25);
 			        cityImg.setFitHeight(30);
@@ -708,6 +708,41 @@ public class OfflineGameScene extends StackPane
 		commandPanel.getChildren().add(0, devCardOptions);
 	}
 	
+	public void displayDevCards(ArrayList<Integer> developmentQuantities) 
+	{
+		
+		//Drawing Development Cards
+        Group devImages = new Group();
+        
+        //Adding rectangle so that the node will be 650 x 200
+        Rectangle r = new Rectangle(650, 200);
+        r.setFill(Color.TRANSPARENT);
+        devImages.getChildren().add(r);
+        
+        String[] devCardLoc = {"res/dev_card/knight.png", "res/dev_card/yop.png", "res/dev_card/monopoly.png", "res/dev_card/roadBuild.png"};
+        for(int i = 0; i < 4; i++) 
+        {
+        	ImageView cardImg = new ImageView(devCardLoc[i]);
+        	cardImg.setX(140 * i);
+        	cardImg.setFitHeight(200);
+        	cardImg.setFitWidth(123);
+        	
+        	devImages.getChildren().add(cardImg);
+        }
+        
+        //Placing Numbers Beside Resource Cards
+        for(int i = 0; i < 4; i++) 
+        {
+        	Text t = new Text(100 + i * 140, 180, "" + developmentQuantities.get(i));
+        	t.setFont(Font.font("Arial", 20));
+        	t.setFill(Color.WHITE);
+        	t.setStroke(Color.WHITE);
+        	t.setStrokeWidth(1);
+        	devImages.getChildren().add(t);
+        }
+        commandPanel.getChildren().add(devImages);
+	}
+	
 	/************************************************************************************
 	 ************************************************************************************
 	 * BUILD METHODS *
@@ -745,10 +780,11 @@ public class OfflineGameScene extends StackPane
 					//Making sure it is connected to a road
 					for(int i = 0; i < 3; i++) 
 					{
-						if(vertexValidCheck(v)) 
+						/*if(vertexValidCheck(v)) 
 						{
 							v.setDisable(false);
-						}
+						}*/
+						v.setDisable(false);
 					}
 				}
 				else if(v != null && v.getHasBuilding() > 0 && buildCode == 3) 
@@ -900,7 +936,7 @@ public class OfflineGameScene extends StackPane
 	
 	/*
 	 * Phase 1: yes or no to trade
-	 * Phase 2: if yes, request player to trade with
+	 * Phase 2: if yes, ask who to trade with
 	 * Phase 3: player 1 chooses what to request
 	 * Phase 4: player 1 chooses how much to request
 	 * Phase 5: player 1 decides if they want to trade multiple resources
@@ -908,6 +944,10 @@ public class OfflineGameScene extends StackPane
 	 * Phase 7: player 2 decides how much they want to trade
 	 * Phase 8: player 2 decides if they want to trade multiple resources
 	 * Phase 9: player 1 decides if they want to accept player 2's offer
+	 * 
+	 * Ship Trade Phase 1: decides which ship (if applicable) to trade with
+	 * Ship Trade Phase 2: player selects what to receive in exchange
+	 * Ship Trade Phase 3: if 3:1, select what to give away
 	 */
 	
 	public void requestTradePhaseOne(int currentPlayer, Button yesButton, Button noButton) 
@@ -936,9 +976,8 @@ public class OfflineGameScene extends StackPane
 		commandPanel.getChildren().add(0, tradeOptions);
 	}
 	
-	public void requestTradePhaseTwo(int currentPlayer, Button option1Button, Button option2Button, Button option3Button, Button cancelButton) 
+	public void requestTradePhaseTwo(Button option1Button, Button option2Button, Button option3Button, Button option4Button, Button cancelButton) 
 	{
-		this.currentPlayer = currentPlayer;
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
 		
@@ -961,16 +1000,20 @@ public class OfflineGameScene extends StackPane
 		
 		option3Button.setPrefWidth(150);
 		tradeOptions.add(option3Button, 2, 1);
-
+		
+		//Ship Button
+		option4Button.setPrefWidth(150);
+		tradeOptions.add(option4Button, 3, 1);
+		
+		//Cancel Button
 		cancelButton.setPrefWidth(150);
-		tradeOptions.add(cancelButton, 3, 1);
+		tradeOptions.add(cancelButton, 2, 2);
 		    		
 		commandPanel.getChildren().add(0, tradeOptions);
 	}
 	
-	public void requestTradePhaseThree(int currentPlayer, Button brickButton , Button grainButton, Button oreButton, Button woodButton, Button woolButton,Button cancelButton) 
+	public void requestTradePhaseThree(Button brickButton , Button grainButton, Button oreButton, Button woodButton, Button woolButton,Button cancelButton) 
 	{
-		this.currentPlayer = currentPlayer;
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
 		
@@ -981,7 +1024,7 @@ public class OfflineGameScene extends StackPane
     	tradeOptions.setVgap(25.0);
     	tradeOptions.setHgap(25.0);
     	tradeOptions.setPadding(new Insets(10));
-		Text tradeLabel = new Text("What would you like to trade?");
+		Text tradeLabel = new Text("What would you like to trade for?");
 		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
 		
 		//resource Buttons
@@ -1006,9 +1049,8 @@ public class OfflineGameScene extends StackPane
 		commandPanel.getChildren().add(0, tradeOptions);
 	}
 	
-	public void requestTradePhaseFour(int currentPlayer,Button cancelButton,TextField resourceNum,Button enter,ArrayList <String> resources,String resource) 
+	public void requestTradePhaseFour(Button cancelButton,TextField resourceNum,Button enter,ArrayList <String> resources,String resource) 
 	{
-		this.currentPlayer = currentPlayer;
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
 		
@@ -1019,7 +1061,7 @@ public class OfflineGameScene extends StackPane
     	tradeOptions.setVgap(25.0);
     	tradeOptions.setHgap(25.0);
     	tradeOptions.setPadding(new Insets(10));
-		Text tradeLabel = new Text("How many "+resource+ " would you like to trade?");
+		Text tradeLabel = new Text("How many "+resource+ " would you like to trade for?");
 		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
 		
 		//number of said resource
@@ -1035,9 +1077,8 @@ public class OfflineGameScene extends StackPane
 		commandPanel.getChildren().add(0, tradeOptions);
 	}
 	
-	public void requestTradePhaseFive(int currentPlayer,Button Yes, Button No) 
+	public void requestTradePhaseFive(Button Yes, Button No) 
 	{
-		this.currentPlayer = currentPlayer;
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
 		
@@ -1062,9 +1103,8 @@ public class OfflineGameScene extends StackPane
 		commandPanel.getChildren().add(0, tradeOptions);
 	}
 	
-	public void requestTradePhaseSix(int currentPlayer, Button brickButton , Button grainButton, Button oreButton, Button woodButton, Button woolButton, Button No, String player2,ArrayList<String> resources,ArrayList<String> rNums) 
+	public void requestTradePhaseSix(Button brickButton , Button grainButton, Button oreButton, Button woodButton, Button woolButton, Button No, String player2,ArrayList<String> resources,ArrayList<String> rNums) 
 	{
-		this.currentPlayer = currentPlayer;
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
 		
@@ -1107,9 +1147,8 @@ public class OfflineGameScene extends StackPane
 		commandPanel.getChildren().add(0, tradeOptions);
 	}
 	
-	public void requestTradePhaseSeven(int currentPlayer,Button cancelButton,ArrayList<String> oppResources, Button enter,ArrayList<String> oppRNums,TextField resourceNum,String oppResource) 
+	public void requestTradePhaseSeven(Button cancelButton,ArrayList<String> oppResources, Button enter,ArrayList<String> oppRNums,TextField resourceNum,String oppResource) 
 	{
-		this.currentPlayer = currentPlayer;
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
 		
@@ -1120,7 +1159,7 @@ public class OfflineGameScene extends StackPane
     	tradeOptions.setVgap(25.0);
     	tradeOptions.setHgap(25.0);
     	tradeOptions.setPadding(new Insets(10));
-		Text tradeLabel = new Text("How many "+oppResource+ " would you like to trade?");
+		Text tradeLabel = new Text("How many "+oppResource+ " would you like to trade for?");
 		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
 		
 		//number of said resource
@@ -1136,9 +1175,8 @@ public class OfflineGameScene extends StackPane
 		commandPanel.getChildren().add(0, tradeOptions);
 	}
 	
-	public void requestTradePhaseEight(int currentPlayer,Button Yes, Button No) 
+	public void requestTradePhaseEight(Button Yes, Button No) 
 	{
-		this.currentPlayer = currentPlayer;
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
 		
@@ -1163,7 +1201,7 @@ public class OfflineGameScene extends StackPane
 		commandPanel.getChildren().add(0, tradeOptions);
 	}
 	
-	public void requestTradePhaseNine(int currentplayer,Button Yes,Button No, ArrayList<String> resources, ArrayList<String> rNums, ArrayList<String> oppResources, ArrayList<String> oppRNums)
+	public void requestTradePhaseNine(Button Yes,Button No, ArrayList<String> resources, ArrayList<String> rNums, ArrayList<String> oppResources, ArrayList<String> oppRNums)
 	{
 		//Prevent stacking
 		updateGUI(vertexes, edges, players);
@@ -1175,7 +1213,7 @@ public class OfflineGameScene extends StackPane
     	tradeOptions.setVgap(25.0);
     	tradeOptions.setHgap(25.0);
     	tradeOptions.setPadding(new Insets(10));
-		Text tradeLabel = new Text("do you accept the terms of trade?");
+		Text tradeLabel = new Text("do you accept the terms of trade");
 		for(int i=0;i<resources.size();i++)
 		{
 			tradeLabel.setText(tradeLabel.getText() + rNums.get(i) + " " + resources.get(i)+"(s)");
@@ -1207,6 +1245,48 @@ public class OfflineGameScene extends StackPane
 		commandPanel.getChildren().add(0, tradeOptions);
 	}
 
+	public void requestShipTradePhaseOneAndTwo(String message, ArrayList <Button> buttons) 
+	{
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane tradeOptions = new GridPane();
+    	tradeOptions.setPrefWidth(650);
+    	tradeOptions.setAlignment(Pos.CENTER);
+    	tradeOptions.setVgap(25.0);
+    	tradeOptions.setHgap(25.0);
+    	tradeOptions.setPadding(new Insets(10));
+		Text tradeLabel = new Text(message);
+		tradeOptions.add(tradeLabel, 0, 0, 2, 2);
+		
+		//Integers to manage rows and columns of the buttons
+		int row = 0;
+		int col = 2;
+		for(Button button: buttons) 
+		{
+			button.setPrefWidth(150);
+			tradeOptions.add(button, col, row);
+			
+			if(row < 2) 
+			{
+				row++;
+			}
+			else 
+			{
+				row = 0;
+				col++;
+			}
+		}
+		
+		commandPanel.getChildren().add(0, tradeOptions);
+	}
+
+	public void requestShipTradePhaseThree(TextField resourceNum, Button backButton) 
+	{
+		
+	}
+	
 	/************************************************************************************
 	 ************************************************************************************
 	 * HELPER METHODS *

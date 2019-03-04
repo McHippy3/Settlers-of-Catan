@@ -6,26 +6,16 @@ import javafx.scene.control.Button;
 
 public class VertexLink extends Button
 {
-	Vertex[] v;
 	EdgeLink[] adjacentEdges = new EdgeLink[3];
-	int gridRow, gridCol;
+	int gridRow, gridCol, harborCode;
 	Settlement settlement;
 	City city;
-	
-	public VertexLink()
-	{
-		v = null;
-	}
-	
-	public VertexLink(Vertex[] v1)
-	{
-		v = v1;
-	}
 	
 	public VertexLink(int row, int col)
 	{
 		gridRow = row;
 		gridCol = col;
+		harborCode = 0;
 	}
 	
 	public int getGridRow() 
@@ -47,11 +37,6 @@ public class VertexLink extends Button
 		if(city != null)
 			count++;
 		return count;
-	}
-	
-	public Settlement getSettlement() 
-	{
-		return settlement;
 	}
 
 	public String toString(Vertex v)

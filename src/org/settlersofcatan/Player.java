@@ -12,7 +12,7 @@ public class Player
 	private Color c;
 	
 	ArrayList<ResourceCard>resList;
-	ArrayList<DevelopmentCard>devList = new ArrayList<DevelopmentCard>();
+	ArrayList<DevelopmentCard> devList = new ArrayList<DevelopmentCard>();
 	
 	ArrayList<Settlement>settleList = new ArrayList<Settlement>();
 	ArrayList<Road>roadList = new ArrayList<Road>();

@@ -65,7 +65,7 @@ public class SettlersOfCatan extends Application
 
 		//Properties
 		currentPlayer = 0;
-		inSetup = true;
+		inSetup = false;
 		setUpPhase = 0;
 		
 		startButton.setOnMouseClicked(
@@ -102,8 +102,8 @@ public class SettlersOfCatan extends Application
 		initializeTiles();
 		offlineGameScene = new OfflineGameScene(vertexes, edges, players, tileArray);
 		mainScene.setRoot(offlineGameScene);
-		initialBuild();
-		//rollMode();
+		//initialBuild();
+		rollMode();
 	}
 	
 	private void initialBuild() 
@@ -225,6 +225,33 @@ public class SettlersOfCatan extends Application
 					vertexes[r][c] = null;
 				}
 			}
+		}
+		
+		initializeHarbors();
+	}
+	
+	//Reads from a file to determine which vertexes are connected to a harbor
+	private void initializeHarbors() 
+	{
+		Scanner fileIn = null;
+		try 
+		{
+			fileIn = new Scanner(new File("src/res/data/shipVertex.txt"));
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+		}
+		
+		int lineNum = 1;
+		while(fileIn.hasNextLine()) 
+		{
+			String[] line = fileIn.nextLine().split("\\s+");
+			for(int i = 0; i < line.length; i += 2) 
+			{
+				vertexes[Integer.parseInt(line[i])][Integer.parseInt(line[i+1])].harborCode = lineNum;
+			}
+			lineNum++;
 		}
 	}
 	
@@ -415,6 +442,8 @@ public class SettlersOfCatan extends Application
 				tileArray[i].vertexArray[l/2] = vertexes[row][col];
 			}
 		}
+		
+		fileIn.close();
 	}
 	
 	/************************************************************************************
@@ -440,9 +469,13 @@ public class SettlersOfCatan extends Application
 					{
 						continueButton.setOnMouseClicked((MouseEvent e) -> displayResults());
 					}
-					else 
+					else if(!players.get(currentPlayer).devList.isEmpty())
 					{
 						continueButton.setOnMouseClicked((MouseEvent e) -> devCardMode());
+					}
+					else 
+					{
+						continueButton.setOnMouseClicked((MouseEvent e) -> tradeModePhase1());
 					}
 					
 					offlineGameScene.showRollResults(roll1, roll2, continueButton);
@@ -472,7 +505,7 @@ public class SettlersOfCatan extends Application
 					if(levelOfSettlement > 0) 
 					{
 						//Only needs to check getSettlement because the player would be the same for settlements and cities
-						Player owner = v.getSettlement().p;
+						Player owner = v.settlement.p;
 						bank.giveResource(tile.type, players.get(owner.playerNumber), levelOfSettlement);
 						
 						receivedStrings.set(owner.playerNumber, receivedStrings.get(owner.playerNumber) + levelOfSettlement + " " + tile.type + " ");
@@ -488,7 +521,10 @@ public class SettlersOfCatan extends Application
 	private void displayResults() 
 	{
 		Button continueButton = new Button("Continue");
-		continueButton.setOnMouseClicked((MouseEvent me) -> devCardMode());
+		if(!players.get(currentPlayer).devList.isEmpty())
+			continueButton.setOnMouseClicked((MouseEvent me) -> devCardMode());
+		else
+			continueButton.setOnMouseClicked((MouseEvent me) -> tradeModePhase1());
 		offlineGameScene.displayText(distributeResources(), 12, continueButton);
 		offlineGameScene.displayTileNumbers();
 	}
@@ -539,7 +575,7 @@ public class SettlersOfCatan extends Application
 					}
 					
 					offlineGameScene.disableBuild(); 
-					currentPlayer++;
+					//currentPlayer++;
 					if(currentPlayer == 4) 
 					{
 						currentPlayer = 0;
@@ -563,6 +599,13 @@ public class SettlersOfCatan extends Application
 		Button roadBuildButton = new Button("Road Building");
 		Button dontPlayButton = new Button("No");
 		
+		//devQuantities holds the number of each dev cards following the order: knight, yop, monopoly, road building
+		ArrayList<Integer> devQuantities = new ArrayList<>();
+		for(int i = 0; i < 4; i++) 
+		{
+			devQuantities.add(0);
+		}
+		
 		ArrayList <Button> availableDevCards = new ArrayList<>();
 		
 		for(int i = 0; i < players.get(currentPlayer).devList.size(); i++)
@@ -571,27 +614,33 @@ public class SettlersOfCatan extends Application
 			{
 				if(!availableDevCards.contains(knightButton))
 					availableDevCards.add(knightButton);
+				devQuantities.set(0, devQuantities.get(0) + 1);
+				
 			}
 			else if(players.get(currentPlayer).devList.get(i).getType().equalsIgnoreCase("Year of Plenty")) 
 			{
 				if(!availableDevCards.contains(yopButton))
 					availableDevCards.add(yopButton);
+				devQuantities.set(1, devQuantities.get(1) + 1);
 			}
 			else if(players.get(currentPlayer).devList.get(i).getType().equalsIgnoreCase("Monopoly")) 
 			{
 				if(!availableDevCards.contains(monopolyButton))
 					availableDevCards.add(monopolyButton);
+				devQuantities.set(2, devQuantities.get(2) + 1);
 			}
 			else if(players.get(currentPlayer).devList.get(i).getType().equalsIgnoreCase("Road Building")) 
 			{
 				if(!availableDevCards.contains(roadBuildButton))
 					availableDevCards.add(roadBuildButton);
+				devQuantities.set(3, devQuantities.get(3) + 1);
 			}
 		}
 		availableDevCards.add(dontPlayButton);
 		dontPlayButton.setOnMouseClicked((MouseEvent me) -> tradeModePhase1());
 		
 		offlineGameScene.requestDevCards(currentPlayer, availableDevCards);
+		offlineGameScene.displayDevCards(devQuantities);
 	}
 	
 	/************************************************************************************
@@ -633,9 +682,10 @@ public class SettlersOfCatan extends Application
 		Button option1Button = new Button(players.get(otherPlayers[0]).getName());
 		Button option2Button = new Button(players.get(otherPlayers[1]).getName());
 		Button option3Button = new Button(players.get(otherPlayers[2]).getName());
+		Button option4Button = new Button("Harbor");
 		Button cancelButton = new Button("Cancel");
 
-		offlineGameScene.requestTradePhaseTwo(currentPlayer, option1Button, option2Button, option3Button, cancelButton);
+		offlineGameScene.requestTradePhaseTwo(option1Button, option2Button, option3Button, option4Button, cancelButton);
 		option1Button.setOnMouseClicked(
 				(MouseEvent me) -> {
 					tradeModePhase3(otherPlayers[0],resources,rNums,oppResources,oppRNums);
@@ -647,6 +697,10 @@ public class SettlersOfCatan extends Application
 		option3Button.setOnMouseClicked(
 				(MouseEvent me) -> {
 					tradeModePhase3(otherPlayers[2],resources,rNums,oppResources,oppRNums);
+				});
+		option4Button.setOnMouseClicked(
+				(MouseEvent me) -> {
+					harborTradeModePhase1();
 				});
 		cancelButton.setOnMouseClicked(
 				(MouseEvent me) -> {
@@ -665,7 +719,7 @@ public class SettlersOfCatan extends Application
 		Button woolButton = new Button("Wool");
 		Button cancelButton = new Button("Cancel");
 
-		offlineGameScene.requestTradePhaseThree(currentPlayer, brickButton, grainButton, oreButton, woodButton, woolButton, cancelButton);
+		offlineGameScene.requestTradePhaseThree(brickButton, grainButton, oreButton, woodButton, woolButton, cancelButton);
 		brickButton.setOnMouseClicked(
 				(MouseEvent me) -> {
 					String resource=new String("Brick");
@@ -710,7 +764,7 @@ public class SettlersOfCatan extends Application
 		Button enter = new Button("Enter");
 		Button cancelButton = new Button("Cancel");
 		
-		offlineGameScene.requestTradePhaseFour(currentPlayer, cancelButton, resourceNum, enter, resources,resources.get(resources.size()-1));
+		offlineGameScene.requestTradePhaseFour(cancelButton, resourceNum, enter, resources,resources.get(resources.size()-1));
 		enter.setOnMouseClicked(
 				(MouseEvent me) -> {
 					String rNum=resourceNum.getText();
@@ -730,7 +784,7 @@ public class SettlersOfCatan extends Application
 		Button yes = new Button("Yes");
 		Button no = new Button("No");
 		
-		offlineGameScene.requestTradePhaseFive(currentPlayer, yes, no);
+		offlineGameScene.requestTradePhaseFive(yes, no);
 		yes.setOnMouseClicked(
 				(MouseEvent me) -> {
 					tradeModePhase3(otherPlayer,resources,rNums,oppResources,oppRNums);
@@ -746,48 +800,48 @@ public class SettlersOfCatan extends Application
 		String Player2=new String(players.get(otherPlayer).getName());
 		
 		//Phase 6: player 2 chooses what to request
-				Button brickButton = new Button("Brick");
-				Button grainButton = new Button("Grain");
-				Button oreButton = new Button("Ore");
-				Button woodButton = new Button("Wood");
-				Button woolButton = new Button("Wool");
-				Button cancelButton = new Button("No");
+		Button brickButton = new Button("Brick");
+		Button grainButton = new Button("Grain");
+		Button oreButton = new Button("Ore");
+		Button woodButton = new Button("Wood");
+		Button woolButton = new Button("Wool");
+		Button cancelButton = new Button("No");
 
-				offlineGameScene.requestTradePhaseSix(currentPlayer, brickButton, grainButton, oreButton, woodButton, woolButton, cancelButton, Player2, resources,rNums);
-				brickButton.setOnMouseClicked(
-						(MouseEvent me) -> {
-							String resource2=new String("Brick");
-							oppResources.add(resource2);
-							tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
-						});
-				grainButton.setOnMouseClicked(
-						(MouseEvent me) -> {
-							String resource2=new String("Grain");
-							oppResources.add(resource2);
-							tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
-						});
-				oreButton.setOnMouseClicked(
-						(MouseEvent me) -> {
-							String resource2=new String("Ore");
-							oppResources.add(resource2);
-							tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
-						});
-				woodButton.setOnMouseClicked(
-						(MouseEvent me) -> {
-							String resource2=new String("Wood");
-							oppResources.add(resource2);
-							tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
-						});
-				woolButton.setOnMouseClicked(
-						(MouseEvent me) -> {
-							String resource2=new String("Wool");
-							oppResources.add(resource2);
-							tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
-						});
-				cancelButton.setOnMouseClicked(
-						(MouseEvent me) -> {
-							tradeModePhase1();
-						});
+		offlineGameScene.requestTradePhaseSix(brickButton, grainButton, oreButton, woodButton, woolButton, cancelButton, Player2, resources,rNums);
+		brickButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String resource2=new String("Brick");
+					oppResources.add(resource2);
+					tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
+				});
+		grainButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String resource2=new String("Grain");
+					oppResources.add(resource2);
+					tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
+				});
+		oreButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String resource2=new String("Ore");
+					oppResources.add(resource2);
+					tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
+				});
+		woodButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String resource2=new String("Wood");
+					oppResources.add(resource2);
+					tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
+				});
+		woolButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String resource2=new String("Wool");
+					oppResources.add(resource2);
+					tradeModePhase7(otherPlayer,resources,rNums,oppResources,oppRNums);
+				});
+		cancelButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeModePhase1();
+				});
 	}
 	
 	private void tradeModePhase7(int otherPlayer, ArrayList<String> resources,ArrayList<String> rNums, ArrayList<String> oppResources,ArrayList<String> oppRNums)
@@ -798,7 +852,7 @@ public class SettlersOfCatan extends Application
 		Button enter = new Button("Enter");
 		Button cancelButton = new Button("Cancel");
 		
-		offlineGameScene.requestTradePhaseSeven(currentPlayer, cancelButton, oppResources, enter, oppRNums,resourceNum,oppResources.get(oppResources.size()-1));
+		offlineGameScene.requestTradePhaseSeven(cancelButton, oppResources, enter, oppRNums,resourceNum,oppResources.get(oppResources.size()-1));
 		enter.setOnMouseClicked(
 				(MouseEvent me) -> {
 					String rNum=resourceNum.getText();
@@ -818,7 +872,7 @@ public class SettlersOfCatan extends Application
 				Button yes = new Button("Yes");
 				Button no = new Button("No");
 				
-				offlineGameScene.requestTradePhaseEight(currentPlayer, yes, no);
+				offlineGameScene.requestTradePhaseEight(yes, no);
 				yes.setOnMouseClicked(
 						(MouseEvent me) -> {
 							tradeModePhase6(otherPlayer,resources,rNums,oppResources,oppRNums);
@@ -835,7 +889,7 @@ public class SettlersOfCatan extends Application
 				Button yes = new Button("Yes");
 				Button no = new Button("No");
 
-				offlineGameScene.requestTradePhaseNine(currentPlayer, yes,no,resources, rNums, oppResources, oppRNums);
+				offlineGameScene.requestTradePhaseNine(yes,no,resources, rNums, oppResources, oppRNums);
 				yes.setOnMouseClicked(
 						(MouseEvent me) -> {
 							//trade work
@@ -846,6 +900,150 @@ public class SettlersOfCatan extends Application
 						(MouseEvent me) -> {
 							tradeModePhase1();
 						});
+	}
+	
+	private void harborTradeModePhase1() 
+	{	
+		//Using list to make sure that the method doesn't make more than one button for each harbor if the player has multiple settlements near the same harbor
+		ArrayList<Integer> availableHarbors = new ArrayList<Integer>();
+		for(int i = 0; i < 10; i++) 
+		{
+			availableHarbors.add(i);
+		}
+		
+		ArrayList <Button> shipOptions = new ArrayList<Button>();
+		//Checking if the player has a settlement near a harbor
+		for(Settlement settlement: players.get(currentPlayer).settleList) 
+		{
+			int harborCode = settlement.v.harborCode;
+			if(availableHarbors.contains(harborCode)) 
+			{
+				availableHarbors.remove(Integer.valueOf(harborCode));
+				Button button = null;
+				
+				//Ship options
+				switch(harborCode) 
+				{
+				case 0:
+					button = new Button("4:1 Any");
+					button.setOnMouseClicked((MouseEvent me) -> harborTradeModePhase2("4 of any"));
+					break;
+				case 1:
+					button = new Button("3:1 Any");
+					button.setOnMouseClicked((MouseEvent me) -> harborTradeModePhase2("3 of any"));
+					break;
+				case 2:
+					button = new Button("2:1 Wool");
+					button.setOnMouseClicked((MouseEvent me) -> harborTradeModePhase2("wool"));
+					break;
+				case 3:
+					button = new Button("3:1 Any");
+					button.setOnMouseClicked((MouseEvent me) -> harborTradeModePhase2("3 of any"));
+					break;
+				case 4:
+					button = new Button("3:1 Any");
+					button.setOnMouseClicked((MouseEvent me) -> harborTradeModePhase2("3 of any"));
+					break;
+				case 5:
+					button = new Button("2:1 Brick");
+					button.setOnMouseClicked((MouseEvent me) -> harborTradeModePhase2("brick"));
+					break;
+				case 6:
+					button = new Button("2:1 Wood");
+					button.setOnMouseClicked((MouseEvent me) -> harborTradeModePhase2("wood"));
+					break;
+				case 7:
+					button = new Button("3:1 Any");
+					button.setOnMouseClicked((MouseEvent me) -> harborTradeModePhase2("3 of any"));
+					break;
+				case 8:
+					button = new Button("2:1 Grain");
+					button.setOnMouseClicked((MouseEvent me) -> harborTradeModePhase2("grain"));
+					break;
+				case 9:
+					button = new Button("2:1 Ore");
+					button.setOnMouseClicked((MouseEvent me) -> harborTradeModePhase2("ore"));
+					break;
+				}
+				
+				shipOptions.add(button);
+			}
+		}
+		
+		Button backButton = new Button("Back");
+		backButton.setOnMouseClicked((MouseEvent me) -> tradeModePhase1());
+		
+		shipOptions.add(backButton);
+		
+		offlineGameScene.requestShipTradePhaseOneAndTwo("Which harbor would you like to trade with?", shipOptions);
+	}
+	
+	//Select what to receive in exchange
+	private void harborTradeModePhase2(final String typeToGiveAway) 
+	{
+		Button brickButton = new Button("Brick");
+		Button grainButton = new Button("Grain");
+		Button oreButton = new Button("Ore");
+		Button woodButton = new Button("Wood");
+		Button woolButton = new Button("Wool");
+		Button cancelButton = new Button("No");
+
+		if(!typeToGiveAway.equals("3 of any") && !typeToGiveAway.equals("4 of any")) 
+		{
+			brickButton.setOnMouseClicked(
+					(MouseEvent me) -> {
+						tradeWithShip("brick", typeToGiveAway, 2);
+					});
+			grainButton.setOnMouseClicked(
+					(MouseEvent me) -> {
+						tradeWithShip("grain", typeToGiveAway, 2);
+					});
+			oreButton.setOnMouseClicked(
+					(MouseEvent me) -> {
+						tradeWithShip("ore", typeToGiveAway, 2);
+					});
+			woodButton.setOnMouseClicked(
+					(MouseEvent me) -> {
+						tradeWithShip("wood", typeToGiveAway, 2);
+					});
+			woolButton.setOnMouseClicked(
+					(MouseEvent me) -> {
+						tradeWithShip("wool", typeToGiveAway, 2);
+					});
+		}
+		
+		cancelButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeModePhase1();
+				});
+		ArrayList <Button> buttons = new ArrayList<Button>();
+		buttons.addAll(Arrays.asList(brickButton, grainButton, oreButton, woodButton, woolButton, cancelButton));
+		
+		offlineGameScene.requestShipTradePhaseOneAndTwo("What would you like in exchange for " + typeToGiveAway, buttons);
+	}
+	
+	//If 3:1 option chosen, select what give trade away
+	private void harborTradeModePhase3(String typeToReceive) 
+	{
+		
+	}
+	
+	private void tradeWithShip(String resourceToReceive, String resourceToGive, int quantity) 
+	{
+		//Converting values to a list so that they can be checked with tradeworks
+		ArrayList <String> typeList = new ArrayList<>();
+		typeList.add(resourceToGive);
+		
+		ArrayList <Integer> quantList = new ArrayList<>();
+		quantList.add(quantity);
+		
+		if(ResourceCard.tradeWorks(players.get(currentPlayer), typeList, quantList)) 
+		{
+			bank.takeResource(resourceToGive, players.get(currentPlayer), quantity);
+			bank.giveResource(resourceToReceive, players.get(currentPlayer), 1);
+		}
+		
+		tradeModePhase1();
 	}
 	
 	/************************************************************************************
@@ -903,54 +1101,56 @@ public class SettlersOfCatan extends Application
 		
 		ArrayList<Integer> quantity1 = new ArrayList<>();
 		
-		for(int i=0;i<rNums.size();i++)
+		for(int i=0;i < rNums.size();i++)
 		{
 			quantity1.add(Integer.parseInt(rNums.get(i)));
 		}
 		
 		ArrayList<String> ans2 = new ArrayList<>();
 		
-		for(int i=0;i<oppResources.size();i++)
+		for(int i = 0;i < oppResources.size();i++)
 		{
 			ans2.add(oppResources.get(i));
 		}
 		
 		ArrayList<Integer> quantity2 = new ArrayList<>();
 		
-		for(int i=0;i<oppRNums.size();i++)
+		for(int i=0;i < oppRNums.size();i++)
 		{
 			quantity2.add(Integer.parseInt(oppRNums.get(i)));
 		}
 		
-
-		
 		if(ResourceCard.tradeWorks(p1, ans1, quantity1) == true && ResourceCard.tradeWorks(p2, ans2, quantity2) == true)
-		{
-			int cap1 = 0;
-			int cap2 = 0;
-			for(int x = 0;x<p2.resList.size();x++)
+		{			
+			for(int a = 0; a < ans1.size(); a++) 
 			{
-				for(int i=0;i < ans1.size();i++)
+				int numTraded = 0;
+				for(int b = 0; b < p2.resList.size(); b++) 
 				{
-					if(p2.resList.get(x).cardType.equalsIgnoreCase(ans1.get(i)) && cap1 <= quantity1.get(i))
+					if(p2.resList.get(b).cardType.equalsIgnoreCase(ans1.get(a)))
 					{
-						p2.resList.remove(x);
-						p1.resList.add(new ResourceCard(ans1.get(i).toLowerCase()));
-						cap1 += 1;
+						p2.resList.remove(b);
+						p1.resList.add(new ResourceCard(ans1.get(a).toLowerCase()));
+						numTraded++;
 					}
+					if(numTraded == quantity1.get(a))
+						break;
 				}
 			}
 			
-			for(int x = 0;x<p1.resList.size();x++)
+			for(int a = 0; a < ans2.size(); a++) 
 			{
-				for(int i=0;i<ans2.size();i++)
+				int numTraded = 0;
+				for(int b = 0; b < p1.resList.size(); b++) 
 				{
-					if(p1.resList.get(x).cardType.equalsIgnoreCase(ans2.get(i)) && cap2 <= quantity2.get(i))
+					if(p1.resList.get(b).cardType.equalsIgnoreCase(ans2.get(a)))
 					{
-						p1.resList.remove(x);
-						p2.resList.add(new ResourceCard(ans2.get(i).toLowerCase()));
-						cap2 += 1;
+						p1.resList.remove(b);
+						p2.resList.add(new ResourceCard(ans2.get(a).toLowerCase()));
+						numTraded++;
 					}
+					if(numTraded == quantity2.get(a))
+						break;
 				}
 			}
 		}
