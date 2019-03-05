@@ -950,7 +950,8 @@ public class OfflineGameScene extends StackPane
 	{
 		for(Tile t: tileArray) 
 		{
-			t.setDisable(false);
+			if(!t.hasRobber)
+				t.setDisable(false);
 		}
 	}
 	
