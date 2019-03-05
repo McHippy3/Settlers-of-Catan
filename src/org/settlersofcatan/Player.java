@@ -220,7 +220,7 @@ public class Player
 	}
 	
 	private DevelopmentBank developmentBank;
-	public boolean buildDevelopmentCard(Bank bank)
+	public String buildDevelopmentCard(Bank bank)
 	{
 		String type="";
 		int ore = this.getOre();
@@ -229,7 +229,37 @@ public class Player
 		
 		developmentBank =new DevelopmentBank();
 		ArrayList<Integer>used = new ArrayList<Integer>();
-
+		for(int i = 0; i < DevelopmentBank.knight.size(); i++) 
+		{
+			if(used.contains(DevelopmentBank.knight.get(i).getIndex())) 
+			{
+				used.remove(i);
+			}
+		}
+		
+		for(int i = 0; i < DevelopmentBank.yop.size(); i++) 
+		{
+			if(used.contains(DevelopmentBank.yop.get(i).getIndex())) 
+			{
+				used.remove(i);
+			}
+		}
+		
+		for(int i = 0; i < DevelopmentBank.monopoly.size(); i++) 
+		{
+			if(used.contains(DevelopmentBank.monopoly.get(i).getIndex())) 
+			{
+				used.remove(i);
+			}
+		}
+		
+		for(int i = 0; i < DevelopmentBank.roadBuild.size(); i++) 
+		{
+			if(used.contains(DevelopmentBank.roadBuild.get(i).getIndex())) 
+			{
+				used.remove(i);
+			}
+		}
 		
 		int choice = 0;
 		Random r = new Random();
@@ -301,12 +331,12 @@ public class Player
 				developmentBank.giveDevCard(type,this.devList,choice);
 				secretVP=secretVP+1;
 			}
-			return true;
+			return type;
 		}
 		else
 		{
 			System.out.println("You lack the resources to build a Development Card.");
-			return false;
+			return "none";
 		}
 	}
 	

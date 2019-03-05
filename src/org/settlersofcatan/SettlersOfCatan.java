@@ -9,6 +9,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -68,7 +70,7 @@ public class SettlersOfCatan extends Application
 		currentPlayer = 0;
 		inSetup = true;
 		setUpPhase = 0;
-		longestRoadLength = 2;
+		longestRoadLength = 4;
 		largestArmy = 2;
 		
 		startButton.setOnMouseClicked(
@@ -519,6 +521,9 @@ public class SettlersOfCatan extends Application
 		{
 			if(tile.number == total) 
 			{
+				if(tile.hasRobber)
+					break;
+				
 				for(VertexLink v: tile.vertexArray) 
 				{
 					int levelOfSettlement = v.getHasBuilding();
@@ -578,8 +583,13 @@ public class SettlersOfCatan extends Application
 				);
 		build4Button.setOnMouseClicked(
 				(MouseEvent e) -> {
-					players.get(currentPlayer).buildDevelopmentCard(bank);
-					buildMode();
+					Button continueButton = new Button("Continue");
+					continueButton.setOnMouseClicked((MouseEvent me) -> buildMode());
+					
+					ArrayList<String> message = new ArrayList<>();
+					message.add("You received " + players.get(currentPlayer).buildDevelopmentCard(bank));
+					
+					offlineGameScene.displayText(message, 12, continueButton);
 					}
 				);
 		
@@ -589,13 +599,13 @@ public class SettlersOfCatan extends Application
 				{
 					//End game if someone won
 					if(checkWin(players)) 
-					{
+					{ 
 						gameWonMode();
 						return;
 					}
 					
 					offlineGameScene.disableBuild(); 
-					//currentPlayer++;
+					currentPlayer++;
 					if(currentPlayer == 4) 
 					{
 						currentPlayer = 0;
@@ -1411,7 +1421,14 @@ public class SettlersOfCatan extends Application
 	{
 		Button continueButton = new Button("Continue");
 		continueButton.setOnMouseClicked((MouseEvent me) -> setTitleScene());
+		
+
 		mainScene.setRoot((Parent) Scenes.gameOverScene(continueButton, players.get(currentPlayer).playerName));
+		
+		//Playing dope victory music
+        Media loadingMusic = new Media(new File("src/res/sound_effects/get_noscoped.mp3").toURI().toString());
+        MediaPlayer player = new MediaPlayer(loadingMusic);
+        player.play();
 	}
 	
 	/************************************************************************************
@@ -1430,7 +1447,7 @@ public class SettlersOfCatan extends Application
 		for(int i = 0; i < names.length; i++)
 		{
 			ArrayList<ResourceCard> resList = new ArrayList<>();
-			for(int a = 0; a < 20; a++) 
+			for(int a = 0; a < 1; a++) 
 			{
 				resList.add(new ResourceCard("brick"));
 				resList.add(new ResourceCard("ore"));
@@ -1585,7 +1602,15 @@ public class SettlersOfCatan extends Application
 	{
 		for(int i = 0;i<p.size();i++)
 		{
-			if(p.get(i).actualVP >= 10)
+			int vp = p.get(i).actualVP;
+			
+			//Checking for special awards
+			if(p.get(i).hasLargestArmy)
+				vp += 2;
+			if(p.get(i).hasLongestRoad)
+				vp += 2;
+			
+			if(vp >= 10)
 			{
 				return true;
 			}
