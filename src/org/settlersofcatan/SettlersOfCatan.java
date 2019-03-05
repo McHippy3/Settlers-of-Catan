@@ -32,8 +32,9 @@ public class SettlersOfCatan extends Application
 	 ************************************************************************************/
 	
 	private Stage stage;
-	private int currentPlayer, setUpPhase, roll1, roll2;
+	private int currentPlayer, setUpPhase, roll1, roll2, longestRoadLength;
 	private boolean inSetup;
+	private boolean roadBuildCard = false;
 	private Scene mainScene;
 	private OfflineGameScene offlineGameScene;
 	private VertexLink vertexes[][];
@@ -67,6 +68,7 @@ public class SettlersOfCatan extends Application
 		currentPlayer = 0;
 		inSetup = false;
 		setUpPhase = 0;
+		longestRoadLength = 2;
 		
 		startButton.setOnMouseClicked(
 				(MouseEvent e) -> setNameScene()
@@ -282,6 +284,10 @@ public class SettlersOfCatan extends Application
 						{
 							EdgeLink e = (EdgeLink) me.getSource();
 							players.get(currentPlayer).buildRoad(bank, edges, e.getGridRow(), e.getGridCol(), inSetup);
+							
+							//Checking for road chains
+							checkLongestRoad(e, 0, new ArrayList <EdgeLink> ());
+							
 							//Disable after build
 							offlineGameScene.disableBuild();
 							Platform.runLater(new Runnable() 
@@ -575,7 +581,7 @@ public class SettlersOfCatan extends Application
 					}
 					
 					offlineGameScene.disableBuild(); 
-					//currentPlayer++;
+					currentPlayer++;
 					if(currentPlayer == 4) 
 					{
 						currentPlayer = 0;
@@ -636,12 +642,171 @@ public class SettlersOfCatan extends Application
 				devQuantities.set(3, devQuantities.get(3) + 1);
 			}
 		}
-		
 		availableDevCards.add(dontPlayButton);
-		dontPlayButton.setOnMouseClicked((MouseEvent me) -> tradeModePhase1());
 		
 		offlineGameScene.requestDevCards(currentPlayer, availableDevCards);
 		offlineGameScene.displayDevCards(devQuantities);
+		
+		knightButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					DevelopmentCard.knight();
+				});
+		yopButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					 yopCardMode();
+				});
+		monopolyButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					monopolyCardMode();
+				});
+		roadBuildButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					roadBuild();
+				});
+		dontPlayButton.setOnMouseClicked((MouseEvent me) -> tradeModePhase1());
+	}
+	
+	private void yopCardMode() 
+	{
+		int cardIndex = 0;
+		for(int i=0;i>players.get(currentPlayer).devList.size();i++)
+		{
+			if(players.get(currentPlayer).devList.get(i).getIndex()==16)
+			{
+				cardIndex=16;
+			}
+			else if(players.get(currentPlayer).devList.get(i).getIndex()==17)
+			{
+				cardIndex=17;
+			}
+		}
+		
+	    final int ci=cardIndex;
+	    
+		Button brickButton = new Button("Brick");
+		Button grainButton = new Button("Grain");
+		Button oreButton = new Button("Ore");
+		Button woodButton = new Button("Wood");
+		Button woolButton = new Button("Wool");
+		Button cancelButton = new Button("Cancel");
+		offlineGameScene.yopMode(currentPlayer, brickButton, grainButton, oreButton, woodButton, woolButton, cancelButton);
+		
+		brickButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String res = "brick";
+					DevelopmentCard.yearOfPlenty(bank, players.get(currentPlayer), res);
+					DevelopmentBank.takeDevCard("year of plenty", players.get(currentPlayer).devList, ci);
+					tradeModePhase1();
+					});
+		grainButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String res = "grain";
+					DevelopmentCard.yearOfPlenty(bank, players.get(currentPlayer), res);
+					DevelopmentBank.takeDevCard("year of plenty", players.get(currentPlayer).devList, ci);
+					tradeModePhase1();
+				});
+		oreButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String res = "ore";
+					DevelopmentCard.yearOfPlenty(bank, players.get(currentPlayer), res);
+					DevelopmentBank.takeDevCard("year of plenty", players.get(currentPlayer).devList, ci);
+					tradeModePhase1();
+				});
+		woodButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					String res = "wood";
+					DevelopmentCard.yearOfPlenty(bank, players.get(currentPlayer), res);
+					DevelopmentBank.takeDevCard("year of plenty", players.get(currentPlayer).devList, ci);
+					tradeModePhase1();
+				});
+		woolButton.setOnMouseClicked(
+				(MouseEvent me) ->{
+					String res = "wool";
+					DevelopmentCard.yearOfPlenty(bank, players.get(currentPlayer), res);
+					DevelopmentBank.takeDevCard("year of plenty", players.get(currentPlayer).devList, ci);
+					tradeModePhase1();
+				});
+		cancelButton.setOnMouseClicked((MouseEvent me) -> devCardMode());
+	}
+		
+	private void monopolyCardMode() 
+	{   
+		int cardIndex=0;
+		for(int i=0;i>players.get(currentPlayer).devList.size();i++)
+		{
+			if(players.get(currentPlayer).devList.get(i).getIndex()==18)
+			{
+				cardIndex=18;
+			}
+			else if(players.get(currentPlayer).devList.get(i).getIndex()==19)
+			{
+				cardIndex=19;
+			}
+		}
+		final int ci=cardIndex;
+		Button brickButton = new Button("Brick");
+		Button grainButton = new Button("Grain");
+		Button oreButton = new Button("Ore");
+		Button woodButton = new Button("Wood");
+		Button woolButton = new Button("Wool");
+		Button cancelButton = new Button("Cancel");
+		offlineGameScene.monopolyMode(currentPlayer, brickButton, grainButton, oreButton, woodButton, woolButton, cancelButton);
+	brickButton.setOnMouseClicked(
+			(MouseEvent me) -> {
+				String res = "brick";
+				DevelopmentCard.monopoly( players.get(currentPlayer), res, players);
+				DevelopmentBank.takeDevCard("monopoly", players.get(currentPlayer).devList, ci);
+				tradeModePhase1();
+				});
+	grainButton.setOnMouseClicked(
+			(MouseEvent me) -> {
+				String res = "grain";
+				DevelopmentCard.monopoly( players.get(currentPlayer), res, players);
+				DevelopmentBank.takeDevCard("monopoly", players.get(currentPlayer).devList, ci);
+				tradeModePhase1();
+			});
+	oreButton.setOnMouseClicked(
+			(MouseEvent me) -> {
+				String res = "ore";
+				DevelopmentCard.monopoly( players.get(currentPlayer), res, players);
+				DevelopmentBank.takeDevCard("monopoly", players.get(currentPlayer).devList, ci);
+				tradeModePhase1();
+			});
+	woodButton.setOnMouseClicked(
+			(MouseEvent me) -> {
+				String res = "wood";
+				DevelopmentCard.monopoly( players.get(currentPlayer), res, players);
+				DevelopmentBank.takeDevCard("monopoly", players.get(currentPlayer).devList, ci);
+				tradeModePhase1();
+			});
+	woolButton.setOnMouseClicked(
+			(MouseEvent me) ->{
+				String res = "wool";
+				DevelopmentCard.monopoly( players.get(currentPlayer), res, players);
+				DevelopmentBank.takeDevCard("monopoly", players.get(currentPlayer).devList, ci);
+				tradeModePhase1();
+			});
+	cancelButton.setOnMouseClicked((MouseEvent me) -> devCardMode());
+	}
+	
+	public void roadBuild()
+	{
+		int cardIndex=0;
+		for(int i=0;i>players.get(currentPlayer).devList.size();i++)
+		{
+			if(players.get(currentPlayer).devList.get(i).getIndex()==15)
+			{
+				cardIndex=15;
+			}
+			else if(players.get(currentPlayer).devList.get(i).getIndex()==14)
+			{
+				cardIndex=14;
+			}
+		}
+		final int ci=cardIndex;
+			DevelopmentBank.takeDevCard("road building", players.get(currentPlayer).devList, ci);
+			roadBuildCard=true;
+			offlineGameScene.enableBuild(1);
 	}
 	
 	/************************************************************************************
@@ -1033,19 +1198,19 @@ public class SettlersOfCatan extends Application
 					});
 			grainButton.setOnMouseClicked(
 					(MouseEvent me) -> {
-						tradeWithShip("grain", typeToGiveAway, 2);
+						harborTradeModePhase3("grain", quantity);
 					});
 			oreButton.setOnMouseClicked(
 					(MouseEvent me) -> {
-						tradeWithShip("ore", typeToGiveAway, 2);
+						harborTradeModePhase3("ore", quantity);
 					});
 			woodButton.setOnMouseClicked(
 					(MouseEvent me) -> {
-						tradeWithShip("wood", typeToGiveAway, 2);
+						harborTradeModePhase3("wood", quantity);
 					});
 			woolButton.setOnMouseClicked(
 					(MouseEvent me) -> {
-						tradeWithShip("wool", typeToGiveAway, 2);
+						harborTradeModePhase3("wool", quantity);
 					});
 		}
 		
@@ -1056,13 +1221,48 @@ public class SettlersOfCatan extends Application
 		ArrayList <Button> buttons = new ArrayList<Button>();
 		buttons.addAll(Arrays.asList(brickButton, grainButton, oreButton, woodButton, woolButton, cancelButton));
 		
-		offlineGameScene.requestShipTradePhase("What would you like in exchange for " + typeToGiveAway, buttons);
+		offlineGameScene.requestShipTradePhase("What would you like in exchange for " + typeToGiveAway + "?", buttons);
 	}
 	
 	//If 3:1 or 4:1 option chosen, select what give trade away
 	private void harborTradeModePhase3(final String typeToReceive, int quantity) 
 	{
+		Button brickButton = new Button("Brick");
+		Button grainButton = new Button("Grain");
+		Button oreButton = new Button("Ore");
+		Button woodButton = new Button("Wood");
+		Button woolButton = new Button("Wool");
+		Button cancelButton = new Button("No");
 		
+		brickButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeWithShip(typeToReceive, "brick", quantity);
+				});
+		grainButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeWithShip(typeToReceive, "grain", quantity);
+				});
+		oreButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeWithShip(typeToReceive, "ore", quantity);
+				});
+		woodButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeWithShip(typeToReceive, "wood", quantity);
+				});
+		woolButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeWithShip(typeToReceive, "wool", quantity);
+				});
+		
+		cancelButton.setOnMouseClicked(
+				(MouseEvent me) -> {
+					tradeModePhase1();
+				});
+		ArrayList <Button> buttons = new ArrayList<Button>();
+		buttons.addAll(Arrays.asList(brickButton, grainButton, oreButton, woodButton, woolButton, cancelButton));
+		
+		offlineGameScene.requestShipTradePhase("What are you going to trade for " + typeToReceive + "?", buttons);
 	}
 	
 	private void tradeWithShip(String resourceToReceive, String resourceToGive, int quantity) 
@@ -1078,9 +1278,22 @@ public class SettlersOfCatan extends Application
 		{
 			bank.takeResource(resourceToGive, players.get(currentPlayer), quantity);
 			bank.giveResource(resourceToReceive, players.get(currentPlayer), 1);
+			tradeModePhase1();
 		}
-		
-		tradeModePhase1();
+		else 
+		{
+			displayTradeFailed();
+		}
+	}
+	
+	private void displayTradeFailed() 
+	{
+		//Display message that trade failed
+		ArrayList <String> message = new ArrayList <>();
+		message.add("Insufficient resources, trade failed");
+		Button continueButton = new Button("Continue");
+		continueButton.setOnMouseClicked((MouseEvent me) -> tradeModePhase1());
+		offlineGameScene.displayText(message, 12, continueButton);
 	}
 	
 	/************************************************************************************
@@ -1108,6 +1321,7 @@ public class SettlersOfCatan extends Application
 	//Starting Game/Initialization
 	public void gameStart(String[] names) 
 	{
+		players.clear();
 		for(int i = 0; i < names.length; i++)
 		{
 			ArrayList<ResourceCard> resList = new ArrayList<>();
@@ -1158,7 +1372,7 @@ public class SettlersOfCatan extends Application
 		}
 		
 		if(ResourceCard.tradeWorks(p1, ans1, quantity1) == true && ResourceCard.tradeWorks(p2, ans2, quantity2) == true)
-		{			
+		{		
 			for(int a = 0; a < ans1.size(); a++) 
 			{
 				int numTraded = 0;
@@ -1191,8 +1405,67 @@ public class SettlersOfCatan extends Application
 				}
 			}
 		}
+		else 
+		{
+			displayTradeFailed();
+		}
 	}
 
+	//Recursive loop to check for road chains and thereby find longest road
+	private void checkLongestRoad(EdgeLink el, int chainLength, ArrayList <EdgeLink> usedEdges) 
+	{
+		//Updating Longest Road if chain length is greater than previous longest
+		if(chainLength > longestRoadLength) 
+		{
+			longestRoadLength = chainLength;
+			for(Player player: players)
+				player.hasLongestRoad = false;
+			players.get(currentPlayer).hasLongestRoad = true;
+		}
+		
+		//Going through every edge connected to the beginning and ends of the road
+		VertexLink v1 = vertexes[el.getMainGridRowStart()][el.getMainGridColStart()];
+		VertexLink v2 = vertexes[el.getMainGridRowEnd()][el.getMainGridColEnd()];
+		
+		//Counting connections
+		for(int i = 0; i < 3; i++) 
+		{
+			//In case vertex only has two connected Edges
+			if(v1.adjacentEdges[i] == null)
+				break;
+			
+			EdgeLink connectedEdge = v1.adjacentEdges[i];
+			if(connectedEdge != null && !usedEdges.contains(connectedEdge) && connectedEdge.getHasRoad() && connectedEdge.road.player.playerNumber == currentPlayer) 
+			{
+				//Ensuring that usedEdges works as intended by preventing rings of roads bugs
+				ArrayList <EdgeLink> usedEdgesCopy = new ArrayList <EdgeLink> ();
+				usedEdgesCopy.addAll(usedEdges);
+				usedEdgesCopy.add(connectedEdge);
+				
+				checkLongestRoad(connectedEdge, chainLength + 1, usedEdgesCopy);
+			}
+		}
+		
+		for(int i = 0; i < 3; i++) 
+		{
+			if(v2.adjacentEdges[i] == null)
+				break;
+			
+			EdgeLink connectedEdge = v2.adjacentEdges[i];
+			if(connectedEdge != null && !usedEdges.contains(connectedEdge) && connectedEdge.getHasRoad() && connectedEdge.road.player.playerNumber == currentPlayer) 
+			{
+				//Ensuring that usedEdges works as intended by preventing rings of roads bugs
+				ArrayList <EdgeLink> usedEdgesCopy = new ArrayList <EdgeLink> ();
+				usedEdgesCopy.addAll(usedEdges);
+				usedEdgesCopy.add(connectedEdge);
+				
+				checkLongestRoad(connectedEdge, chainLength + 1, usedEdgesCopy);
+				checkLongestRoad(connectedEdge, chainLength + 1, usedEdgesCopy);
+			}
+		}
+
+	}
+	
 	//Game ends if player reaches 10 victory points
 	private boolean checkWin(ArrayList<Player> p)
 	{

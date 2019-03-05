@@ -189,7 +189,7 @@ public class OfflineGameScene extends StackPane
         		ImageView img = new ImageView(new Image(picURL));
         		img.setFitHeight(210 * sf);
         		img.setFitWidth(240 * sf);
-        		img.setRotate(90);
+        		img.setRotate(270);
         		int x = 205 * c - (105 * r % 2);
         		
         		//Shift right to center
@@ -325,20 +325,35 @@ public class OfflineGameScene extends StackPane
 	{
 		for(int i = 0; i < 4; i++) 
 		{
-			//Finding and removing victory point labels
-			for(int i2 = 0; i2 < playerTiles[i].getChildren().size(); i2++) 
+			//Removing old labels
+			while(playerTiles[i].getChildren().size() != 1) 
 			{
-				Node node = playerTiles[i].getChildren().get(i2);
-				if(node instanceof Text && ((Text) node).getText().contains("Victory Points: "))
-				{
-					playerTiles[i].getChildren().remove(node);
-					break;
-				}
+				playerTiles[i].getChildren().remove(1);
 			}
 			
 			//Updating victory points Text
 			Text updatedPlayerText = new Text("Victory Points: " + players.get(i).getVP());
-			playerTiles[i].add(updatedPlayerText, 0, 1, 1, 1);
+			
+			//Hidden VP from development cards
+			players.get(i).actualVP = players.get(i).victoryPoints + players.get(i).secretVP;
+			if(i == currentPlayer) 
+			{
+				updatedPlayerText.setText(updatedPlayerText.getText() + " ("+players.get(i).actualVP + ")");
+			}
+			
+			playerTiles[i].add(updatedPlayerText, 0, 1);
+			
+			//Bonus Point Awards
+			if(players.get(i).hasLongestRoad) 
+			{
+				Text longestRoadText = new Text("Has Longest Road");
+				playerTiles[i].add(longestRoadText, 0, 2);
+			}
+			if(players.get(i).hasLargestArmy) 
+			{
+				Text largestArmyText = new Text("Has Largest Army");
+				playerTiles[i].add(largestArmyText, 0, 3);
+			}
 			
 			//Distinguish current player
 			if(currentPlayer == i) 
@@ -743,6 +758,82 @@ public class OfflineGameScene extends StackPane
         commandPanel.getChildren().add(devImages);
 	}
 	
+	public void yopMode(int currentPlayer, Button brickButton, Button grainButton, Button oreButton, Button woodButton, Button woolButton, Button cancelButton)
+	{
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane yopOptions = new GridPane();
+    	yopOptions.setPrefWidth(650);
+    	yopOptions.setAlignment(Pos.CENTER);
+    	yopOptions.setVgap(25.0);
+    	yopOptions.setHgap(25.0);
+    	yopOptions.setPadding(new Insets(10));
+		Text yopLabel = new Text("What resource would you like?");
+		yopOptions.add(yopLabel, 0, 0, 2, 2);
+		
+		//resource Buttons
+		brickButton.setPrefWidth(150);
+		yopOptions.add(brickButton, 2, 0);
+		
+		grainButton.setPrefWidth(150);
+		yopOptions.add(grainButton, 3, 0);
+		
+		oreButton.setPrefWidth(150);
+		yopOptions.add(oreButton, 2, 1);
+
+		woodButton.setPrefWidth(150);
+		yopOptions.add(woodButton, 3, 1);
+		
+		woolButton.setPrefWidth(150);
+		yopOptions.add(woolButton, 2, 2);
+		
+		cancelButton.setPrefWidth(150);
+		yopOptions.add(cancelButton, 3, 2);
+		    		
+		commandPanel.getChildren().add(0, yopOptions);
+	}
+	
+	public void monopolyMode(int currentPlayer, Button brickButton, Button grainButton, Button oreButton, Button woodButton, Button woolButton, Button cancelButton)
+	{
+		this.currentPlayer = currentPlayer;
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane monopolyOptions = new GridPane();
+    	monopolyOptions.setPrefWidth(650);
+    	monopolyOptions.setAlignment(Pos.CENTER);
+    	monopolyOptions.setVgap(25.0);
+    	monopolyOptions.setHgap(25.0);
+    	monopolyOptions.setPadding(new Insets(10));
+		Text monopolyLabel = new Text("What resource would you like a monopoly of?");
+		monopolyOptions.add(monopolyLabel, 0, 0, 2, 2);
+		
+		//resource Buttons
+		brickButton.setPrefWidth(150);
+		monopolyOptions.add(brickButton, 2, 0);
+		
+		grainButton.setPrefWidth(150);
+		monopolyOptions.add(grainButton, 3, 0);
+		
+		oreButton.setPrefWidth(150);
+		monopolyOptions.add(oreButton, 2, 1);
+
+		woodButton.setPrefWidth(150);
+		monopolyOptions.add(woodButton, 3, 1);
+		
+		woolButton.setPrefWidth(150);
+		monopolyOptions.add(woolButton, 2, 2);
+		
+		cancelButton.setPrefWidth(150);
+		monopolyOptions.add(cancelButton, 3, 2);
+		    		
+		commandPanel.getChildren().add(0, monopolyOptions);
+	}
+	
 	/************************************************************************************
 	 ************************************************************************************
 	 * BUILD METHODS *
@@ -761,12 +852,13 @@ public class OfflineGameScene extends StackPane
 		{
 			for(EdgeLink e: r) 
 			{
-				if(e != null && !e.getHasRoad() && buildCode == 1) 
+				if(e != null /*&& !e.getHasRoad() && buildCode == 1*/) 
 				{
 					if(edgeValidCheck(e)) 
 					{
 						e.setDisable(false);
 					}
+					e.setDisable(false);
 				}
 			}
 		}

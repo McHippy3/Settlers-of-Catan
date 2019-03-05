@@ -261,7 +261,7 @@ public class ResourceCard
 	public static int getMaxRsc(Player p, String s)
 	{
 		int x = 0;
-		for(int i = 0;i<p.resList.size();i++)
+		for(int i = 0;i < p.resList.size();i++)
 		{
 			if(p.resList.get(i).cardType.equalsIgnoreCase(s))
 			{

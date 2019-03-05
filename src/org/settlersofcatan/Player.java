@@ -8,9 +8,7 @@ import java.io.*;
 import java.lang.Math;
 
 public class Player 
-{
-	private Color c;
-	
+{	
 	ArrayList<ResourceCard>resList;
 	ArrayList<DevelopmentCard> devList = new ArrayList<DevelopmentCard>();
 	
@@ -18,36 +16,10 @@ public class Player
 	ArrayList<Road>roadList = new ArrayList<Road>();
 	ArrayList<City>cityList = new ArrayList<City>();
 	
-	int victoryPoints;
-	int playerNumber;
+	int victoryPoints, playerNumber, army, secretVP, actualVP;
 	String playerName;
-	
-	public Player()
-	{
-		c = null;
-		resList = null;
-		devList = null;
-		victoryPoints = 0;
-		settleList = null;
-		roadList = null;
-		cityList = null;
-		playerNumber = 0;
-		playerName = "";
-	}
-	
-	public Player(Color c, int vp, String name)
-	{
-		this.c = c;
-		victoryPoints = vp;
-		playerName = name;
-		for(int i = 0;i<playerName.length();i++)
-		{
-			if(playerName.charAt(i) == ' ')
-			{
-				playerName.trim();
-			}
-		}
-	}
+	boolean hasLongestRoad = false;
+	boolean hasLargestArmy = false;
 	
 	public Player(int playerNum, String name, ArrayList<ResourceCard> resList)
 	{
@@ -247,14 +219,31 @@ public class Player
 		}
 	}
 	
+	private DevelopmentBank developmentBank;
 	public boolean buildDevelopmentCard(Bank bank)
 	{
+		String type="";
 		int ore = this.getOre();
 		int wool = this.getWool();
 		int grain = this.getGrain();
 		
+		developmentBank =new DevelopmentBank();
+		ArrayList<Integer>used = new ArrayList<Integer>();
+
+		
+		int choice = 0;
 		Random r = new Random();
-		int choice = r.nextInt(25);
+		choice = r.nextInt(25);
+		while(used.contains(choice))
+		{
+			r = new Random();
+			choice = r.nextInt(25);
+		}
+		
+		
+		used.add(choice);
+
+		System.out.println(choice);
 		
 		if(ore >= 1 && wool >= 1 && grain >= 1)
 		{
@@ -264,39 +253,53 @@ public class Player
 			
 			if(choice<14)
 			{
-				this.devList.add(new DevelopmentCard("knight", "res/dev_cards/knight.png"));
+				type="knight";
+				developmentBank.giveDevCard(type,this.devList,choice);
 			}
 			else if(choice>=14&&choice<16)
 			{
-				this.devList.add(new DevelopmentCard("road building", "res/dev_cards/roadbuild.png"));
+				type="road build";
+				developmentBank.giveDevCard(type,this.devList,choice);
 			}
 			else if(choice>=16&&choice<18)
 			{
-				this.devList.add(new DevelopmentCard("year of plenty", "res/dev_cards/yop.png"));
+				type="year of plenty";
+				developmentBank.giveDevCard(type,this.devList,choice);
 			}
 			else if(choice>=18&&choice<20)
 			{
-				this.devList.add(new DevelopmentCard("monopoly", "res/dev_cards/monopoly.png"));
+				type="monopoly";
+				developmentBank.giveDevCard(type,this.devList,choice);
 			}
 			else if(choice==20)
 			{
-				this.devList.add(new DevelopmentCard("chapel", "res/dev_cards/chapel.png"));
+				type="chapel";
+				developmentBank.giveDevCard(type,this.devList,choice);
+				secretVP=secretVP+1;
 			}
 			else if(choice==21)
 			{
-				this.devList.add(new DevelopmentCard("library", "res/dev_cards/library.png"));
+				type="library";
+				developmentBank.giveDevCard(type,this.devList,choice);
+				secretVP=secretVP+1;
 			}
 			else if(choice==22)
 			{
-				this.devList.add(new DevelopmentCard("market", "res/dev_cards/market.png"));
+				type="market";
+				developmentBank.giveDevCard(type,this.devList,choice);
+				secretVP=secretVP+1;
 			}
 			else if(choice==23)
 			{
-				this.devList.add(new DevelopmentCard("palace", "res/dev_cards/palace.png"));
+				type="palace";
+				developmentBank.giveDevCard(type,this.devList,choice);
+				secretVP=secretVP+1;
 			}
 			else
 			{
-				this.devList.add(new DevelopmentCard("university", "res/dev_cards/university.png"));
+				type="university";
+				developmentBank.giveDevCard(type,this.devList,choice);
+				secretVP=secretVP+1;
 			}
 			return true;
 		}
