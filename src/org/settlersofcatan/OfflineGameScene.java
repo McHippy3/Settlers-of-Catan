@@ -192,6 +192,7 @@ public class OfflineGameScene extends StackPane
         		img.setRotate(270);
         		int x = 205 * c - (105 * r % 2);
         		
+        		
         		//Shift right to center
         		if(r != 2) 
         		{
@@ -205,7 +206,9 @@ public class OfflineGameScene extends StackPane
         		
         		img.setX((int) (x * sf) + xOffSet);
         		img.setY(180 * r * sf + yOffSet);
-        		gameTiles.getChildren().add(img);
+        		tileArray[count].setLayoutX((int) (x * sf) + xOffSet);
+        		tileArray[count].setLayoutY(180 * r * sf + yOffSet);        		
+        		gameTiles.getChildren().addAll(img, tileArray[count]);
         		count++;
         	}
         	
@@ -316,6 +319,9 @@ public class OfflineGameScene extends StackPane
 		//Roads
         updateRoads();
         
+        //Robber
+        updateRobber();
+        
         //Command Panel Elements/Nodes
         updateCommandPanel();
 	}
@@ -367,6 +373,55 @@ public class OfflineGameScene extends StackPane
 		}
 	}
 	
+	//Update Robber
+	private void updateRobber() 
+	{
+		int numOfColumns = 3;
+		int count = 0;
+        for(int r = 0; r < 5; r++) 
+        {
+        	for(int c = 0; c < numOfColumns; c++) 
+        	{
+        		if(tileArray[count].hasRobber) 
+        		{
+	        		ImageView robberImg = new ImageView(new Image("res/other/robber.png"));
+	        		robberImg.setFitHeight(90);
+	        		robberImg.setFitWidth(36);
+	        		
+	        		int x = 205 * c - (105 * r % 2);
+	        		
+	        		//Shift right to center
+	        		if(r != 2) 
+	        		{
+	        			x += 105;
+	        		}
+	        		
+	        		if(r == 0 || r == 4) 
+	        		{
+	        			x += 105;
+	        		}
+	        		
+	        		robberImg.setX((int) (x * sf) + xOffSet + 53);
+	        		robberImg.setY(180 * r * sf + yOffSet + 20);
+	        		
+	        		//Adding at index 20 so that updateBuildings() will remove it
+	        		gameTiles.getChildren().add(40, robberImg);
+        		}
+        		
+        		count++;
+        	}
+        	
+    		
+
+    		
+        	if(r < 2) 
+        	{
+        		numOfColumns++;
+        	}
+        	else numOfColumns--;
+        }
+	}
+	
 	//UpdateGUI helper
 	private void updateRoads() 
 	{
@@ -408,7 +463,7 @@ public class OfflineGameScene extends StackPane
 			        {
 			              roadImg.setRotate(0);
 			        }
-			        gameTiles.getChildren().add(20, roadImg);
+			        gameTiles.getChildren().add(40, roadImg);
         		}
         	}
         }
@@ -418,9 +473,9 @@ public class OfflineGameScene extends StackPane
 	private void updateBuildings() 
 	{
 		//Removing old settlement and city images
-		while(gameTiles.getChildren().size() != 155) 
+		while(gameTiles.getChildren().size() != 174) 
 		{
-			gameTiles.getChildren().remove(20);
+			gameTiles.getChildren().remove(40);
 		}
 		
 		double[] y = new double[] {0, 60, 180, 240, 360, 420, 540, 600, 720, 780, 900, 960, 1080, 1140, 1260};
@@ -446,7 +501,7 @@ public class OfflineGameScene extends StackPane
 			        settlementImg.setFitHeight(30);
 			        settlementImg.setFitWidth(30);
 			        //Place images at index 20 to be on top of tiles but below buttons
-			        gameTiles.getChildren().add(20, settlementImg);
+			        gameTiles.getChildren().add(40, settlementImg);
 				}
 				//Cities
 				else if(vertexes[r][c] != null && vertexes[r][c].getHasBuilding() == 2) 
@@ -459,7 +514,7 @@ public class OfflineGameScene extends StackPane
 			        cityImg.setFitHeight(30);
 			        cityImg.setFitWidth(30);
 			        //Place images at index 20 to be on top of tiles but below buttons
-			        gameTiles.getChildren().add(20, cityImg);
+			        gameTiles.getChildren().add(40, cityImg);
 				}
         	}
         }
@@ -664,7 +719,7 @@ public class OfflineGameScene extends StackPane
         		tileNum.setX((int) (x * sf) + xOffSet + 53);
         		tileNum.setY(180 * r * sf + yOffSet + 72);
         		//Adding at index 20 so that updateBuildings() will remove it
-        		gameTiles.getChildren().add(20, tileNum);
+        		gameTiles.getChildren().add(40, tileNum);
         		count++;
         	}
         	
@@ -836,6 +891,79 @@ public class OfflineGameScene extends StackPane
 	
 	/************************************************************************************
 	 ************************************************************************************
+	 * ROBBER METHODS *
+	 ************************************************************************************
+	 ************************************************************************************/
+	
+	public void requestMoveRobber() 
+	{
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		Text suggestionText = new Text("Select tile to move robber to");
+		
+		HBox container = new HBox(suggestionText);
+		container.setPrefWidth(650);
+		container.setAlignment(Pos.CENTER);
+		
+		commandPanel.getChildren().add(0, container);
+	}
+	
+	public void requestStealResource(ArrayList<Button> buttons) 
+	{
+		//Prevent stacking
+		updateGUI(vertexes, edges, players);
+		
+		//Build Options
+    	GridPane stealOptions = new GridPane();
+    	stealOptions.setPrefWidth(650);
+    	stealOptions.setAlignment(Pos.CENTER);
+    	stealOptions.setVgap(25.0);
+    	stealOptions.setHgap(25.0);
+    	stealOptions.setPadding(new Insets(10));
+		Text stealLabel = new Text("Who would you like to steal from?");
+		stealOptions.add(stealLabel, 0, 0, 2, 2);
+		
+		//Integers to manage rows and columns of the buttons
+		int row = 0;
+		int col = 2;
+		for(Button button: buttons) 
+		{
+			button.setPrefWidth(150);
+			stealOptions.add(button, col, row);
+			
+			if(row < 2) 
+			{
+				row++;
+			}
+			else 
+			{
+				row = 0;
+				col++;
+			}
+		}
+		
+		commandPanel.getChildren().add(0, stealOptions);
+	}
+
+	public void enableTileSelection() 
+	{
+		for(Tile t: tileArray) 
+		{
+			t.setDisable(false);
+		}
+	}
+	
+	public void disableTileSelection() 
+	{
+		for(Tile t: tileArray) 
+		{
+			t.setDisable(true);
+		}
+	}
+	
+	/************************************************************************************
+	 ************************************************************************************
 	 * BUILD METHODS *
 	 ************************************************************************************
 	 ************************************************************************************/
@@ -852,13 +980,12 @@ public class OfflineGameScene extends StackPane
 		{
 			for(EdgeLink e: r) 
 			{
-				if(e != null /*&& !e.getHasRoad() && buildCode == 1*/) 
+				if(e != null && !e.getHasRoad() && buildCode == 1) 
 				{
 					if(edgeValidCheck(e)) 
 					{
 						e.setDisable(false);
 					}
-					e.setDisable(false);
 				}
 			}
 		}
@@ -872,11 +999,10 @@ public class OfflineGameScene extends StackPane
 					//Making sure it is connected to a road
 					for(int i = 0; i < 3; i++) 
 					{
-						/*if(vertexValidCheck(v)) 
+						if(vertexValidCheck(v)) 
 						{
 							v.setDisable(false);
-						}*/
-						v.setDisable(false);
+						}
 					}
 				}
 				else if(v != null && v.getHasBuilding() > 0 && buildCode == 3) 
@@ -1019,6 +1145,7 @@ public class OfflineGameScene extends StackPane
 		    		
 		commandPanel.getChildren().add(0, buildOptions);
     }
+	
 	
 	/************************************************************************************
 	 ************************************************************************************

@@ -32,15 +32,15 @@ public class SettlersOfCatan extends Application
 	 ************************************************************************************/
 	
 	private Stage stage;
-	private int currentPlayer, setUpPhase, roll1, roll2, longestRoadLength;
+	private int currentPlayer, setUpPhase, roll1, roll2, longestRoadLength, largestArmy;
 	private boolean inSetup;
 	private boolean roadBuildCard = false;
 	private Scene mainScene;
+	private Robber robber;
 	private OfflineGameScene offlineGameScene;
 	private VertexLink vertexes[][];
 	private EdgeLink edges[][];
 	private Tile[] tileArray;
-	private TileRow rowOne, rowTwo, rowThree, rowFour, rowFive;
 	
 	public void start(Stage stage) 
 	{
@@ -66,9 +66,10 @@ public class SettlersOfCatan extends Application
 
 		//Properties
 		currentPlayer = 0;
-		inSetup = false;
+		inSetup = true;
 		setUpPhase = 0;
 		longestRoadLength = 2;
+		largestArmy = 2;
 		
 		startButton.setOnMouseClicked(
 				(MouseEvent e) -> setNameScene()
@@ -102,10 +103,12 @@ public class SettlersOfCatan extends Application
 		initializeEdges();
 		initializeAdjacentEdges();
 		initializeTiles();
+		
+		robber = new Robber(tileArray);
+		
 		offlineGameScene = new OfflineGameScene(vertexes, edges, players, tileArray);
 		mainScene.setRoot(offlineGameScene);
-		//initialBuild();
-		rollMode();
+		initialBuild();
 	}
 	
 	private void initialBuild() 
@@ -385,6 +388,35 @@ public class SettlersOfCatan extends Application
 				tileArray[i] = new Tile("ore", 0);
 			else
 				tileArray[i] = new Tile("wool", 0);
+			
+			//Button Stuff
+			tileArray[i].setPrefSize(144, 126);
+			tileArray[i].setOnMouseClicked((MouseEvent me) -> {
+				Tile t = (Tile) me.getSource();
+				
+				//Must use index since numbers repeat
+				for(int ind = 0; ind < tileArray.length; ind++)
+				{
+					if(tileArray[ind] == t)
+						moveRobber(ind);
+				}
+			});
+			tileArray[i].setStyle("-fx-background-color: transparent");
+			tileArray[i].setDisable(true);
+			tileArray[i].setOnMouseEntered(
+					(me) -> 
+					{
+						Tile t = (Tile) me.getSource();
+						t.setStyle("-fx-background-color: #e58b96");
+					}
+				);
+				tileArray[i].setOnMouseExited(
+					(me) -> 
+					{
+						Tile t = (Tile) me.getSource();
+						t.setStyle("-fx-background-color: transparent");
+					}
+				);
 		}
 		
 		//Shuffling and then setting the numbers
@@ -396,31 +428,17 @@ public class SettlersOfCatan extends Application
 			if(tileArray[i].type.equals("desert")) 
 			{
 				tileArray[i].setNumber(7);
+				tileArray[i].hasRobber = true;
 			}
 			else
 			{
 				tileArray[i].setNumber(tileNums[count]);
+				tileArray[i].hasRobber = false;
 				count++;
 			}
 		}
 		shuffleTiles(tileArray); //Shuffling again for numbers
 		setVertexesOnTiles(); //Determining vertexes
-		
-		//Creating rows of tiles
-		Tile[] ar1 = {tileArray[0], tileArray[1], tileArray[2]};
-	    rowOne = new TileRow(ar1);
-				
-	    Tile[] ar2 = {tileArray[3], tileArray[4], tileArray[5], tileArray[6]};
-		rowTwo = new TileRow(ar2);
-				
-		Tile[] ar3 = {tileArray[7], tileArray[8], tileArray[9], tileArray[10], tileArray[11]};
-		rowThree = new TileRow(ar3);
-				
-		Tile[] ar4 = {tileArray[12], tileArray[13], tileArray[14], tileArray[15]};
-		rowFour = new TileRow(ar4);
-				
-		Tile[] ar5 = {tileArray[16], tileArray[17], tileArray[18]};
-		rowFive = new TileRow(ar5);
 	}
 	
 	private void setVertexesOnTiles() 
@@ -475,13 +493,9 @@ public class SettlersOfCatan extends Application
 					{
 						continueButton.setOnMouseClicked((MouseEvent e) -> displayResults());
 					}
-					else if(!players.get(currentPlayer).devList.isEmpty())
-					{
-						continueButton.setOnMouseClicked((MouseEvent e) -> devCardMode());
-					}
 					else 
 					{
-						continueButton.setOnMouseClicked((MouseEvent e) -> tradeModePhase1());
+						continueButton.setOnMouseClicked((MouseEvent e) -> activateRobber());
 					}
 					
 					offlineGameScene.showRollResults(roll1, roll2, continueButton);
@@ -581,7 +595,7 @@ public class SettlersOfCatan extends Application
 					}
 					
 					offlineGameScene.disableBuild(); 
-					currentPlayer++;
+					//currentPlayer++;
 					if(currentPlayer == 4) 
 					{
 						currentPlayer = 0;
@@ -611,6 +625,21 @@ public class SettlersOfCatan extends Application
 		{
 			devQuantities.add(0);
 		}
+		
+		int cardIndex = 0;
+		for(int i=0;i>players.get(currentPlayer).devList.size();i++)
+		{
+			if(players.get(currentPlayer).devList.get(i).getIndex()==16)
+			{
+				cardIndex=16;
+			}
+			else if(players.get(currentPlayer).devList.get(i).getIndex()==17)
+			{
+				cardIndex=17;
+			}
+		}
+		
+	    final int ci=cardIndex;
 		
 		ArrayList <Button> availableDevCards = new ArrayList<>();
 		
@@ -649,7 +678,11 @@ public class SettlersOfCatan extends Application
 		
 		knightButton.setOnMouseClicked(
 				(MouseEvent me) -> {
-					DevelopmentCard.knight();
+					offlineGameScene.requestMoveRobber();
+					offlineGameScene.enableTileSelection();
+					players.get(currentPlayer).army++;
+					checkLargestArmy();
+					DevelopmentBank.takeDevCard("knight", players.get(currentPlayer).devList, ci);
 				});
 		yopButton.setOnMouseClicked(
 				(MouseEvent me) -> {
@@ -807,6 +840,78 @@ public class SettlersOfCatan extends Application
 			DevelopmentBank.takeDevCard("road building", players.get(currentPlayer).devList, ci);
 			roadBuildCard=true;
 			offlineGameScene.enableBuild(1);
+	}
+	
+	/************************************************************************************
+	 ************************************************************************************
+	 * ROBBER *
+	 ************************************************************************************
+	 ************************************************************************************/
+	
+	private void activateRobber() 
+	{
+		robber.stealResources(players, bank);
+		Button continueButton = new Button("Continue");
+		continueButton.setOnMouseClicked((MouseEvent me) -> {
+			offlineGameScene.requestMoveRobber();
+			offlineGameScene.displayTileNumbers();
+			offlineGameScene.enableTileSelection();
+			});
+		
+		ArrayList <String> text = new ArrayList <>();
+		text.add("You activated the robber, resources stolen");
+		offlineGameScene.displayText(text, 12, continueButton);
+	}
+	
+	private void moveRobber(int tileIndex) 
+	{
+		offlineGameScene.disableTileSelection();
+		//Removing Robber from old tile
+		for(int i = 0; i < tileArray.length; i++) 
+		{
+			if(tileArray[i].hasRobber) 
+			{
+				tileArray[i].hasRobber = false;
+				break;
+			}
+		}
+		
+		//Adding Robber to new tile
+		tileArray[tileIndex].hasRobber = true;
+		Robber.t = tileArray[tileIndex];
+		stealResource(tileIndex);
+	}
+	
+	private void stealResource(int tileIndex) 
+	{
+		ArrayList<Button> stealOptions = new ArrayList<>();
+		ArrayList <Player> playerOptions = new ArrayList<>();
+		
+		for(int i = 0; i < players.size(); i++)
+			playerOptions.add(players.get(i));
+		
+		for(VertexLink v: tileArray[tileIndex].vertexArray) 
+		{
+			if(v.getHasBuilding() > 0 && v.settlement.p.playerNumber != currentPlayer && playerOptions.contains(v.settlement.p)) 
+			{
+				Player p = v.settlement.p;
+				playerOptions.remove(p);
+				Button b = new Button(v.settlement.p.playerName);
+				b.setOnMouseClicked(
+					(MouseEvent me) -> {
+						robber.stealSingleResource(players.get(currentPlayer), p);
+						tradeModePhase1();
+					});
+				stealOptions.add(b);
+			}
+		}
+		
+		offlineGameScene.requestStealResource(stealOptions);
+		
+		if(stealOptions.isEmpty()) 
+		{
+			tradeModePhase1();
+		}
 	}
 	
 	/************************************************************************************
@@ -1466,12 +1571,21 @@ public class SettlersOfCatan extends Application
 
 	}
 	
+	private void checkLargestArmy() 
+	{
+		for(Player p: players) 
+		{
+			if(p.army > largestArmy)
+				p.hasLargestArmy = true;
+		}
+	}
+	
 	//Game ends if player reaches 10 victory points
 	private boolean checkWin(ArrayList<Player> p)
 	{
 		for(int i = 0;i<p.size();i++)
 		{
-			if(p.get(i).victoryPoints >= 10)
+			if(p.get(i).actualVP >= 10)
 			{
 				return true;
 			}

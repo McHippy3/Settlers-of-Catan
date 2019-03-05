@@ -1,9 +1,10 @@
 package org.settlersofcatan;
 
 
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 
-public class Tile 
+public class Tile extends Button
 {
 	/*
 	 * 
