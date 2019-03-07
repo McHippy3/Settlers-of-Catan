@@ -1,12 +1,5 @@
 package org.settlersofcatan;
-import javafx.animation.RotateTransition;
-import javafx.animation.ScaleTransition;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -14,22 +7,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import javafx.util.Duration;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class OfflineGameScene extends StackPane

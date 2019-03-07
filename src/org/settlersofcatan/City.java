@@ -1,12 +1,5 @@
 package org.settlersofcatan;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-import static java.lang.System.*;
-import java.awt.Color;
-import java.io.*;
-import java.lang.Math;
-
 public class City 
 {
 	Player p;
