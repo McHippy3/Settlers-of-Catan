@@ -270,10 +270,7 @@ public class Player
 			choice = r.nextInt(25);
 		}
 		
-		
 		used.add(choice);
-
-		System.out.println(choice);
 		
 		if(ore >= 1 && wool >= 1 && grain >= 1)
 		{
@@ -288,7 +285,7 @@ public class Player
 			}
 			else if(choice>=14&&choice<16)
 			{
-				type="road build";
+				type="road building";
 				developmentBank.giveDevCard(type,this.devList,choice);
 			}
 			else if(choice>=16&&choice<18)

@@ -20,6 +20,11 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
+/* KNOWN BUGS
+ * 1. Road building development card not entirely working, probably David's fault
+ * 2. Game skips development card phase if a 7 was rolled
+ * */
+
 public class SettlersOfCatan extends Application
 {
 	public static void main(String[] args) 
@@ -546,10 +551,7 @@ public class SettlersOfCatan extends Application
 	private void displayResults() 
 	{
 		Button continueButton = new Button("Continue");
-		if(!players.get(currentPlayer).devList.isEmpty())
-			continueButton.setOnMouseClicked((MouseEvent me) -> devCardMode());
-		else
-			continueButton.setOnMouseClicked((MouseEvent me) -> tradeModePhase1());
+		continueButton.setOnMouseClicked((MouseEvent me) -> devCardMode());
 		offlineGameScene.displayText(distributeResources(), 12, continueButton);
 		offlineGameScene.displayTileNumbers();
 	}
@@ -623,6 +625,12 @@ public class SettlersOfCatan extends Application
 	
 	private void devCardMode() 
 	{
+		//Skip if player doesn't have any dev cards
+		if(players.get(currentPlayer).devList.isEmpty()) 
+		{
+			Platform.runLater(() -> tradeModePhase1());
+		}
+		
 		Button knightButton = new Button("Knight");
 		Button yopButton = new Button("Year of Plenty");
 		Button monopolyButton = new Button("Monopoly");
@@ -847,9 +855,9 @@ public class SettlersOfCatan extends Application
 			}
 		}
 		final int ci=cardIndex;
-			DevelopmentBank.takeDevCard("road building", players.get(currentPlayer).devList, ci);
-			roadBuildCard=true;
-			offlineGameScene.enableBuild(1);
+		DevelopmentBank.takeDevCard("road building", players.get(currentPlayer).devList, ci);
+		roadBuildCard=true;
+		offlineGameScene.enableBuild(1);
 	}
 	
 	/************************************************************************************
@@ -910,7 +918,7 @@ public class SettlersOfCatan extends Application
 				b.setOnMouseClicked(
 					(MouseEvent me) -> {
 						robber.stealSingleResource(players.get(currentPlayer), p);
-						tradeModePhase1();
+						devCardMode();
 					});
 				stealOptions.add(b);
 			}
@@ -1187,7 +1195,7 @@ public class SettlersOfCatan extends Application
 	{	
 		//Using list to make sure that the method doesn't make more than one button for each harbor if the player has multiple settlements near the same harbor
 		ArrayList<Integer> availableHarbors = new ArrayList<Integer>();
-		for(int i = 0; i < 10; i++) 
+		for(int i = 1; i < 10; i++) 
 		{
 			availableHarbors.add(i);
 		}
@@ -1205,10 +1213,6 @@ public class SettlersOfCatan extends Application
 				//Ship options
 				switch(harborCode) 
 				{
-				case 0:
-					button = new Button("4:1 Any");
-					button.setOnMouseClicked((MouseEvent me) -> harborTradeModePhase2("4 of any"));
-					break;
 				case 1:
 					button = new Button("3:1 Any");
 					button.setOnMouseClicked((MouseEvent me) -> harborTradeModePhase2("3 of any"));
@@ -1251,9 +1255,12 @@ public class SettlersOfCatan extends Application
 			}
 		}
 		
+		Button fourToOneButton = new Button("4:1 Any");
+		fourToOneButton.setOnMouseClicked((MouseEvent me) -> harborTradeModePhase2("4 of any"));
+		shipOptions.add(fourToOneButton);
+		
 		Button backButton = new Button("Back");
 		backButton.setOnMouseClicked((MouseEvent me) -> tradeModePhase1());
-		
 		shipOptions.add(backButton);
 		
 		offlineGameScene.requestShipTradePhase("Which harbor would you like to trade with?", shipOptions);
@@ -1447,7 +1454,7 @@ public class SettlersOfCatan extends Application
 		for(int i = 0; i < names.length; i++)
 		{
 			ArrayList<ResourceCard> resList = new ArrayList<>();
-			for(int a = 0; a < 1; a++) 
+			for(int a = 0; a < 10; a++) 
 			{
 				resList.add(new ResourceCard("brick"));
 				resList.add(new ResourceCard("ore"));
