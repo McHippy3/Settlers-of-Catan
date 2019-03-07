@@ -1,16 +1,7 @@
 package org.settlersofcatan;
 
 import javafx.scene.control.Button;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
 
-import javafx.scene.image.ImageView;
-
-import static java.lang.System.*;
-import java.awt.Color;
-import java.io.*;
-import java.lang.Math;
 
 public class Vertex extends Button
 {

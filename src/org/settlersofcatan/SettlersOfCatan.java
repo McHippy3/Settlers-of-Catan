@@ -311,6 +311,11 @@ public class SettlersOfCatan extends Application
 									{
 										initialBuild();
 									}
+									else if(roadBuildCard==true)
+									{
+										roadBuildCard=false;
+										offlineGameScene.enableBuild(1);
+									}
 									else 
 									{
 										buildMode();

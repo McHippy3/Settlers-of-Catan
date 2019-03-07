@@ -1,18 +1,10 @@
 package org.settlersofcatan;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
-import javafx.application.Application;
-
-import static java.lang.System.*;
-import java.awt.Color;
-import java.io.*;
-import java.lang.Math;
 
 public class DevelopmentCard 
 {
-	private OfflineGameScene offlineGameScene;
 	private String type, imageURL;
 	boolean playable;
 	private int index;
