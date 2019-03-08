@@ -1459,7 +1459,7 @@ public class SettlersOfCatan extends Application
 		for(int i = 0; i < names.length; i++)
 		{
 			ArrayList<ResourceCard> resList = new ArrayList<>();
-			for(int a = 0; a < 10; a++) 
+			for(int a = 0; a < 1; a++) 
 			{
 				resList.add(new ResourceCard("brick"));
 				resList.add(new ResourceCard("ore"));

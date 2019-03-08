@@ -1,8 +1,5 @@
 package org.settlersofcatan;
-<<<<<<< HEAD
 
-=======
->>>>>>> 3762622fd9e7c990f52641c305fc5aa8bdd2fa17
 import javafx.geometry.Insets;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Pos;
