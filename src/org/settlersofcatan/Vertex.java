@@ -1,10 +1,7 @@
 package org.settlersofcatan;
 
 import javafx.scene.control.Button;
-<<<<<<< HEAD
 
-=======
->>>>>>> 3762622fd9e7c990f52641c305fc5aa8bdd2fa17
 
 public class Vertex extends Button
 {

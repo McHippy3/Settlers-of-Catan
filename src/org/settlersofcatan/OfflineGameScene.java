@@ -306,6 +306,8 @@ public class OfflineGameScene extends StackPane
         
         //Command Panel Elements/Nodes
         updateCommandPanel();
+        //displays the numbers on the tile
+        displayTileNumbers();
 	}
 	
 	//Update GUI helper
