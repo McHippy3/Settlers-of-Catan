@@ -7,8 +7,7 @@ public class DevelopmentCard
 	private String type, imageURL;
 	boolean playable;
 	private int index;
-	
-	
+
 	// The boolean playable is used as a flag to check whether or not one can play a Dev. Card. (See rules)
 	
 	public DevelopmentCard()
