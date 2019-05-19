@@ -1,6 +1,9 @@
 # Settlers of Catan
 The classic board game Settlers of Catan made in Java
 
+## Creators
+David Wu, Noah Kim, Matthiew Baker, Christopher Smit
+
 ## Classes 
 **SettlersofCatan**: Main class, runs games logic and player turns
 
